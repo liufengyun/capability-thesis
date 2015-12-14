@@ -1,0 +1,2 @@
+#! /usr/bin/env bash
+ls content/*.tex | entr pdflatex main.tex

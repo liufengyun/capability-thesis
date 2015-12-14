@@ -1,0 +1,81 @@
+% \documentclass[12pt]{ociamthesis}  % default square logo
+\documentclass[12pt]{article}  % default square logo
+
+\usepackage[margin=2.8cm]{geometry}
+\usepackage{setspace}
+\usepackage{mathptmx} % Times font
+\usepackage{mathrsfs} % mathrsfs font
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+%\usepackage{framed}
+\usepackage{hyperref}
+\usepackage{amssymb} % empty set
+\usepackage{multicol} % multi-column
+
+% code listing
+\usepackage{listings}
+\usepackage{xcolor}
+
+% packages for drawing
+\usepackage{tikz}
+\usetikzlibrary{graphs}     % create graphs
+\usetikzlibrary{arrows}
+
+%% set code styles
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+  frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+}
+
+% definitions, theorems
+
+\newtheorem{definition}{Definition}
+
+
+\onehalfspacing
+
+%end the preamble and start the document
+\begin{document}
+
+\input{content/cover}
+%% \include{content/dedication}        % include a dedication.tex file
+%% \include{content/acknowlegements}   % include an acknowledgements.tex file
+\include{content/abstract}          % include the abstract
+
+\tableofcontents            % generate and include a table of contents
+% \listoffigures              % generate and include a list of figures
+
+%now include the files of latex for each of the chapters etc
+\include{content/introduction}
+\include{content/conclusions}
+
+%now enable appendix numbering format and include any appendices
+%% \appendix
+%% \include{content/appendix1}
+
+%next line adds the Bibliography to the contents page
+\addcontentsline{toc}{section}{Bibliography}
+%uncomment next line to change bibliography name to references
+%\renewcommand{\bibname}{References}
+\bibliography{refs}        %use a bibtex bibliography file refs.bib
+\bibliographystyle{plain}  %use the plain bibliography style
+
+\end{document}
