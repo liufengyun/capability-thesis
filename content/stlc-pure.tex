@@ -1,0 +1,268 @@
+\section{Simply Typed Lambda Calculus - Pure}
+
+This chapter describes a variant of the \emph{simply typed
+  lambda-calculus} with the exension of capabilities. We call this
+system \emph{STLC Pure}, because in this system all functions must
+observe a variable-capturing discipline.  In later chapters, we'll see
+the development of impure systems where there are both
+effect-disciplined functions which observe the variable-capturing
+discipline, and ordinary functions which don't observe the
+variable-capturing discipline.
+
+The system STLC Pure, though conceptually simple, can quite well
+demonstrate the core idea of capability-based type-and-effect
+systems. We'll first introduce the formalization, then discuss
+soundness and effect safety. Concepts introduced here will be a
+foundation for more complex systems in later chapters.
+
+\subsection{Definitions}
+
+Formally, STLC Pure is obtained by introducing capability type and
+imposing variable capability-capturing discipline on lambda
+abstractions.  Figure~\ref{fig:stlc-pure-definition} presents the full
+definition of STLC Pure.
+
+The syntax is almost the same as standard STLC, except the addition of
+capability type \emph{E} and addition of variables as values. The
+evaluation rules are exactly the same, with standard call-by-value
+small-step semantics. The typing rule T-Abs is slightly changed by
+performing an operation on the environment. The peculiarities in the
+formalization are explained below.
+
+\begin{figure}[ht]
+\begin{framed}
+\begin{multicols}{2}
+
+\textbf{Syntax}
+
+\begin{tabu} to \linewidth {l l l X[r]}
+  t   & ::= &                    & terms:               \\
+      &     &  x                 & variable             \\
+      &     & $\lambda$ x:T.t    & abstraction          \\
+      &     & t t                & application          \\
+\\
+  v   & ::= &                    & values:              \\
+      &     & $\lambda$ x:T.t    & abstraction value    \\
+      &     & x                  & variable value       \\
+\\
+  T   & ::= &                    & types:               \\
+      &     & B                  & basic type           \\
+      &     & E                  & capability type      \\
+      &     & T $\to$ T          & type of functions    \\
+\end{tabu}
+
+\hfill\\
+
+\textbf{Evaluation} \hfill \framebox[1.2\width][r]{$t \longrightarrow t'$}
+
+\infrule[E-App1]
+{ t_1 \longrightarrow t'_1 }
+{ t_1 \; t_2 \longrightarrow t'_1 \; t_2 }
+
+\infrule[E-App2]
+{ t_2 \longrightarrow t'_2 }
+{ v_1 \; t_2 \longrightarrow v_1 \; t'_2 }
+
+\infax[E-AppAbs]
+{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+
+\columnbreak
+
+\textbf{Typing}  \hfill \framebox[1.2\width][r]{$\Gamma \vdash x : T$}
+
+\infrule[T-Var]
+{ x: T \in \Gamma }
+{ \Gamma \vdash x : T }
+
+\infrule[T-Abs]
+{ pure(\Gamma),\; x: S \vdash t_2 : T }
+{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+
+\infrule[T-App]
+{ \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
+{ \Gamma \vdash t_1 \; t_2 : T }
+
+\textbf{Pure Environment}
+
+\begin{center}
+\begin{tabular}{l c l}
+pure($\varnothing$)             & = &   $\varnothing$ \\
+pure($\Gamma$, x: E)            & = &  pure($\Gamma$) \\
+pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
+\end{tabular}
+\end{center}
+
+\hfill\\
+
+\end{multicols}
+\end{framed}
+
+\caption{System STLC Pure}
+\label{fig:stlc-pure-definition}
+\end{figure}
+
+\subsubsection{Variable-Capturing Discipline}
+
+The most important change compared to standard STLC lies in following
+typing rule:
+
+\infrule[T-Abs]
+{ pure(\Gamma) , x: S \vdash t_2 : T }
+{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+
+This typing rule imposes a \emph{variable-capturing discipline} on
+lambda abstractions. This discipline stipulates that only variables
+whose type is not a capability type can be captured in a lambda
+abstraction.
+
+The discipline is implemented with the helper function \emph{pure},
+which removes any variable bindings of the capability type \emph{E}
+from the typing environment. It's easy to verify the \emph{pure}
+function satisfies following properties:
+
+\begin{lemma}[Pure-Distributivity]
+  pure (E, F) = pure E, pure F
+\end{lemma}
+
+\begin{lemma}[Pure-Idempotency]
+  pure (pure E) = pure E
+\end{lemma}
+
+\subsubsection{Stoic Functions}
+
+The variable-capturing discipline makes the functions in STLC Pure
+essentially different from functions in standard STLC. In STLC,
+functions can capture any variables in scope, while in STLC Pure
+functions can only capture variables whose type is not a capability
+type($E$). To differentiate them (which is important as in later
+systems both exist), we call the more effect-disciplined functions as
+\emph{stoic functions}.
+
+Stoic functions are essential in capability-based type-and-effect
+systems. If functions are allowed to capture capability variables in
+scope, it will be impossible to tell whether a function has side
+effect or not (and what kind of effect) by just checking its
+type. Stoic functions are effect-disciplined in the sense that the
+only way for stoic functions to have side effects is to pass a
+capability as parameter, thus it can be captured by the type system.
+
+It's important to note that stoic functions are not necessarily pure
+functions. Stoic functions can have side effects, and if they do have
+side effects they are honest about that in their type signature. For
+example, following function \emph{hello} is a stoic function which has
+IO effects\footnote{For readability, we'll use a syntax similar to
+  Scala. However, we'll use $\to$ to annotate the type of stoic
+  functions, and $\Rightarrow$ for ordinary functions.}.
+
+\begin{lstlisting}[language=Scala]
+  def hello(c:IO) = println("hello, world!", c)
+\end{lstlisting}
+
+In the following code snippet, we can be sure that the function
+\emph{f} is pure, as it doesn't take any capability as parameter. In
+the definition of \emph{f}, it's impossible to call functions to
+create side effects, as in STLC Pure all functions that can have side
+effects take some capability as parameter.
+
+\begin{lstlisting}[language=Scala]
+  def twice(f: Int -> Int)(x: Int) = f (f x)
+\end{lstlisting}
+
+\subsubsection{Where do Effects Come From}
+
+Careful readers might have noticed that in current type-and-effect system,
+there is no formalization of effects. Indeed, that's an intentional
+design choice. As the primary concern of this study is IO effects, we
+assume the existence of primitive functions like \emph{println}, which
+take capability parameters to create side effects.
+
+\subsubsection{Where do Capabilities Come From}
+
+In current system it is impossible to create capabilities. Where do
+capabilities come from?  There are two possible answers. The first one
+is that all capabilities are from the runtime and passed to the
+program through the \emph{main} method.
+
+The second one is that there are no capabilities. Capabilities can be
+erased before evaluation in principle, without affecting meaning of
+the program. However, in this study we only state this observation
+informally and leave the formal proof to future studies.
+
+\subsubsection{Why Treat Variables as Values}
+
+As discussed above, in current system, there is no way to create
+capabilities. It means that a function taking a capability parameter
+can never be called. A soundness proof for such a system is not very
+convincing. Instead, if we treat variables as values, functions that
+takes a capability parameter can be called with a capability
+variable. This makes the preservation proof (see below) more
+convincing.
+
+Adding variables as values doesn't break soundness or effect safety of
+the system. In fact, by adding variables as values, we only added 5
+lines of code in our soundness proof, and effect safety proof remains
+the same.
+
+\subsection{Soundness}
+
+We follow the standard formulation of soundness in TAPL
+\cite{pierce2002types}, which consists of \emph{progress} and
+\emph{presevation}, defined as follows:
+
+\begin{theorem}[Progress]
+If $\varnothing \vdash t : T$, then either $t$ is a value or there is some
+$t'$ with $t \longrightarrow t'$.
+\end{theorem}
+
+\begin{theorem}[Preservation]
+If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
+\vdash t' : T$.
+\end{theorem}
+
+We proved both theorems in Coq based on the locally-nameless
+representation. The proof of progress is the same as in STLC. However,
+there is a significant difference in the proof of preservation In the
+classic proof of preservation for STLC (as shown in TAPL), it depends
+on a substitution lemma, which is formulated as follows:
+
+\begin{lemma}[Subsitution-Classic]
+If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
+\vdash [x \mapsto s]t : T$.
+\end{lemma}
+
+However, this substitution lemma doesn't hold in current system. For a
+counter-example, let's assume that $\Gamma = \{f: E \to B,\;
+  c:E\}$, then it's obviously that following two propositions hold:
+
+\begin{itemize}
+\item $\{f: E \to B,\; c:E\},\; x:B \vdash \lambda z:B.\,x \; : \; B \to B$.
+\item $\{f: E \to B,\; c:E\},\; x:B \vdash f \; c \; : \; B$.
+\end{itemize}
+
+However, following typing relationship doesn't hold if we replace
+$x$ with $f \; c$.
+
+\begin{center}
+$\{f: E \to B,\; c:E\} \vdash \lambda z:B.\,f \; c \; : \; B \to B$.
+\end{center}
+
+In fact, the substituted term $\lambda z:B.\,f \; c$ cannot be typed,
+as according to the typing rules, it cannot capture the capability
+variable $c$ in the environment. To overcome this problem, we
+stipulate that the term $s$ to be substituted must be a
+value. Remember that in current system, both lambda abstractions and
+variables are values, thus subsitution of capability variables can
+also happen. The new formulation is as follows:
+
+\begin{lemma}[Subsitution-New]
+  If $\Gamma,\; x:S \vdash t : T$, s is a value and
+  $\Gamma \vdash s : S$, then $\Gamma \vdash [x \mapsto s]t : T$.
+\end{lemma}
+
+\subsection{Effect Safety}
+
+
+
+\subsection{Discussion}
+
+extensions and practicality
