@@ -5,6 +5,7 @@
 \usepackage{mathptmx} % Times font
 \usepackage{mathrsfs} % mathrsfs font
 \usepackage{amsthm}   % theorems, definitions, lemmas
+
 \usepackage{amsmath}  % \text{}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -15,9 +16,6 @@
 \usepackage{tabu} % advanced table layout
 \usepackage{chngcntr} % figure numbering per chapter
 \usepackage{lib/bcprules} % typeset inference rule
-
-% multi-column separator
-\setlength{\columnseprule}{0.4pt}
 
 % figure numbering
 \counterwithin{figure}{section}
@@ -35,6 +33,7 @@
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{shade}{rgb}{0.8,0.8,0.8}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
 \lstset{
@@ -79,6 +78,7 @@
 %now include the files of latex for each of the chapters etc
 \include{content/introduction}
 \include{content/stlc-pure}
+\include{content/f-pure}
 \include{content/conclusions}
 
 %now enable appendix numbering format and include any appendices
