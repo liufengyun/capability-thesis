@@ -1,15 +1,15 @@
-\section{Simply Typed Lambda Calculus - Pure}
+\section{System STLC-Pure}
 
 This chapter describes a variant of the \emph{simply typed
-  lambda-calculus} with the exension of capabilities. We call this
-system \emph{STLC Pure}, because in this system all functions must
+  lambda-calculus} with the extension of capabilities. We call this
+system \emph{STLC-Pure}, because in this system all functions must
 observe a variable-capturing discipline.  In later chapters, we'll see
 the development of impure systems where there are both
 effect-disciplined functions which observe the variable-capturing
 discipline, and ordinary functions which don't observe the
 variable-capturing discipline.
 
-The system STLC Pure, though conceptually simple, can quite well
+The system STLC-Pure, though conceptually simple, can quite well
 demonstrate the core idea of capability-based type-and-effect
 systems. We'll first introduce the formalization, then discuss
 soundness and effect safety. Concepts introduced here will be a
@@ -17,10 +17,10 @@ foundation for more complex systems in later chapters.
 
 \subsection{Definitions}
 
-Formally, STLC Pure is obtained by introducing a capability type and
+Formally, STLC-Pure is obtained by introducing a capability type and
 imposing a variable capability-capturing discipline on lambda
 abstractions.  Figure~\ref{fig:stlc-pure-definition} presents the full
-definition of STLC Pure.
+definition of STLC-Pure.
 
 The syntax is almost the same as standard STLC, except the addition of
 capability type \emph{E} and addition of variables as values. The
@@ -31,6 +31,9 @@ formalization are explained below.
 
 \begin{figure}[ht]
 \begin{framed}
+
+% multi-column separator
+\setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
 \textbf{Syntax}
@@ -97,7 +100,7 @@ pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
 \end{multicols}
 \end{framed}
 
-\caption{System STLC Pure}
+\caption{System STLC-Pure}
 \label{fig:stlc-pure-definition}
 \end{figure}
 
@@ -130,9 +133,9 @@ function satisfies following properties:
 
 \subsubsection{Stoic Functions}
 
-The variable-capturing discipline makes the functions in STLC Pure
+The variable-capturing discipline makes the functions in STLC-Pure
 essentially different from functions in standard STLC. In STLC,
-functions can capture any variables in scope, while in STLC Pure
+functions can capture any variables in scope, while in STLC-Pure
 functions can only capture variables whose type is not a capability
 type. To differentiate them (which is important as in later systems
 both exist), we call the more effect-disciplined functions as
@@ -161,7 +164,7 @@ IO effects\footnote{For the sake of readability, we'll use a syntax
 In the following code snippet, we can be sure that the function
 \emph{f} is pure, as it doesn't take any capability as parameter. In
 the definition of \emph{f}, it's impossible to call functions to
-create side effects, as in STLC Pure all functions that can have side
+create side effects, as in STLC-Pure all functions that can have side
 effects take some capability as parameter.
 
 \begin{lstlisting}[language=Scala]
@@ -182,7 +185,7 @@ create side effects.
 
 In current system it is impossible to create capabilities. Where do
 capabilities come from?  There are two possible answers. The first one
-is that all capabilities are from the runtime and passed to the
+is that all capabilities are from the run-time and passed to the
 program through the \emph{main} method.
 
 The second one is that there are no capabilities. Capabilities can be
@@ -223,7 +226,7 @@ However, it's straight-forward to extend the system with pairs or
 tuples. In later chapters we'll see systems where there exists
 functions that are not restricted by variable-capturing discipline.
 In those systems, this problem is no longer an issue, thus we don't
-pursue the exension of pairs and tuples here.
+pursue the extension of pairs and tuples here.
 
 \subsection{Soundness}
 
@@ -273,7 +276,7 @@ as according to the typing rules, it cannot capture the capability
 variable $c$ in the environment. To overcome this problem, we
 stipulate that the term $s$ to be substituted must be a
 value. Remember that in current system, both lambda abstractions and
-variables are values, thus subsitution of capability variables can
+variables are values, thus substitution of capability variables can
 also happen. The new formulation is as follows:
 
 \begin{lemma}[Subsitution-New]
@@ -373,6 +376,9 @@ stated:
 
 \begin{figure}[ht]
 \begin{framed}
+
+% multi-column separator
+\setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
 \textbf{Capsafe}
@@ -405,7 +411,7 @@ stated:
 { \varnothing \quad caprod }
 
 \infrule[H-Var]
-{ G \; healthy \andalso T \; healthy }
+{ G \; healthy \andalso T \; \text{capsafe} }
 { G, \; x:T \quad healthy }
 
 % \columnbreak
@@ -415,7 +421,7 @@ stated:
 \end{multicols}
 \end{framed}
 
-\caption{System STLC Pure Healthy Environment}
+\caption{System STLC-Pure Healthy Environment}
 \label{fig:stlc-pure-healthy-definition}
 \end{figure}
 
@@ -460,8 +466,9 @@ The proof of effect safety depends on following lemmas, most of them
 are straight-forward to prove. Effect safety follows immediately from
 the lemma \emph{Healthy-Capsafe}.
 
+
 \begin{lemma}[Capsafe-Not-Caprod]
- For any T, T is capsafe implies T is not caprod.
+ If type T is capsafe, then T is not caprod.
 \end{lemma}
 
 \begin{lemma}[Capsafe-Or-Caprod]
@@ -469,16 +476,20 @@ the lemma \emph{Healthy-Capsafe}.
 \end{lemma}
 
 \begin{lemma}[Healthy-Pure]
-  For any healthy enviroment $\Gamma$, $pure \; \Gamma = \Gamma$.
+  If environment $\Gamma$ is healthy, then $pure \; \Gamma = \Gamma$.
 \end{lemma}
 
 % Following generalized lemma is essential in the proof of effect safety:
 
 \begin{lemma}[Healthy-Capsafe]
- For any healthy enviroment $\Gamma$ and term $t$, if $\Gamma \vdash t
+ For any healthy environment $\Gamma$ and term $t$, if $\Gamma \vdash t
  : T$, then T is capsafe.
 \end{lemma}
 
+\begin{theorem}[Effect-Safety]
+  For any healthy environment $\Gamma$, it's impossible to construct a
+  term $t$ with $\Gamma \vdash t : E$.
+\end{theorem}
 
 % \subsection{Discussion}
 
