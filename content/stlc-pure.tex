@@ -10,7 +10,7 @@ discipline, and ordinary functions which don't observe the
 variable-capturing discipline.
 
 The system STLC-Pure, though conceptually simple, can quite well
-demonstrate the core idea of capability-based type-and-effect
+demonstrate the main features of capability-based type-and-effect
 systems. We'll first introduce the formalization, then discuss
 soundness and effect safety. Concepts introduced here will be a
 foundation for more complex systems in later chapters.
@@ -29,7 +29,7 @@ small-step semantics. The typing rule T-Abs is slightly changed by
 performing an operation on the environment. The peculiarities in the
 formalization are explained below.
 
-\begin{figure}[ht]
+\begin{figure}
 \begin{framed}
 
 % multi-column separator
@@ -131,15 +131,16 @@ function satisfies following properties:
   pure (pure E) = pure E
 \end{lemma}
 
-\subsubsection{Stoic Functions}
+\subsubsection{Stoic Functions and Libertine Functions}
 
 The variable-capturing discipline makes the functions in STLC-Pure
 essentially different from functions in standard STLC. In STLC,
 functions can capture any variables in scope, while in STLC-Pure
 functions can only capture variables whose type is not a capability
 type. To differentiate them (which is important as in later systems
-both exist), we call the more effect-disciplined functions as
-\emph{stoic functions}.
+both exist), we call the more effect-disciplined functions \emph{stoic
+  functions} (or stoics) and the other \emph{libertine functions} (or
+libertines).
 
 Stoic functions are essential in capability-based type-and-effect
 systems. If functions are allowed to capture capability variables in
@@ -388,7 +389,7 @@ stated:
   term $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
-\begin{figure}[ht]
+\begin{figure}
 \begin{framed}
 
 % multi-column separator
@@ -428,9 +429,6 @@ stated:
 { G \; healthy \andalso T \; \text{capsafe} }
 { G, \; x:T \quad healthy }
 
-% \columnbreak
-
-\hfill\\
 
 \end{multicols}
 \end{framed}
@@ -445,9 +443,9 @@ $B \to E$, $(E \to B) \to E$ are considered as caprod. To inspect the
 formalization in detail, we can ask several questions.
 
 \emph{Are capsafe types inhabitable?} The answer is no. The type
-$E \to B \to E$ is non-inhabitable in any environment. However,
-allowing this type in healthy environment doesn't enable us to
-construct a term of capability type.
+$E \to B \to E$ is non-inhabitable. However, allowing this type in
+healthy environment doesn't enable us to construct a term of
+capability type.
 
 \emph{Are caprod types non-inhabitable?} Yes, except the capability
 type $E$. As $E$ is also excluded in pure environment, thus it's
