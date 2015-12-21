@@ -212,7 +212,7 @@ the same.
 
 The current system doesn't support a function to have more than one
 kind of effects. For example, in the following code snippet, $c1$
-can't be used in the function body, as it's removing by \emph{pure} in
+can't be used in the function body, as it's removed by \emph{pure} in
 the typing of the function body.
 
 \begin{lstlisting}[language=Scala]
@@ -246,7 +246,7 @@ If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
 
 We proved both theorems in Coq based on the locally-nameless
 representation. The proof of progress is the same as in STLC. However,
-there is a significant difference in the proof of preservation In the
+there is a significant difference in the proof of preservation. In the
 classic proof of preservation for STLC (as shown in TAPL), it depends
 on a substitution lemma, which is formulated as follows:
 
@@ -284,6 +284,21 @@ also happen. The new formulation is as follows:
   $\Gamma \vdash s : S$, then $\Gamma \vdash [x \mapsto s]t : T$.
 \end{lemma}
 
+Interestingly, this strict evaluation requirement contrasts
+capability-based effect systems with monad-based effect systems. In
+Haskell, if it takes strict evaluation, it will be impossible to track
+effects in the type system, as demonstrated by following code snippet:
+
+\begin{lstlisting}[language=Haskell]
+  inc n = (\x -> n + 1) (putStrLn (show n))
+\end{lstlisting}
+
+The function \emph{inc} has the type $(Num\;a, Show\;a) \Rightarrow a
+\to a$. By just checking its type, we would think it has no side
+effects because no IO monads appear in the type signature. However, if
+it takes strict evaluation, the \emph{putStrLn} will be executed, thus
+breaks the monad-based effect system.
+
 \subsection{Effect Safety}
 
 One question that can be asked for any type-and-effect system is that,
@@ -292,18 +307,17 @@ prove effect safety of the system.
 
 \subsubsection{Informal Formulation}
 
-We start by formulating the effect safety informally and then
-translate it into formal statement. A tentative formulation would be
-as follows:
+We start by formulating the effect safety informally. A tentative
+formulation would be as follows:
 
 \begin{definition}[Effect-Safety-Informally-1]
 A function typed in pure environment cannot have side effects inside.
 \end{definition}
 
 However, this formulation is obviously problematic, as we know stoic
-functions can have effects if it takes a capability parameter. Thus,
-we need to restrict the stoic functions to those not taking capability
-parameters:
+functions can have side effects if it takes a capability
+parameter. Thus, we need to restrict the functions to those not taking
+capability parameters:
 
 \begin{definition}[Effect-Safety-Informally-2]
   A function (without capability parameter) typed in pure environment
@@ -337,7 +351,7 @@ For a counter-example, let's assume $\Gamma = \{f: B \to E, \; x:
 B\}$. It's obvious that $\Gamma$ is pure, but we can construct the
 term $f \; x$ which is of the capability type.
 
-The cause of the problem is that in pure environment, there could be
+The cause of the problem is that in pure environment, there could exist
 ill types like $B \to E$, which is non-inhabitable in ``healthy''
 environments.  Existence of these ill types in pure environment
 doesn't pose a problem to the system, because if a function takes a
