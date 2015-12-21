@@ -385,11 +385,11 @@ of \emph{healthy environment}, the effect safety can be formally
 stated:
 
 \begin{definition}[Effect-Safety]
-  For any healthy environment $\Gamma$, it's impossible to construct a
-  term $t$ with $\Gamma \vdash t : E$.
+  If $\Gamma$ is healhty, then there doesn't exist term $t$ with
+  $\Gamma \vdash t : E$.
 \end{definition}
 
-\begin{figure}
+\begin{figure}[h]
 \begin{framed}
 
 % multi-column separator
@@ -452,7 +452,10 @@ type $E$. As $E$ is also excluded in pure environment, thus it's
 justified to remove it in the healthy environment. The CP-Fun rule is
 justified by the fact that in a healthy environment it is impossible
 to construct a function which takes a capsafe parameter and returns a
-value of caprod type.
+value of caprod type. Or from a logical point of view, given a proof
+from which E can't be proved, we can't transform it to be a proof
+capable of proving E, together with a group of premises incapable of
+proving E.
 
 \emph{Are healthy environments pure?} Yes, it can be
 proved. Conceptually speaking, a healthy environment should always be
@@ -494,13 +497,12 @@ the lemma \emph{Healthy-Capsafe}.
 % Following generalized lemma is essential in the proof of effect safety:
 
 \begin{lemma}[Healthy-Capsafe]
- For any healthy environment $\Gamma$ and term $t$, if $\Gamma \vdash t
- : T$, then T is capsafe.
+  If $\Gamma$ is healthy and $\Gamma \vdash t : T$, then T is capsafe.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety]
-  For any healthy environment $\Gamma$, it's impossible to construct a
-  term $t$ with $\Gamma \vdash t : E$.
+  If $\Gamma$ is healhty, then there doesn't exist term $t$ with
+  $\Gamma \vdash t : E$.
 \end{theorem}
 
 % \subsection{Discussion}
