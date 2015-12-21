@@ -362,13 +362,13 @@ that there cannot be actual side effects inside a pure stoic
 function. Thus, we need two statements about effect safety.
 
 \begin{definition}[Effect-Safety-1]
-  For any healthy environment $\Gamma$, it's impossible to construct a
-  term $t$ with $\Gamma \vdash t : E$.
+  If $\Gamma$ is healthy, there doesn't exist $t$ with
+  $\Gamma \vdash t : E$.
 \end{definition}
 
 \begin{definition}[Effect-Safety-2]
-  For any healthy environment $\Gamma$, if $\Gamma \vdash t_1 \; t_2 :
-  T$, then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+  If $\Gamma$ is healthy and $\Gamma \vdash t_1 \; t_2 : T$, then
+  there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
 A tempting formulation of the second effect safety statement would be
@@ -555,4 +555,141 @@ $\Gamma$ is empty. Otherwise, if $t$ is a variable, we can do nothing.
 \label{fig:stlc-impure-axioms}
 \end{figure}
 
-The justification for the axiom Ax-Base is as follows.
+The justification for the axiom \textsc{Ax-Base} is as
+follows. Suppose $t = \lambda x:B. \; \lambda y:S. \; t_1$ and
+$\Gamma \vdash t : B \to S \Rightarrow T$. The typing rule for $t$
+should be the typing rule for stoic functions:
+
+\infrule[Step-1]
+{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \Rightarrow T }
+{ \Gamma \vdash \lambda x:B. \lambda y:S. \; t_1 : B \to S \Rightarrow T }
+
+Then what's the rule used in the typing of $\lambda y:S. \; t_1$? If it's
+first typed as $S \to T$ and then subsumed to $S \Rightarrow T$, then
+we are done. Otherwise, $\lambda y:S. \; t_1$ is typed using the rule of
+libertine functions:
+
+\infrule[Step-2]
+{ pure(\Gamma),\; x: B,\; y:S \vdash t_1 : T }
+{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \Rightarrow T }
+
+According to the definition of \emph{pure}, we know that following two
+equations holds:
+
+\begin{itemize}
+\item $pure(pure(\Gamma)) = pure(\Gamma)$
+\item $pure(\Gamma, x:B) = pure(\Gamma), x:B$
+\end{itemize}
+
+From the equations above, we have can get following equation:
+
+\begin{center}
+  $pure(pure(\Gamma),\; x: B) = pure(\Gamma),\; x: B$
+\end{center}
+
+If we substitute the equation in Step-2, we get exactly the
+precondition for typing stoic functions. Thus $\lambda y:S.t_2$ can be
+typed as stoic function:
+
+\infrule[Step-2']
+{ pure(pure(\Gamma),\; x: B),\; y:S \vdash t_1 : T }
+{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \to T }
+
+Because we know $\lambda y:S. \; t_1$ is typed as $S \to T$, so we can
+update Step-1 as following:
+
+\infrule[Step-1']
+{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \to T }
+{ \Gamma \vdash \lambda x:B. \lambda y:S. \; t_1 : B \to S \to T }
+
+Put all the steps together, we've inferred
+$\Gamma \vdash t : B \to S \to T$ from the fact
+$\Gamma \vdash t : B \to S \Rightarrow T$. That's the justification
+for the \textsc{Ax-Base} rule. The justifications for \textsc{Ax-Top}
+and \textsc{Ax-Stoic} are similar. The axiom \textsc{Ax-Poly} is an
+interesting one, which deserves a separate section.
+
+Assuming the axioms above, it's straight-forward to prove a lemma
+\emph{Healthy-Pure-Stoic}, and the second statement of effect safety
+follows immediately from the lemma.
+
+\begin{lemma}[Healthy-Pure-Stoic]
+  If $\Gamma$ is healthy and pure,  and $\Gamma \vdash t : S
+  \Rightarrow T$, then $\Gamma \vdash t : S \to T$.
+\end{lemma}
+
+\begin{theorem}[Effect-Safety-2]
+  If $\Gamma$ is healthy and pure, and $\Gamma \vdash t_1 \; t_2 :
+  T$, then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+\end{theorem}
+
+Note that unlike the proof of the first effect safety statement, the
+proof of the second statement of effect safety assumes that $\Gamma$
+is pure. This is due to the fact that \emph{healthy} no longer implies
+\emph{pure}. Conceptually speaking, a healthy environment should
+always be a subset of pure environment. To clear the worry of readers,
+we can define $healthy' \; E := healthy \; E \wedge pure \; E = E$.
+Effect safety proved only assuming the weaker \emph{healthy} also
+holds for $healthy'$.
+
+\subsubsection{Effect Polymorphism}
+
+The axiom \textsc{Ax-Poly}, which we call \emph{effect polymorphism},
+reflects some important property about capability-based effect
+systems. Suppose following typing relation holds, what impure
+variables can be captured by $t_1$?
+
+\begin{center}
+  $\Gamma \vdash \lambda f:U \Rightarrow V. \; \lambda y:S. \; t_1 : (U
+  \Rightarrow V) \to S \Rightarrow T$.
+\end{center}
+
+As the functioin is stoic, the only impure variable can be captured is
+$f$. Now, if we supply a stoic function as parameter to the function,
+it has the same effect as saying that $f$ is $U \to V$. Thus in this
+context, the function can be typed as $(U \to V) \to S \Rightarrow T$.
+Now according to the \textsc{Ax-Stoic} axiom, the term can also be
+typed as $(U \to V) \to S \to T$. Then according to the standard
+\textsc{T-App} rule, we can get the type of the application is
+$S \to T$. That's the justification for the axiom \textsc{Ax-Poly}.
+
+Effect polymorphism is an advantage of capability-based effect systems
+over monad-based effect systems. In Haskell, there is always the need
+to maintain two copies of higher-order functions, as following code
+snippet shows\footnote{From the slides of Ben Lippmeier,
+  \emph{Witnessing Purity, Constancy and Mutability}, APLAS 2009}:
+
+\begin{lstlisting}[language=Haskell]
+  map :: (a -> b) -> List a -> List b
+  map f xs
+    = case xs of
+        Nil -> Nil
+        Cons x xs -> Cons (f x) (map f xs)
+
+  mapIO :: (a -> IO b) -> List a -> IO (List b)
+  mapIO f xs
+    = case xs of
+      Nil -> return Nil
+      Cons x xs -> do x' <- f x
+        xs' <- mapIO f xs
+        return (Cons x' xs')
+\end{lstlisting}
+
+The non-monadic version and the monadic version of code are the same
+in essence. It's a pity we have to duplicate the same code twice in
+monad-based effect systems. In capability-based effect systems, we
+only need to maintain one copy of the code:
+
+\begin{lstlisting}[language=Haskell]
+  def map[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(l)
+  }
+\end{lstlisting}
+% haskell two versions of map
+
+The \emph{map} function above has the type
+$(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. When supplied
+with a pure function $f$ of type $A \to B$, \emph{map f} has the type
+$List [A] \to List[B]$. This is a good news for programmers in want to
+effect polymorphism.
