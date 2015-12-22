@@ -632,11 +632,18 @@ we can define $healthy' \; E := healthy \; E \wedge pure \; E = E$.
 Effect safety proved only assuming the weaker \emph{healthy} also
 holds for $healthy'$.
 
-\subsubsection{Effect Polymorphism}
+\subsection{Effect Polymorphism}
 
 The axiom \textsc{Ax-Poly}, which we call \emph{effect polymorphism},
 reflects some important property about capability-based effect
-systems. Suppose following typing relation holds, what impure
+systems.
+
+\infrule[Ax-Poly] { \Gamma \vdash t_2 : U \to V \andalso \Gamma \vdash
+  t_1 : (U \Rightarrow V) \to S \Rightarrow T } { \Gamma \vdash t_1 \;
+  t_2 : S \to T }
+
+
+Suppose following typing relation holds, what impure
 variables can be captured by $t_1$?
 
 \begin{center}
@@ -713,5 +720,5 @@ $c$. The function \emph{squareImpure} has the type
 $List[Int] \to IO \to List[Int]$, and \emph{squarePure} has the type
 $List[Int] \to List[Int]$. This means all effects are captured in the
 type system in the presence of local free functions. This is an
-example of the flexibility of the combination of stoic functions and
-free functions in tracking effects in the type system.
+example of the flexibility of capability-based effect systems, powered
+by the combination of stoic and free functions.
