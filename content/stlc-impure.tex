@@ -738,6 +738,9 @@ polymorphism work in such cases? The answer is as follows:
 
 In the above, we only have one implementation of the \emph{map}
 function and we protect the implementation by the keyword
-\emph{private}. And it's possible to add new interfaces to allow more
-effects without breaking compatibility of existing code. This is the
-power and flexibility of capability-based effect systems.
+\emph{private}. All calling of the \emph{map} function has to go
+through the two exposed interface. The two interfaces imposes that the
+passed function \emph{f} must either be pure or only have IO side
+effects. And it's possible to add new interfaces to allow more effects
+without breaking compatibility of existing code. This is the power and
+flexibility of capability-based effect systems.
