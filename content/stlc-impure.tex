@@ -2,7 +2,7 @@
 
 This chapter describes an extension of system STLC-Pure, where there
 exists both effect-disciplined functions (stoic functions) and
-effect-arbitrary functions (libertine functions). As there's a
+effect-arbitrary functions (free functions). As there's a
 subtyping between the two kinds of functions, it's natural to
 integrate subtyping in the system.
 
@@ -14,12 +14,12 @@ system STLC-Pure.
 
 Initially, we arrived at a formualtion of the system shown in
 Figure~\ref{fig:stlc-impure-definition-first}. It's a straight-forward
-extension of SLTC-Pure with subtyping and libertine functions. Note
+extension of SLTC-Pure with subtyping and free functions. Note
 that in this formulation, we need to change the definition of the
-\emph{pure} function to exclude libertine function types in the pure
+\emph{pure} function to exclude free function types in the pure
 environment. This restriction is important, because we're not sure
-what side effects there might be inside libertine functions. If we
-allow stoic functions have access to libertine functions, we'll loose
+what side effects there might be inside free functions. If we
+allow stoic functions have access to free functions, we'll loose
 the ability to track the effects of stoic functions in the type
 system.
 
@@ -63,8 +63,8 @@ formuations.
       &     & \colorbox{shade}{Top}  & top type             \\
       &     & B                  & basic type           \\
       &     & E                  & capability type      \\
-      &     & T $\to$ T          & type of stoics       \\
-      &     & \colorbox{shade}{T $\Rightarrow$ T} & type of libertines   \\
+      &     & T $\to$ T          & type of stoic funs       \\
+      &     & \colorbox{shade}{T $\Rightarrow$ T} & type of free funs   \\
 \end{tabu}
 
 \hfill\\
@@ -150,7 +150,7 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 \end{figure}
 
 The first one is to introduce two different Top types, one is pure and
-the other is impure. The capability type E and libertine function type
+the other is impure. The capability type E and free function type
 $S \Rightarrow T$ are not sutype of the pure Top. The subtyping
 hierarchy is shown in Figure~\ref{fig:stlc-impure-subtyping-tree}. This
 formulation works well, and we've proved soundness and effect safety
@@ -166,11 +166,11 @@ as we cannot create side effects with a variable of type Top.
   edge from parent/.style={draw,latex-}]
   \node {Top-Impure}
   child { node {E} }
-  child { node (libertine) {S $\Rightarrow$ T} }
+  child { node (free) {S $\Rightarrow$ T} }
   child { node {Top-Pure}
     child { node (stoic) {S $\to$ T} }
     child { node {B} } };
-  \path [draw, -latex] (stoic) -- (libertine);
+  \path [draw, -latex] (stoic) -- (free);
 \end{tikzpicture}
 
 \caption{Subtyping: Top-Pure and Top-Impure}
@@ -224,8 +224,8 @@ Figure~\ref{fig:stlc-impure-definition}.
       &     & \colorbox{shade}{Top}  & top type             \\
       &     & B                  & basic type           \\
       &     & E                  & capability type      \\
-      &     & T $\to$ T          & type of stoics       \\
-      &     & \colorbox{shade}{T $\Rightarrow$ T} & type of libertines   \\
+      &     & T $\to$ T          & type of stoic funs       \\
+      &     & \colorbox{shade}{T $\Rightarrow$ T} & type of free funs   \\
 \end{tabu}
 
 % \hfill\\
@@ -349,11 +349,11 @@ the proof of perservation, corresponding to the two reduction rules.
 
 We follow the same approach as the system STLC-Pure in formulation of
 effect safety. The formulation is an extension of the definition of
-capsafe/caprod in STLC-Pure with libertine function types.
+capsafe/caprod in STLC-Pure with free function types.
 
 \subsubsection{Formulation}
 
-With the presence of libertine functions, the previous formulation of
+With the presence of free functions, the previous formulation of
 effect safety is not enough. We not only need to ensure that it's
 impossible to construct a term of the capability type in healthy
 environments, but also need to ensure only stoic functions can be
@@ -373,11 +373,11 @@ function. Thus, we need two statements about effect safety.
 
 A tempting formulation of the second effect safety statement would be
 that in a healthy environment it's impossible to construct a term of
-libertine function type. However, this formulation has no hope to be
+free function type. However, this formulation has no hope to be
 proved, as $S \to T$ is a subtype of $S \Rightarrow T$, any term that
 can be typed as the former can also be typed as the latter.
 
-Now let's consider how to define caprod/capsafe for libertine function
+Now let's consider how to define caprod/capsafe for free function
 types. Our first attempt is to add following rule:
 
 \infax[CP-Fun2]{ S \Rightarrow T \quad caprod }
@@ -388,14 +388,14 @@ of this type in the healthy environment, together with another
 variable $g$ of the capsafe type $B \to B$, it's possible to create
 the term \emph{f g}, which is of the capability type. On ther other
 hand, it doesn't make sense to take $S \Rightarrow T$ as capsafe, as
-it would allow calling libertine functions in healthy environments,
+it would allow calling free functions in healthy environments,
 which also breaks the effect safety.
 
 This dilemma prompts us to reexamin the meaning of \emph{capsafe} and
 \emph{caprod}. When these facilities were introduced in STLC-Pure, they
 are formulated through the provability of the capability type E. From
 the perspective of provability of E, $S \to T$ and $S \Rightarrow T$
-don't make much difference. Thus, libertine functions types should be
+don't make much difference. Thus, free functions types should be
 formulated the same way as sotic function types. We tried this
 approach, and it worked. The full formulation is presented in
 Figure~\ref{fig:stlc-impure-healthy-definition}.
@@ -476,8 +476,8 @@ depends on \emph{healthy'}.
 Another question is, how can we be sure that the new CP-Fun2 rule only
 reject non-inhabitable types in pure environments? As before, we only
 provide informal arguments here. In fact, the type $B \Rightarrow E$
-rejected by CP-Fun2 is inhabitable, as libertine functions can capture
-any capabilities in scope. However, as all libertine function types
+rejected by CP-Fun2 is inhabitable, as free functions can capture
+any capabilities in scope. However, as all free function types
 like $S \Rightarrow T$ are already removed from the pure environment,
 it's fair enough to remove some of them from the healthy environment.
 
@@ -567,7 +567,7 @@ should be the typing rule for stoic functions:
 Then what's the rule used in the typing of $\lambda y:S. \; t_1$? If it's
 first typed as $S \to T$ and then subsumed to $S \Rightarrow T$, then
 we are done. Otherwise, $\lambda y:S. \; t_1$ is typed using the rule of
-libertine functions:
+free functions:
 
 \infrule[Step-2]
 { pure(\Gamma),\; x: B,\; y:S \vdash t_1 : T }
@@ -680,7 +680,7 @@ in essence. It's a pity we have to duplicate the same code twice in
 monad-based effect systems. In capability-based effect systems, we
 only need to maintain one copy of the code:
 
-\begin{lstlisting}[language=Haskell]
+\begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
     case Nil => Nil
     case x::xs => f(x)::map(f)(l)
@@ -689,7 +689,10 @@ only need to maintain one copy of the code:
 % haskell two versions of map
 
 The \emph{map} function above has the type
-$(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. When supplied
-with a pure function $f$ of type $A \to B$, \emph{map f} has the type
-$List [A] \to List[B]$. This is a good news for programmers in want to
-effect polymorphism.
+$(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. Is \emph{map} a
+pure function? It depends on how it's used. When supplied with a pure
+function $f$ of type $A \to B$, \emph{map} has the type
+$(A \to B) \to List [A] \to List[B]$, thus is pure. When supplied with
+a function of type $A \Rightarrow B$ with side effects, \emph{map} is
+impure. This is a good news for programmers in want of effect
+polymorphism.

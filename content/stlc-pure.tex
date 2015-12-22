@@ -131,7 +131,7 @@ function satisfies following properties:
   pure (pure E) = pure E
 \end{lemma}
 
-\subsubsection{Stoic Functions and Libertine Functions}
+\subsubsection{Stoic Functions and Free Functions}
 
 The variable-capturing discipline makes the functions in STLC-Pure
 essentially different from functions in standard STLC. In STLC,
@@ -139,8 +139,7 @@ functions can capture any variables in scope, while in STLC-Pure
 functions can only capture variables whose type is not a capability
 type. To differentiate them (which is important as in later systems
 both exist), we call the more effect-disciplined functions \emph{stoic
-  functions} (or stoics) and the other \emph{libertine functions} (or
-libertines).
+  functions} (or stoics) and the other \emph{free functions}.
 
 Stoic functions are essential in capability-based type-and-effect
 systems. If functions are allowed to capture capability variables in
@@ -287,7 +286,7 @@ also happen. The new formulation is as follows:
 
 Interestingly, this strict evaluation requirement contrasts
 capability-based effect systems with monad-based effect systems. In
-Haskell, if it takes strict evaluation, it will be impossible to track
+Haskell, if it adopts strict evaluation, it will be impossible to track
 effects in the type system, as demonstrated by following code snippet:
 
 \begin{lstlisting}[language=Haskell]
@@ -297,7 +296,7 @@ effects in the type system, as demonstrated by following code snippet:
 The function \emph{inc} has the type $(Num\;a, Show\;a) \Rightarrow a
 \to a$. By just checking its type, we would think it has no side
 effects because no IO monads appear in the type signature. However, if
-it takes strict evaluation, the \emph{putStrLn} will be executed, thus
+it adopts strict evaluation, the \emph{putStrLn} will be executed, thus
 breaks the monad-based effect system.
 
 \subsection{Effect Safety}
