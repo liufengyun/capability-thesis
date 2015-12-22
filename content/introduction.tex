@@ -1,9 +1,115 @@
 \section{Introduction}
 
+The objective of this study is to explore the theoretical foundations
+as well as conceptual possibilities of capability-based effect
+systems. In this chapter, we'll discuss the motivation, the core ideas
+and contributions of this study.
+
 \subsection{Motivation}
 
-\subsection{Capability-based Type and Effect Systems}
+The main motivation is to turn Scala into an effect-disciplined
+programming language. Currently, Scala doesn't have the ability to
+track effects in the type system. This poses a problem in distributed
+and parallel applications. For example, in parallel computing, there's
+often the need to stipulate that the function passed to \emph{pmap}
+has no side effects.
+
+\begin{lstlisting}[language=Scala]
+def pmap(xs: List[Int], f: Int => Int): List[Int]
+\end{lstlisting}
+
+However, currently it's impossible for the library author to impose
+the constraint in the type system. A type-and-effect system has been
+proposed for Scala\cite{lukas2014effect}, but is not well received in
+the Scala community, mainly due to its notational verbosity in
+handling \emph{effect polymorphism}. The problem of \emph{effect
+  polymorphism} can be illustrated by the \emph{map} function:
+
+\begin{lstlisting}[language=Scala]
+  def map[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(l)
+  }
+\end{lstlisting}
+
+In an effect system, the effect of \emph{map} depends on the passed in
+function \emph{f}. If \emph{f} has IO effects, then \emph{map} also
+has IO effects. If \emph{f} is pure, then \emph{map} is pure as
+well. Existing effect systems either can't handle effect polymorphism,
+thus need several versions of the \emph{map} function, or incur
+significant notational burden on programmers in order to make effect
+polymorphism work.
+
+Monad-based effect systems have a success in Haskell. However, as we
+will see, monad-based effect systems only work in lazy evaluation
+languages, while Scala is strict. On the other hand, monad-based
+effect systems also have a problem with \emph{effect
+  polymorphism}. Haskell programmers often need to maintain two
+versions of the same code, as following example shows.
+
+\begin{lstlisting}[language=Haskell]
+  map :: (a -> b) -> List a -> List b
+  mapIO :: (a -> IO b) -> List a -> IO (List b)
+\end{lstlisting}
+
+Given this situation, we are compelled to find a new approach to the
+effect polymorphism problem, and \emph{capability-based} effect
+systems seem to be a promising direction.
+
+\subsection{Capability-based Effect Systems}
+
+The core idea of \emph{capability-based} effect system is that an
+instance of capability is required in order to make effects. As
+capabilities have to be passed as function parameters, by tracking
+capabilities in the type system we can track effects in the program.
+
+To ensure that capabilities are passed by function parameters, instead
+of being captured from the environment, we need to impose a
+\emph{variable-capturing discipline}, stipulating that capability
+variables cannot be captured. Functions observe the discipline are
+called \emph{stoic functions}, while functions don't oberve the
+discipline are called \emph{free functions}.
+
+With the combination of free functions and stoic functions,
+\emph{capability-based} effect systems can solve the problem of
+\emph{effect polymorphism} well, while incuring no syntactical
+burden. For example, instead of having two versions of \emph{map},
+following \emph{map} is effect polymorphic.
+
+\begin{lstlisting}[language=Scala]
+  def map[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(l)
+  }
+\end{lstlisting}
+
+When the passed function \emph{f} is pure, \emph{map} is pure as
+well. In contrast, if \emph{f} is impure, then \emph{map} is also
+impure. We'll see details of effect polymorphism in system
+STLC-Impure.
 
 \subsection{Contributions}
 
+The main contribution of this study are as follows:
+
+\begin{itemize}
+  \item Formulated and proved soundness and effect safety for system
+    SLTC-Impure.
+  \item Formulated and proved soundness and effect safety for system
+    F-Impure.
+  \item Proposed an approach to solve the problem of effect
+    polymorphism in these two systems.
+\end{itemize}
+
 \subsection{Structure of Report}
+
+In following chapters, we'll introduce four systems of increasing
+complexity, namely STLC-Pure, F-Pure, STLC-Impure and F-Impure.
+
+\begin{itemize}
+\item STLC-Pure is an variant of STLC with only stoic functions.
+\item F-Pure is an extension of STLC-Pure with universal types.
+\item STLC-Impure is an extension of STLC-Pure with free functions and
+\item F-Impure is an extension of F-Pure with free functions and
+  subtyping.
+\end{itemize}
