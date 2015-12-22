@@ -694,5 +694,24 @@ pure function? It depends on how it's used. When supplied with a
 function of type $A \Rightarrow B$ with side effects, \emph{map} is
 impure. When supplied with a pure function $f$ of type $A \to B$,
 \emph{map} has the actual type $(A \to B) \to List [A] \to List[B]$,
-thus is pure. This is a good news for programmers in want of effect
-polymorphism.
+thus is pure. Following code snippet demonstrates the usage of
+\emph{map} in both pure and impure settings.
+
+\begin{lstlisting}[language=Scala]
+  def squareImpure(list: List[Int])(c: IO) = {
+    map { x => println(x)(c); x*x } list
+  }
+
+  def squarePure(list: List[Int]) = {
+    map { x => x*x } list
+  }
+\end{lstlisting}
+
+In the code above, the lambda passed to \emph{map} in
+\emph{squareImpure} is not stoic, as it captures the capability
+$c$. The function \emph{squareImpure} has the type
+$List[Int] \to IO \to List[Int]$, and \emph{squarePure} has the type
+$List[Int] \to List[Int]$. This means all effects are captured in the
+type system in the presence of local free functions. This is an
+example of the flexibility of the combination of stoic functions and
+free functions in tracking effects in the type system.
