@@ -719,6 +719,25 @@ In the code above, the lambda passed to \emph{map} in
 $c$. The function \emph{squareImpure} has the type
 $List[Int] \to IO \to List[Int]$, and \emph{squarePure} has the type
 $List[Int] \to List[Int]$. This means all effects are captured in the
-type system in the presence of local free functions. This is an
-example of the flexibility of capability-based effect systems, powered
-by the combination of stoic and free functions.
+type system in the presence of local free functions.
+
+The reader might be wondering, what if we want to stipulate that the
+passed function \emph{f} can only have IO effects? How does effect
+polymorphism work in such cases? The answer is as follows:
+
+\begin{lstlisting}[language=Scala]
+  private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(l)
+  }
+
+  def map(f: A -> B)(l: List[A]) = mapImpl(f)(l)
+
+  def map(f: IO -> A => B)(l: List[A])(c: IO) = mapImpl(f c)(l)
+\end{lstlisting}
+
+In the above, we only have one implementation of the \emph{map}
+function and we protect the implementation by the keyword
+\emph{private}. And it's possible to add new interfaces to allow more
+effects without breaking compatibility of existing code. This is the
+power and flexibility of capability-based effect systems.
