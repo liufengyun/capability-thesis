@@ -14,14 +14,7 @@ system STLC-Pure.
 
 Initially, we arrived at a formualtion of the system shown in
 Figure~\ref{fig:stlc-impure-definition-first}. It's a straight-forward
-extension of SLTC-Pure with subtyping and free functions. Note
-that in this formulation, we need to change the definition of the
-\emph{pure} function to exclude free function types in the pure
-environment. This restriction is important, because we're not sure
-what side effects there might be inside free functions. If we
-allow stoic functions have access to free functions, we'll loose
-the ability to track the effects of stoic functions in the type
-system.
+extension of SLTC-Pure with subtyping and free functions.
 
 The definition is all good, except that perservation breaks! The
 problem is caused by using an impure term as \emph{Top}. To see a
@@ -317,6 +310,22 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 \caption{System STLC-Impure}
 \label{fig:stlc-impure-definition}
 \end{figure}
+
+Note that in this formulation, we need to change the definition of the
+\emph{pure} function to exclude free function types in the pure
+environment. This restriction is important, because we're not sure
+what side effects there might be inside free functions. If we allow
+stoic functions have access to free functions, we'll loose the ability
+to track the effects of stoic functions in the type system.
+
+In principle, we can keep some free functions that we are sure can
+never be called in the pure environment, such as
+$(B \to E) \Rightarrow B$, as it's impossible to get an actual
+instance of \emph{E} in order to call this function. However, from the
+perspective of practicity, it doesn't make sense to have functions in
+the environment if they can never be called. Thus, to simplify the
+system without sacrificing usability, we removed all free function
+types from the pure environment.
 
 \subsection{Soundness}
 
