@@ -131,6 +131,11 @@ function satisfies following properties:
   pure (pure E) = pure E
 \end{lemma}
 
+Initially, we've tried a variable-capturing discipline where no free
+variables can be captured, i.e. $pure(\Gamma) = \varnothing$. While
+this definition is certainly effect safe, the system is not very
+expressive, as it's impossible to have closures anymore.
+
 \subsubsection{Stoic Functions and Free Functions}
 
 The variable-capturing discipline makes the functions in STLC-Pure
