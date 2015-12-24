@@ -93,6 +93,8 @@ system STLC-Pure.
 pure($\varnothing$)             & = &   $\varnothing$ \\
 pure($\Gamma$, x: E)            & = &  pure($\Gamma$) \\
 pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
+\rowcolor{gray!40}
+pure($\Gamma$, X)  & = &  pure($\Gamma$), X  \\
 \end{tabular}
 \end{center}
 
@@ -112,12 +114,10 @@ types. Figure~\ref{fig:f-pure-definition} presents the full definition
 of F-Pure, with the difference from the system STLC-Pure highlighted.
 
 The extension of syntax and evaluation rules are exactly the same as
-the extension of STLC with universal types. The definition of the
-function \emph{pure} is the same as in STLC-Pure, i.e. only variables
-of the capability type are excluded from the environment. The essential
-difference lies in the two new typing rules T-TAbs and T-TApp. The
-typing rule T-TAbs stipulates that type abstraction must observe the
-variable-capturing discipline.
+the extension of STLC with universal types.  The essential difference
+lies in the two new typing rules \textsc{T-TAbs} and
+\textsc{T-TApp}. The typing rule \textsc{T-TAbs} stipulates that type
+abstraction must observe the variable-capturing discipline.
 
 \infrule[T-TAbs]
 { pure(\Gamma),\; X \vdash t_2 : T }
@@ -130,9 +130,9 @@ abstraction could generate a term of capability type or have side
 effects. This makes it incorrect to have universal types in pure
 environments, thus renders universal type useless in current system.
 
-The typing rule T-TApp requires that the type parameter must not be
-the capability type. However, it's allowed to supply ill types like
-$B \to E$ as parameter to type abstraction.
+The typing rule \textsc{T-TApp} requires that the type parameter must
+not be the capability type. However, it's allowed to supply ill types
+like $B \to E$ as parameter to type abstraction.
 
 % This restriction implies in system F-Pure polymorphism doesn't cover
 % capability types.
@@ -152,6 +152,11 @@ If we allow $E$ as parameter to type application, we can get a term of
 type $E \to B \to E$. However, after the evaluation step, the term
 $\lambda x:E. \; \lambda y:B. \; x$ can't be typed anymore, thus
 preservation breaks.
+
+The definition of the function \emph{pure} is changed slightly by
+allowing type variables to be in the pure environment. This is
+natural, as we know in the typing rule \textsc{T-TApp} that a type
+variable can't be of the capability type.
 
 \subsection{Soundness}
 
@@ -217,15 +222,15 @@ universal types.
 { [X \mapsto B]T \; caprod \quad or \quad [X \mapsto E]T \; caprod }
 { \forall X.T \quad caprod }
 
-We need to ensure that thew new rule CP-All only mark
-non-inhabitable types as $caprod$. As before, we only provide informal
-argument here. The justification for the rule CP-All is that, if a
+We need to ensure that thew new rule CP-All only mark non-inhabitable
+types as $caprod$. As before, we only provide informal argument
+here. The justification for the rule \text{CP-All} is that, if a
 universal type is inhabitable, then it must be inhabitable by
 replacing the type parameter with any type (except E). Thus if a
 specialized universal type is caprod (which we know is non-inhabitable
 as argued before), then the universal type is also
-non-inhabitable. Therefore, the CP-All rule only marks non-inhabitable
-types as caprod.
+non-inhabitable. Therefore, the \textsc{CP-All} rule only marks
+non-inhabitable types as caprod.
 
 Note that in the explanation above, we say that the capability type E
 is an exception. For example, the type $\forall T.T \to B \to T$ is
@@ -233,9 +238,9 @@ inhabited by the term
 $\lambda T. \; \lambda x:T. \; \lambda y:B. \; x$. However, the type
 $E \to B \to E$ is non-inhabitable. This is not a problem since
 $E \to B \to E$ is \emph{capsafe}. In fact, in the initial
-formulation, we used $B \to E$ instead of $E$ in CS-All and
-CP-All. Later, we found out that we can simplify the formulation
-without changing the proof of effect safety.
+formulation, we used $B \to E$ instead of $E$ in \textsc{CS-All} and
+\textsc{CP-All}. Later, we found out that we can simplify the
+formulation without changing the proof of effect safety.
 
 The full definition of the \emph{healthy environment} is presented in
 Figure~\ref{fig:f-pure-healthy-definition}, with difference from
