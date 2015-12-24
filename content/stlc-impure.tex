@@ -522,10 +522,24 @@ The first effect safety statement follows immediately from the lemma
   $\Gamma \vdash t : E$.
 \end{theorem}
 
-The proof of the second effect safety statement is hopeless, unless we
-assume four well-founded axioms listed in
-Figure~\ref{fig:stlc-impure-axioms}. These axioms can only be proved if
-$\Gamma$ is empty. Otherwise, if $t$ is a variable, we can do nothing.
+However, it's impossible to prove the second statement of effect
+safety, which states that if we can construct an application
+$t_1 \; t_2$ in a healthy and pure environment, then $t_1$ can be
+typed as $S \to T$ for some S and T. To see an example why it cannot
+be proved, let's assume
+$\Gamma = \{f: B \to B \Rightarrow B, \; x: B\}$. It's obvious
+$\Gamma$ is healthy and pure, however, $f \; x$ in the term
+$(f \; x) \;x$ has the type $B \Rightarrow B$. And it's impossible to
+prove that $f \; x$ has the type $B \to B$. But if $f$ is not a
+variable, but a fully defined function, then we can prove that $f$
+also has the type $B \to B \to B$. This is because the inner function
+of type $B \Rightarrow B$ cannot capture any capabilities or free
+functions, otherwise the outer function can't be typed as stoic!
+
+This observation leads us to assume four well-founded axioms listed in
+Figure~\ref{fig:stlc-impure-axioms}. These axioms can only be proved
+if $\Gamma$ is empty. Otherwise, if $t$ is a variable, we can do
+nothing.
 
 \begin{figure}[h]
 \begin{framed}
@@ -611,7 +625,7 @@ update Step-1 as following:
 { pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \to T }
 { \Gamma \vdash \lambda x:B. \lambda y:S. \; t_1 : B \to S \to T }
 
-Put all the steps together, we've inferred
+Put all the steps together, we obtained
 $\Gamma \vdash t : B \to S \to T$ from the fact
 $\Gamma \vdash t : B \to S \Rightarrow T$. That's the justification
 for the \textsc{Ax-Base} rule. The justifications for \textsc{Ax-Top}
@@ -638,8 +652,8 @@ is pure. This is due to the fact that \emph{healthy} no longer implies
 \emph{pure}. Conceptually speaking, a healthy environment should
 always be a subset of pure environment. To clear the worry of readers,
 we can define $healthy' \; E := healthy \; E \wedge pure \; E = E$.
-Effect safety proved only assuming the weaker \emph{healthy} also
-holds for $healthy'$.
+The first statement of effect safety is proved only assuming the
+weaker \emph{healthy}, it certainly holds for $healthy'$ as well.
 
 \subsection{Effect Polymorphism}
 
