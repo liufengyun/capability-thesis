@@ -1,0 +1,354 @@
+\section{System F-Impure}
+
+In this chapter, we present the system \emph{F-Impure}, which is an
+extension of the system F-Pure with free functions. It can also be
+seen as an extension of the system STLC-Impure with universal types,
+but without subtyping. Extending the system with subtyping would lead
+us to bounded polymorphism, which we are still working on. Given the
+importance of parametric polymorphism and the fact that subtyping is
+not a necessary addon of functional programming, the system
+\emph{F-Impure} deserves a separate presentation here.
+
+We'll first introduce the formalization, then discuss soundness and
+effect safety. In the discussion, we'll focus on its difference from
+the system STLC-Impure and F-Pure.
+
+\begin{figure}
+\begin{framed}
+
+% multi-column separator
+\setlength{\columnseprule}{0.4pt}
+\begin{multicols}{2}
+
+\textbf{Syntax}
+
+\begin{tabu} to \linewidth {l l l X[r]}
+  t   & ::= &                                      & terms:               \\
+      &     &  x                                   & variable             \\
+      &     & $\lambda$ x:T.t                      & abstraction          \\
+      &     & t t                                  & application          \\
+      &     & $\lambda$ X.t                        & type abstraction     \\
+      &     & t [T]                                & type application     \\
+\\
+  v   & ::= &                    & values:              \\
+      &     & $\lambda$ x:T.t    & abstraction value    \\
+      &     & x                  & variable value       \\
+      &     & $\lambda X.t$      & type abstraction value  \\
+\\
+  T   & ::= &                       & types:               \\
+      &     & X                     & type variable        \\
+      &     & B                     & basic type           \\
+      &     & E                     & capability type      \\
+      &     & T $\to$ T             & type of stoic funs   \\
+      &     & \colorbox{shade}{T $\Rightarrow$ T}     & type of free funs    \\
+      &     & $\forall$ X.T         & universal type       \\
+\end{tabu}
+
+\hfill\\
+
+\textbf{Evaluation} \hfill \framebox[1.2\width][r]{$t \longrightarrow t'$}
+
+\infrule[E-App1]
+{ t_1 \longrightarrow t'_1 }
+{ t_1 \; t_2 \longrightarrow t'_1 \; t_2 }
+
+\infrule[E-App2]
+{ t_2 \longrightarrow t'_2 }
+{ v_1 \; t_2 \longrightarrow v_1 \; t'_2 }
+
+\infax[E-AppAbs]
+{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+
+\infrule[E-TApp]
+{ t_1 \longrightarrow t'_1 }
+{ t_1 \; [T_2] \longrightarrow t'_1 \; [T_2] }
+
+\infax[E-TappTabs]
+{ (\lambda X.t_1) [T_2] \longrightarrow [X \mapsto T_2]t_1 }
+
+\columnbreak
+
+\textbf{Typing}  \hfill \framebox[1.2\width][r]{$\Gamma \vdash x : T$}
+
+\infrule[T-Var]
+{ x: T \in \Gamma }
+{ \Gamma \vdash x : T }
+
+\infrule[T-Abs2]
+{ pure(\Gamma),\; x: S \vdash t_2 : T }
+{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+
+\infrule[T-Abs2]
+{  \colorbox{shade}{$\Gamma,\; x: S \vdash t_2 : T$} }
+{  \colorbox{shade}{$\Gamma \vdash \lambda x:S.t_2 : S \Rightarrow T$} }
+
+\infrule[T-Degen]
+{ \colorbox{shade}{$\Gamma \vdash t : S \to T$} }
+{ \colorbox{shade}{$\Gamma \vdash t : S \Rightarrow T$} }
+
+\infrule[T-App]
+{ \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
+{ \Gamma \vdash t_1 \; t_2 : T }
+
+\infrule[T-TAbs]
+{ pure(\Gamma),\; X \vdash t_2 : T }
+{ \Gamma \vdash \lambda X.t_2 : \forall X. T }
+
+\infrule[T-TApp]
+{ \Gamma \vdash t_1 : \forall X.T \andalso T_2 \neq E }
+{ \Gamma \vdash t_1 \; [T_2] : [X \mapsto T_2]T }
+
+\textbf{Pure Environment}
+
+\begin{center}
+\begin{tabular}{l c l}
+pure($\varnothing$)             & = &   $\varnothing$ \\
+pure($\Gamma$, x: E)            & = &  pure($\Gamma$) \\
+\rowcolor{gray!40}
+pure($\Gamma$, x: S $\Rightarrow$ T)  & = &  pure($\Gamma$) \\
+pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
+pure($\Gamma$, X)  & = &  pure($\Gamma$), X  \\
+\end{tabular}
+\end{center}
+
+\hfill\\
+
+\end{multicols}
+\end{framed}
+
+\caption{System F-Impure}
+\label{fig:f-impure-definition}
+\end{figure}
+
+\subsection{Definitions}
+
+Figure~\ref{fig:f-impure-definition} presents the full definition of
+F-Pure, with the difference from the system F-Impure highlighted. As
+can be seen from the figure, we introduced free function types and
+added a typing rule for free functions. As we have no subtyping in the
+system, we have to add a \textsc{T-Degen} rule to restore the
+subtyping relationship between stoic function types and free function
+types.
+
+As in STLC-Impure, we also adapted the definition of \emph{pure} to
+exclude free function types from pure environments. If we allow stoic
+functions to have access to free functions, we'll loose the ability to
+track the effects of stoic functions in the type system.
+
+A different design choice we could make is to introduce free universal
+abstractions in the system. From the viewpoint of practicality, such a
+type will not be very useful in real-world programming, as in practice
+polymorphic functions rarely capture free variables, not mention
+capability variables. Thus for the sake of simplicity, we don't pursue
+the extension here.
+
+\subsection{Soundness}
+
+We proved both progress and preservation in Coq based on the
+locally-nameless representation. The subtleties in the proof are the
+same as stated in system F-Pure, thus we don't reiterate there.
+
+\begin{theorem}[Progress]
+If $\varnothing \vdash t : T$, then either $t$ is a value or there is some
+$t'$ with $t \longrightarrow t'$.
+\end{theorem}
+
+\begin{theorem}[Preservation]
+If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
+\vdash t' : T$.
+\end{theorem}
+
+\subsection{Effect Safety}
+
+We'll first introduce the formulation, which is a combination of the
+formualtion in STLC-Impure and F-Pure, then discuss the proof of
+effect safety.
+
+\subsubsection{Formulation}
+
+Given that we've seen how universal types and free function types are
+extended in the formulation of \emph{healthy environment}, we can
+easily combine them to arrive at the formulation shown in
+Figure~\ref{fig:f-impure-healthy-definition}, with the changes from
+F-Pure highlighted. As in the system STLC-Impure, we'll need two
+statements about effect safety.
+
+\begin{definition}[Effect-Safety-1]
+  If $\Gamma$ is healthy, there doesn't exist $t$ with
+  $\Gamma \vdash t : E$.
+\end{definition}
+
+\begin{definition}[Effect-Safety-2]
+  If $\Gamma$ is healthy and $\Gamma \vdash t_1 \; t_2 : T$, then
+  there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+\end{definition}
+
+\begin{figure}
+\begin{framed}
+
+% multi-column separator
+\setlength{\columnseprule}{0.4pt}
+\begin{multicols}{2}
+
+\textbf{Capsafe}
+
+\infax[CS-Base]
+{ B \quad \text{capsafe} }
+
+\infrule[CS-Fun1]
+{ S \quad caprod }
+{ S \to T \quad \text{capsafe} }
+
+\infrule[CS-Fun2]
+{ T \quad \text{capsafe} }
+{ S \to T \quad \text{capsafe} }
+
+\infrule[CS-Fun3]
+{ \colorbox{shade}{$S \quad caprod$} }
+{ \colorbox{shade}{$S \Rightarrow T \quad \text{capsafe}$} }
+
+\infrule[CS-Fun4]
+{ \colorbox{shade}{$T \quad \text{capsafe}$} }
+{ \colorbox{shade}{$S \Rightarrow T \quad \text{capsafe}$} }
+
+\infrule[CS-All]
+{ [X \mapsto B]T \; \text{capsafe} \andalso [X \mapsto E]T \; \text{capsafe} }
+{ \forall X.T \quad \text{capsafe} }
+
+\columnbreak
+
+\textbf{Caprod}
+
+\infax[CP-Eff]
+{ E \quad caprod }
+
+\infrule[CP-Fun1]
+{ S \; \text{capsafe} \andalso T \; caprod }
+{ S \to T \quad caprod }
+
+\infrule[CP-Fun2]
+{ \colorbox{shade}{$S \; \text{capsafe} \andalso T \; caprod$} }
+{ \colorbox{shade}{$S \Rightarrow T \quad caprod$} }
+
+\infrule[CP-All]
+{ [X \mapsto B]T \; caprod \quad or \quad [X \mapsto E]T \; caprod }
+{ \forall X.T \quad caprod }
+
+\textbf{Healthy}
+
+\infax[H-Empty]
+{ \varnothing \quad caprod }
+
+\infrule[H-Var]
+{ G \; healthy \andalso T \; \text{capsafe} }
+{ G, \; x:T \quad healthy }
+
+\infrule[H-TVar]
+{ G \quad healthy }
+{ G, \; X \quad healthy }
+
+\hfill\\
+
+\end{multicols}
+\end{framed}
+
+\caption{System F-Impure Healthy Environment}
+\label{fig:f-impure-healthy-definition}
+\end{figure}
+
+
+\subsubsection{Proof}
+
+The proof of the first effect safety statement is nearly the same as
+in the system F-Pure, thus we don't reiterate here.
+
+When we come the the proof of the second statement of effect safety,
+we encounter the same problem as in system STLC-Impure. First, we need
+to change the statement slightly, as now the definition of
+\emph{healthy} no longer implies \emph{pure}:
+
+\begin{definition}[Effect-Safety-2']
+  If $\Gamma$ is healthy and pure, and $\Gamma \vdash t_1 \; t_2 : T$, then
+  there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+\end{definition}
+
+Second, we need to assume a set of axioms, as shown in
+Figure~\ref{fig:f-impure-definition}. We highlighted the new added
+axioms to the axioms in STLC-Impure. The justification for the axioms
+\textsc{Ax-All} and \textsc{Ax-Var} is the same as the justification
+for the axiom \textsc{Ax-Base}, which we've seen in the system
+STLC-Impure. In short, because the outer function is stoic and the
+parameter is pure, the inner function can actually capture no
+capabilities or free functions, thus it's fair enough to type the
+inner function as stoic as well.
+
+\begin{figure}[h]
+\begin{framed}
+
+% multi-column separator
+% \setlength{\columnseprule}{0.4pt}
+\begin{multicols}{2}
+
+\infrule[Ax-Base]
+{ \Gamma \vdash t : B \to S \Rightarrow T }
+{ \Gamma \vdash t : B \to S \to T }
+
+\hfill\\
+
+\infrule[Ax-Var]
+{ \colorbox{shade}{$\Gamma \vdash t : X \to S \Rightarrow T$} }
+{ \colorbox{shade}{$\Gamma \vdash t : X \to S \to T$} }
+
+\hfill\\
+
+\infrule[Ax-Poly]
+{ \Gamma \vdash t_2 : U \to V \\
+  \Gamma \vdash t_1 : (U \Rightarrow V) \to S \Rightarrow T }
+{ \Gamma \vdash t_1 \; t_2 : S \to T }
+
+\columnbreak
+
+\infrule[Ax-All]
+{ \colorbox{shade}{$\Gamma \vdash t : \forall X.T \to S \Rightarrow T$} }
+{ \colorbox{shade}{$\Gamma \vdash t : \forall X.T \to S \to T$} }
+
+\hfill\\
+
+\infrule[Ax-TApp]
+{ \colorbox{shade}{$\Gamma \vdash t : \forall X.T_1 \Rightarrow T_2$} }
+{ \colorbox{shade}{$\Gamma \vdash t \; [U] : [X \mapsto U]T_1 \to [X
+    \mapsto U]T_2$} }
+
+\hfill\\
+
+\infrule[Ax-Stoic]
+{ \Gamma \vdash t : (U \to V) \to S \Rightarrow T }
+{ \Gamma \vdash t : (U \to V) \to S \to T }
+
+\end{multicols}
+\end{framed}
+
+\caption{System F-Impure Axioms}
+\label{fig:f-impure-axioms}
+\end{figure}
+
+The justification for the axiom \textsc{Ax-TApp} is similar. If a term
+$t$ can be typed as $\forall X.T_1 \Rightarrow T_2$ under $\Gamma$,
+according to the typing rule \textsc{T-All}, the whole term can be
+typed under $pure(\Gamma)$. Then the inner lambda abstraction can be
+typed under $pure(\Gamma), X$, which is equal to $pure(\Gamma,
+X)$. Thus, it's fair enough to type the inner function as stoic.
+
+Assuming the axioms, it's straight-forward to prove a lemma
+\emph{Healthy-Pure-Stoic}, and the second statement of effect safety
+follows immediately from the lemma.
+
+\begin{lemma}[Healthy-Pure-Stoic]
+  If $\Gamma$ is healthy and pure,  and $\Gamma \vdash t : S
+  \Rightarrow T$, then $\Gamma \vdash t : S \to T$.
+\end{lemma}
+
+\begin{theorem}[Effect-Safety-2']
+  If $\Gamma$ is healthy and pure, and $\Gamma \vdash t_1 \; t_2 :
+  T$, then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+\end{theorem}
