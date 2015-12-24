@@ -134,7 +134,9 @@ function satisfies following properties:
 Initially, we've tried a variable-capturing discipline where no free
 variables can be captured, i.e. $pure(\Gamma) = \varnothing$. While
 this definition is certainly effect safe, the system is not very
-expressive, as it's impossible to have closures anymore.
+expressive, as we lose the ability to have closures in the system,
+which is usually considered to be a powerful weapon of functional
+programming.
 
 \subsubsection{Stoic Functions and Free Functions}
 
