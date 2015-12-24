@@ -35,10 +35,10 @@ handling \emph{effect polymorphism}. The problem of \emph{effect
 In an effect system, the effect of \emph{map} depends on the passed in
 function \emph{f}. If \emph{f} has IO effects, then \emph{map} also
 has IO effects. If \emph{f} is pure, then \emph{map} is pure as
-well. Existing effect systems either can't handle effect polymorphism,
-thus need several versions of the \emph{map} function, or incur
-some notational burden on programmers in order to make effect
-polymorphism work.
+well. In order to make effect polymorphism work, proposed
+type-and-effect systems usually require programmers to annotate the
+function \emph{map} to say that its effect depends on the function
+\emph{f}, which incur some notational burden on programmers.
 
 Monad-based effect systems have a success in Haskell. However, as we
 will see, monad-based effect systems only work in lazy evaluation
@@ -46,8 +46,10 @@ languages, which is not a good fit for Scala because Scala is
 strict. On the other hand, monad-based effect systems also have a
 problem with \emph{effect polymorphism}. As reported in Chapter 1
 section 6 of the thesis\cite{lippmeier2009type}, almost every general
-purpose higher-order function in Haskell needs a monadic version and
-non-monadic version, as following example shows.
+purpose higher-order function in Haskell needs both a monadic version
+and non-monadic version. For example, following code snippet shows the
+signature for two versions of the \emph{map} function. The duplication
+of code is a pity for programmers.
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
@@ -87,20 +89,21 @@ following \emph{map} is effect polymorphic.
 
 When the passed function \emph{f} is pure, \emph{map} is pure as
 well. In contrast, if \emph{f} is impure, then \emph{map} is also
-impure. We'll see details of effect polymorphism in system
+impure. No additional annotation is required for effect polymorphism
+to work. We'll see details of effect polymorphism in system
 STLC-Impure.
 
 \subsection{Contributions}
 
-The main contribution of this study are as follows:
+The main contributions of this study are as follows:
 
 \begin{itemize}
-  \item Formulated and proved soundness and effect safety for system
-    SLTC-Impure.
-  \item Formulated and proved soundness and effect safety for system
-    F-Impure.
-  \item Proposed an approach to solve the problem of effect
-    polymorphism in these two systems.
+\item Formulated and developed metatheory of four capability-based
+  effect systems, which can serve as the fundation for implementing
+  capability-based effect system in functional programming languages.
+\item Proposed an approach to solve the problem of effect polymorphism
+  in capability-based effect systems, which is much simpler and more
+  elegant than type-and-effect systems and monad-based effect systems.
 \end{itemize}
 
 \subsection{Structure of Report}
