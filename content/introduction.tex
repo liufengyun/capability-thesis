@@ -37,15 +37,17 @@ function \emph{f}. If \emph{f} has IO effects, then \emph{map} also
 has IO effects. If \emph{f} is pure, then \emph{map} is pure as
 well. Existing effect systems either can't handle effect polymorphism,
 thus need several versions of the \emph{map} function, or incur
-significant notational burden on programmers in order to make effect
+some notational burden on programmers in order to make effect
 polymorphism work.
 
 Monad-based effect systems have a success in Haskell. However, as we
 will see, monad-based effect systems only work in lazy evaluation
-languages, while Scala is strict. On the other hand, monad-based
-effect systems also have a problem with \emph{effect
-  polymorphism}. Haskell programmers often need to maintain two
-versions of the same code, as following example shows.
+languages, which is not a good fit for Scala because Scala is
+strict. On the other hand, monad-based effect systems also have a
+problem with \emph{effect polymorphism}. As reported in Chapter 1
+section 6 of the thesis\cite{lippmeier2009type}, almost every general
+purpose higher-order function in Haskell needs a monadic version and
+non-monadic version, as following example shows.
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
