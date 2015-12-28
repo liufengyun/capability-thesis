@@ -1,6 +1,6 @@
 \begin{abstract}
   Type-and-effect systems have been around for about thirty years. But
-  they have never gained popularity in the programmer community,
+  they have never gained popularity in the programming community,
   mainly due to the verbosity of its syntax. \emph{Monad-based} effect
   systems have a successful story in Haskell, but these systems can't
   handle \emph{effect polymorphism} well.
@@ -10,29 +10,26 @@
 
   In this study we took another approach and investigated
   \emph{capability-based} effect systems. In such systems, an instance
-  of capability type is required to make side effects. For the system
-  to work, we introduced \emph{stoic functions} which observe a
-  \emph{variable-capturing discipline}, in contrast to \emph{free
-    functions}, which has no contraints in capturing variables.
+  of capability type is required to make side effects. To ensure
+  capabilities are passed as function parameters, we introduced
+  \emph{stoic functions} which observe a \emph{variable-capturing
+    discipline} , in contrast to \emph{free functions}, which have no
+  constraints in capturing variables.
 
-  Generally, capability-based effect systems are easier to understand
-  and use than monads. Most importantly, powered by the combination of
-  \emph{stoic functions} and \emph{free functions}, capability-based
-  systems can quite well handle effect polymorphism. These merits make
-  capability-based effect systems stand a better chance to be adopted
-  by the programmer community.
+  Generally speaking, capability-based effect systems are easier to
+  understand and use than monad-based effect systems. More
+  importantly, equipped with stoic functions and free functions,
+  capability-based systems can handle \emph{effect polymorphism}
+  elegantly. These merits make capability-based effect systems stand a
+  better chance to be adopted by the programming community.
 
   In this report we present four capability-based type-and-effect
   systems of increasing complexity, namely STLC-Pure, STLC-Impure,
-  F-Pure and F-Impure. We proved soundness and effect safety for all
-  the systems based on locally-nameless representation in Coq.
-
-  % The system SLTC-Pure and F-Pure demonstrated that capability-based
-  % effect systems can be used in pure functional languages to track
-  % effects. The system STLC-Impure and F-Impure demonstrated that
-  % capability-based effect systems can be used in a hybrid language
-  % where only part of the program is effect-disciplined -- this
-  % provides a flexibility to programmers when they don't care about
-  % effects.
+  F-Pure and F-Impure.  The system SLTC-Pure and F-Pure demonstrated
+  that capability-based effect systems can be used in pure functional
+  languages to track effects. The system STLC-Impure and F-Impure
+  demonstrated that in a capability-based effect system with both free
+  functions and stoic functions, the problem of \emph{effect
+    polymorphism} can be solved trivially.
 
 \end{abstract}
