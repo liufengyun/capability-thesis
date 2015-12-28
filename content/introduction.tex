@@ -10,7 +10,7 @@ and contributions of this study.
 The main motivation is to turn Scala into an effect-disciplined
 programming language. Currently, Scala doesn't have the ability to
 track effects in the type system. This poses a problem in distributed
-and parallel applications. For example, in parallel computing, there's
+and parallel programming. For example, in parallel computing, there's
 often the need to stipulate that the function passed to \emph{pmap}
 has no side effects.
 
@@ -38,13 +38,13 @@ has IO effects. If \emph{f} is pure, then \emph{map} is pure as
 well. In order to make effect polymorphism work, proposed
 type-and-effect systems usually require programmers to annotate the
 function \emph{map} to say that its effect depends on the function
-\emph{f}, which incur some notational burden on programmers.
+\emph{f}, which incurs some notational burden on programmers.
 
 Monad-based effect systems have a success in Haskell. However, as we
 will see, monad-based effect systems only work in lazy evaluation
 languages, which is not a good fit for Scala because Scala is
-strict. On the other hand, monad-based effect systems also have a
-problem with \emph{effect polymorphism}. As reported in Chapter 1
+strict. On the other hand, monad-based effect systems also face the
+problem of \emph{effect polymorphism}. As reported in Chapter 1
 section 6 of the thesis\cite{lippmeier2009type}, almost every general
 purpose higher-order function in Haskell needs both a monadic version
 and non-monadic version. For example, following code snippet shows the
@@ -63,8 +63,8 @@ systems seem to be a promising direction.
 \subsection{Capability-based Effect Systems}
 
 The core idea of \emph{capability-based} effect system is that an
-instance of capability is required in order to make effects. As
-capabilities have to be passed as function parameters, by tracking
+instance of capability is required in order to make effects. If
+capabilities are passed as function parameters, by tracking
 capabilities in the type system we can track effects in the program.
 
 To ensure that capabilities are passed by function parameters, instead
@@ -76,7 +76,7 @@ discipline are called \emph{free functions}.
 
 With the combination of free functions and stoic functions,
 \emph{capability-based} effect systems can solve the problem of
-\emph{effect polymorphism} well, while incurring no syntactical
+\emph{effect polymorphism} easily, while incurring no syntactical
 burden. For example, instead of having two versions of \emph{map},
 following \emph{map} is effect polymorphic.
 
@@ -103,7 +103,8 @@ The main contributions of this study are as follows:
   capability-based effect system in functional programming languages.
 \item Proposed an approach to solve the problem of effect polymorphism
   in capability-based effect systems, which is much simpler and more
-  elegant than type-and-effect systems and monad-based effect systems.
+  elegant than in type-and-effect systems and monad-based effect
+  systems.
 \end{itemize}
 
 \subsection{Structure of Report}
