@@ -209,15 +209,23 @@ informally and leave the formal proof to future studies.
 
 \subsubsection{Why Treat Variables as Values}
 
-As discussed above, in current system, there is no way to create
-capabilities. It means that a function taking a capability parameter
-can never be called. A soundness proof for such a system is not very
-convincing. Instead, if we treat variables as values, functions that
-takes a capability parameter can be called with a capability
-variable. This makes the preservation proof more convincing.
+As discussed above, in current system, there is no way to create a
+value of capabilities. It means that a function taking a parameter of
+the capability type can never be evaluated, as the call-by-value
+semantics require the right-hand side of an application to be a
+value. The same is true for the base type B -- there is no way to
+create a value of type B, thus a function taking a parameter of the
+base type can never be evaluated as well.
+
+A soundness proof for such a system is not very convincing, as
+substitution of a term with a value of the base type or capability
+type can never happen in the system. Instead, if we treat variables as
+values, functions that takes a parameter of the base type or
+capability type can be evaluated with a variable of the base type or
+capability type. This makes the preservation proof more convincing.
 
 Adding variables as values doesn't break soundness or effect safety of
-the system. In fact, by adding variables as values, we only added 5
+the system. In fact, in adding variables as values, we only added 5
 lines of code in our soundness proof, and effect safety proof remains
 the same.
 
