@@ -323,17 +323,20 @@ monad-based effect system.
 
 \subsection{Effect Safety}
 
-One question that can be asked for any type-and-effect system is that,
-does the system really work? This question prompts us to formulate and
-prove effect safety of the system.
+One question that can be asked for any effect system is, does the
+system really work? This question prompts us to formulate and prove
+effect safety of the system. We start by formulating effect safety
+informally, then put forward a formal formulation, and finally prove
+effect safety of the system.
 
 \subsubsection{Informal Formulation}
 
-We start by formulating the effect safety informally. A tentative
+A straight-forward violation of effect safety is for pure functions to
+have side effects inside the function body. Thus, a tentative
 formulation would be as follows:
 
 \begin{definition}[Effect-Safety-Informally-1]
-A function typed in pure environment cannot have side effects inside.
+A function typed in a pure environment cannot have side effects inside.
 \end{definition}
 
 However, this formulation is obviously problematic, as we know stoic
@@ -342,14 +345,14 @@ parameter. Thus, we need to restrict the functions to those not taking
 capability parameters:
 
 \begin{definition}[Effect-Safety-Informally-2]
-  A function (without capability parameter) typed in pure environment
-  cannot have side effects inside.
+  A function (not taking any capability parameter) typed in pure
+  environment cannot have side effects inside.
 \end{definition}
 
 This formulation looks more satisfactory, but it's a little
-cumbersome, let's transform it into a more succinct statement. If we
-inspect the T-Abs typing rule closely, we can find that if \emph{S} is
-not a capability type, $pure(\Gamma),\; x: S$ is equal to
+cumbersome. Let's transform it into a more succinct statement. If we
+inspect the \textsc{T-Abs} typing rule closely, we can find that if
+\emph{S} is not a capability type, $pure(\Gamma),\; x: S$ is equal to
 $pure(\Gamma,\; x: S)$.
 
 \infrule[T-Abs]
@@ -360,12 +363,13 @@ Thus, instead of saying a function $\lambda x:S.t_2 : S$ cannot have
 side effects inside, we can say the term $t_2$ cannot have side
 effects in pure environment. As we know, to have side effects, we must
 supply a capability as parameter. Thus, the term $t_2$ cannot have
-side effects if we cannot construct a term of capability type in pure
-environment. This observation leads us to the following statement of
-effect safety:
+side effects if we cannot construct a term of capability type in a
+pure environment. This observation leads us to the following statement
+of effect safety:
 
 \begin{definition}[Effect-Safety-Informally-3]
- It's impossible to construct a term $t$ of capability type in pure environment.
+  It's impossible to construct a term $t$ of capability type in a pure
+  environment.
 \end{definition}
 
 This formulation looks very promising, but in fact it cannot be proved!
@@ -373,14 +377,14 @@ For a counter-example, let's assume $\Gamma = \{f: B \to E, \; x:
 B\}$. It's obvious that $\Gamma$ is pure, but we can construct the
 term $f \; x$ which is of the capability type.
 
-The cause of the problem is that in pure environment, there could exist
-ill types like $B \to E$, which is non-inhabitable in ``healthy''
-environments.  Existence of these ill types in pure environment
-doesn't pose a problem to the system, because if a function takes a
-non-inhabitable parameter, the function can never be actually called.
+The cause of the problem is that in a pure environment, there could
+exist non-inhabitable types like $B \to E$.  Existence of
+non-inhabitable types in pure environment doesn't pose a problem to
+the system, because if a function takes a parameter of a
+non-inhabitable type, the function can never be actually called.
 
 To convince the readers that the current system is effect-safe, we
-need to carefully exclude and only exclude ill types in the pure
+need to exclude and only exclude non-inhabitable types from the pure
 environment and then prove that it is impossible to construct a term
 of capability type in this restricted environment. Thus we arrive at
 following formulation:
@@ -390,25 +394,80 @@ following formulation:
   pure environment without variables of non-inhabitable types.
 \end{definition}
 
-\subsubsection{Formal Formulation}
+\subsubsection{Inhabitability}
 
-However, the insight in the informal statement doesn't give rise to a
-direct proof of effect safety. We need a formulation not based on
-inhabitability of types. When we examine the problem more closely, we
-found that through the lens of \emph{Curry Howard Isomorphism}, the
-effect safety actually says that it is impossible to prove the
-capability type $E$ from a group of ``good'' premises. Then, we can
-classify all types (propositions) into two groups: in one group $E$
-cannot be proved and in the other group $E$ can be proved. This leads
-us to a formulation of \emph{healthy environment} given in
-Figure~\ref{fig:stlc-pure-healthy-definition}. Given the formulation
-of \emph{healthy environment}, the effect safety can be formally
-stated:
+We need to define the concept \emph{inhabitability} precisely. What
+types are inhabitable? An inhabitable type should be able to be
+inhabited by a term using the typing rules. Obviously, given a typing
+relation $\Gamma \vdash t: T$, we cannot immediately conclude that T
+is inhabitable -- we need to ensure that $\Gamma$ only contains
+inhabitable types. Otherwise, any type is inhabitable if $\Gamma$
+contains a variable of the corresponding type.
 
-\begin{definition}[Effect-Safety]
-  If $\Gamma$ is healhty, then there doesn't exist $t$ with
-  $\Gamma \vdash t : E$.
+One thing we are sure about is that, if $\Gamma$ is empty, then $T$ is
+inhabitable. If $\Gamma$ if not empty, and the binding
+$x:S \in \Gamma$ and S is inhabitable, then we can remove x:S from
+$\Gamma$ and substitute x in the term t with the term that inhabits
+the type S to obtain a new term $t'$. The substitution lemma tells us
+that the new term $t'$ still has the type T. Continue this line of
+thought, we'll find out that all inhabitable types can be inhabited in
+the empty environment. Thus, a tentative definition is as follows:
+
+\begin{definition}[Inhabitability-First-Try]
+  A type T is inhabitable if there exists a term t with $\varnothing
+  \vdash t : T$.
 \end{definition}
+
+However, this definition is not satisfactory in our case, as in system
+STLC-Pure there doesn't exist values for the base type and capability
+type except variables, though we do want both types to be
+inhabitable. A natural approach is to extend the empty environment
+with two variables of the base type and capability type respectively:
+
+\begin{definition}[Inhabitability-Second-Try]
+  A type T is inhabitable if there exists a term t with
+  $x:B,\; y:E \vdash t : T$.
+\end{definition}
+
+This definition indeed gives us all inhabitable types in system
+STLC-Pure. However, we can do better with following definition:
+
+\begin{definition}[Inhabitability-Final]
+  A type T is inhabitable if there exists a value v with the typing
+  $x:B,\; y:E \vdash v : T$.
+\end{definition}
+
+What if the term $t$ in the second definition is an application? In that
+case, $t$ must be able to take a step until it becomes a value. And the
+preservation theorem tells us the type remains unchanged during
+evaluation. This final definition makes proofs related to
+inhabitability simpler.
+
+\subsubsection{Formalization}
+
+With the formal definition of inhabitability, we can easily formalize
+the informal statement of effect safety as follows:
+
+\begin{definition}[Effect-Safety-Inhabitability]
+  If $\Gamma$ is a pure environment with only variables inhabitable
+  types, then there doesn't exist $t$ with $\Gamma \vdash t : E$.
+\end{definition}
+
+However, this formulation doesn't give rise to a direct proof. In
+fact, this statement is too strong -- some non-inhabitable types, such
+as $E \to B \to E$, don't enable us to create a term of the type $E$,
+thus it's safe to be kept in the environment. This means it's possible
+to impose a looser restriction on $\Gamma$, as long as all inhabitable
+types that can appear in a pure environment can also appear in
+$\Gamma$.
+
+When we examine the problem more closely, we found that through the
+lens of \emph{Curry Howard Isomorphism}, effect safety actually says
+that it is impossible to prove the capability type $E$ from a group of
+``good'' premises. Thus, we can classify all types (propositions) into
+two groups: in one group $E$ cannot be proved and in the other group
+$E$ can be proved. This leads us to a formulation of \emph{healthy
+  environment} given in Figure~\ref{fig:stlc-pure-healthy-definition}.
 
 \begin{figure}[h]
 \begin{framed}
@@ -459,36 +518,51 @@ stated:
 \end{figure}
 
 In the definition, types like $B \to B$, $E \to E$, $E \to B$ and
-$(B \to E) \to B$ are considered as capsafe, while types like
-$B \to E$, $(E \to B) \to E$ are considered as caprod. To inspect the
-formalization in detail, we can ask several questions.
+$(B \to E) \to B$ are considered as \emph{capsafe}, while types like
+$B \to E$, $(E \to B) \to E$ are considered as \emph{caprod}. Only
+\emph{capsafe} types can appear in a \emph{healthy} environment. To
+inspect the formalization in detail, we can ask several questions.
 
 \emph{Are capsafe types inhabitable?} The answer is no. The type
-$E \to B \to E$ is non-inhabitable. However, allowing this type in
-healthy environment doesn't enable us to construct a term of
-capability type.
+$E \to B \to E$ is non-inhabitable. However, allowing this type in the
+healthy environment doesn't enable us to construct a term of the
+capability type E.
+
+\emph{Are inhabitable types capsafe?} The answer is yes, except the
+capability type $E$. As the capability type $E$ can't appear in the
+pure environment, this is not a problem.
 
 \emph{Are caprod types non-inhabitable?} Yes, except the capability
-type $E$. As $E$ is also excluded in pure environment, thus it's
-justified to remove it in the healthy environment. The CP-Fun rule is
-justified by the fact that in a healthy environment it is impossible
-to construct a function which takes a capsafe parameter and returns a
-value of caprod type. Or from a logical point of view, given a proof
+type $E$. As $E$ is also excluded in the pure environment, thus it's
+justified to remove it from the healthy environment.
+
+Intuitively, the rule \textsc{CP-Fun} can be justified by the fact
+that in a healthy environment it is impossible to construct a function
+which takes a \emph{capsafe} parameter and returns a value of
+\emph{caprod} type. Or from a logical point of view, given a proof
 from which E can't be proved, we can't transform it to be a proof
 capable of proving E, together with a group of premises incapable of
 proving E.
 
 \emph{Why this formulation of healthy environment is acceptable?} This
-formulation is acceptable because it only rejects non-inhabitable
-types in pure environments, which is the key insight in the informal
-formulation of effect safety. It's incorrect to reject inhabitable
-types, but it's acceptable to keep non-inhabitable types, as long as
-effect safety can be proved.
+formulation is acceptable because all inhabitable types that can
+appear in the pure environment can also appear in the healthy
+environment. This claim has been formally proved:
 
-Note that it's possible to formalize inhabitability and prove
-rigorously that all caprod types are actually non-inhabitable. We
-leave it to future studies and only resort to informal arguments for
-the correctness of the formulation of \emph{healthy environment} here.
+\begin{theorem}[Inhabitable-Capsafe]
+  If the type T is inhabitable, then either T is capsafe or $T = E$.
+\end{theorem}
+
+From the theorem above, it's obvious that a pure environment $\Gamma$
+with only variables of inhabitable types is also a healthy
+environment. Thus, any property proved for a healthy environment also
+holds for $\Gamma$. Therefore, effect safety can be reformulated more
+generally as follows:
+
+\begin{definition}[Effect-Safety]
+  If $\Gamma$ is healthy, then there doesn't exist $t$ with
+  $\Gamma \vdash t : E$.
+\end{definition}
 
 \subsubsection{Proof}
 
