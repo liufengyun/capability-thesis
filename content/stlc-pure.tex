@@ -3,11 +3,12 @@
 This chapter describes a variant of the \emph{simply typed
   lambda-calculus} with the extension of capabilities. We call this
 system \emph{STLC-Pure}, because in this system all functions must
-observe a variable-capturing discipline.  In later chapters, we'll see
-the development of impure systems where there are both
-effect-disciplined functions which observe the variable-capturing
-discipline, and ordinary functions which don't observe the
-variable-capturing discipline.
+observe a variable-capturing discipline.
+
+% In later chapters, we'll see the development of impure systems where
+% there are both effect-disciplined functions which observe the
+% variable-capturing discipline, and ordinary functions which don't
+% observe the variable-capturing discipline.
 
 The system STLC-Pure, though conceptually simple, can quite well
 demonstrate the main features of capability-based type-and-effect
@@ -25,11 +26,11 @@ definition of STLC-Pure.
 The syntax is almost the same as standard STLC, except the addition of
 capability type \emph{E} and addition of variables as values. The
 evaluation rules are exactly the same, with standard call-by-value
-small-step semantics. The typing rule T-Abs is slightly changed by
-performing an operation on the environment. The peculiarities in the
-formalization are explained below.
+small-step semantics. The typing rule \textsc{T-Abs} is slightly
+changed by performing an operation on the environment. The
+peculiarities in the formalization are explained below.
 
-\begin{figure}
+\begin{figure}[h]
 \begin{framed}
 
 % multi-column separator
@@ -78,14 +79,16 @@ formalization are explained below.
 { \Gamma \vdash x : T }
 
 \infrule[T-Abs]
-{ pure(\Gamma),\; x: S \vdash t_2 : T }
-{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+{ \colorbox{shade}{$pure(\Gamma),\; x: S \vdash t_2 : T$} }
+{ \colorbox{shade}{$\Gamma \vdash \lambda x:S.t_2 : S \to T$} }
 
 \infrule[T-App]
 { \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
 { \Gamma \vdash t_1 \; t_2 : T }
 
 \textbf{Pure Environment}
+
+\hfill
 
 \begin{center}
 \begin{tabular}{l c l}
@@ -94,8 +97,6 @@ pure($\Gamma$, x: E)            & = &  pure($\Gamma$) \\
 pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
 \end{tabular}
 \end{center}
-
-\hfill\\
 
 \end{multicols}
 \end{framed}
@@ -106,11 +107,11 @@ pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
 
 \subsubsection{Variable-Capturing Discipline}
 
-The most important change to standard STLC lies in following typing
-rule:
+The most important change to standard STLC lies in the following
+typing rule:
 
 \infrule[T-Abs]
-{ pure(\Gamma) , x: S \vdash t_2 : T }
+{ pure(\Gamma), \; x: S \vdash t_2 : T }
 { \Gamma \vdash \lambda x:S.t_2 : S \to T }
 
 This typing rule imposes a \emph{variable-capturing discipline} on
@@ -120,8 +121,8 @@ abstraction.
 
 The discipline is implemented with the helper function \emph{pure},
 which removes any variable bindings of the capability type \emph{E}
-from the typing environment. It's easy to verify that the \emph{pure}
-function satisfies following properties:
+from the typing environment. It's easy to verify that the function
+\emph{pure} satisfies following properties:
 
 \begin{lemma}[Pure-Distributivity]
   pure (E, F) = pure E, pure F
@@ -134,8 +135,8 @@ function satisfies following properties:
 Initially, we've tried a variable-capturing discipline where no free
 variables can be captured, i.e. $pure(\Gamma) = \varnothing$. While
 this definition is certainly effect safe, the system is not very
-expressive, as we lose the ability to have closures in the system,
-which is usually considered to be a powerful weapon of functional
+expressive, as we lose the ability to create closures in the system,
+which is usually considered to be an essential feature of functional
 programming.
 
 \subsubsection{Stoic Functions and Free Functions}
@@ -148,21 +149,21 @@ type. To differentiate them (which is important as in later systems
 both exist), we call the more effect-disciplined functions \emph{stoic
   functions} (or stoics) and the other \emph{free functions}.
 
-Stoic functions are essential in capability-based type-and-effect
-systems. If functions are allowed to capture capability variables in
-scope, it will be impossible to tell whether a function has side
-effect or not (and what kind of effect) by just checking its
-type. Stoic functions are effect-disciplined in the sense that the
-only way for stoic functions to have side effects is to pass a
-capability as parameter, thus it can be captured by the type system.
+Stoic functions are essential in capability-based effect systems. If
+functions are allowed to capture capability variables in scope, it
+will be impossible to tell whether a function has side effect or not
+(and what kind of effect) by just checking its type. Stoic functions
+are effect-disciplined in the sense that the only way for stoic
+functions to have side effects is to pass a capability as parameter,
+thus it can be captured by the type system.
 
 It's important to note that stoic functions are not necessarily pure
 functions. Stoic functions can have side effects, and if they do have
 side effects they are honest about that in their type signature. For
 example, following function \emph{hello} is a stoic function which has
 IO effects\footnote{For the sake of readability, we'll use a syntax
-  similar to Scala. However, we'll use $\to$ to annotate the type of
-  stoic functions, and $\Rightarrow$ for ordinary functions.}.
+  similar to Scala. However, we'll use $\to$ for the type of stoic
+  functions, and $\Rightarrow$ for free functions.}.
 
 \begin{lstlisting}[language=Scala]
   def hello(c:IO) = println("hello, world!", c)
@@ -180,11 +181,17 @@ effects take some capability as parameter.
 
 \subsubsection{Where do Effects Come From}
 
-Careful readers might have noticed that in current type-and-effect
-system, there is no formalization of effects. Indeed, that's an
-intentional design choice. We assume the existence of primitive
-functions like \emph{println}, which take capability parameters to
+Careful readers might have noticed that in current effect system,
+there is no formalization of effects. Indeed, that's an intentional
+design choice. We assume the existence of primitive functions like
+\emph{println} and \emph{readln}, which take capability parameters to
 create side effects.
+
+\begin{lstlisting}[language=Scala]
+  def println: String -> IO -> ()
+  def readln: IO -> String
+\end{lstlisting}
+
 
 % As the primary concern of this study is IO effects,
 
@@ -207,8 +214,7 @@ capabilities. It means that a function taking a capability parameter
 can never be called. A soundness proof for such a system is not very
 convincing. Instead, if we treat variables as values, functions that
 takes a capability parameter can be called with a capability
-variable. This makes the preservation proof (see below) more
-convincing.
+variable. This makes the preservation proof more convincing.
 
 Adding variables as values doesn't break soundness or effect safety of
 the system. In fact, by adding variables as values, we only added 5
@@ -223,17 +229,18 @@ can't be used in the function body, as it's removed by \emph{pure} in
 the typing of the function body.
 
 \begin{lstlisting}[language=Scala]
-  def error(e:Error)(c1:IO)(c2:Exception) = {
+  def error(e:Error)(c1:IO)(c2:Throw) = {
     println("error happen!", c1)
     throw c2 e
   }
 \end{lstlisting}
 
-However, it's straight-forward to extend the system with pairs or
-tuples. In later chapters we'll see systems where there exists
-functions that are not restricted by variable-capturing discipline.
-In those systems, this problem is no longer an issue, thus we don't
-pursue the extension of pairs and tuples here.
+It's straight-forward to extend the system with pairs or tuples to
+overcome the limit of the current system. However, in later chapters
+we'll see systems where there exists functions that are not restricted
+by the variable-capturing discipline.  In those systems, this problem
+is no longer an issue, thus we don't pursue the extension of pairs and
+tuples here.
 
 \subsection{Soundness}
 
@@ -266,22 +273,20 @@ However, this substitution lemma doesn't hold in current system. For a
 counter-example, let's assume that $\Gamma = \{f: E \to B,\;
   c:E\}$, then it's obviously that following two propositions hold:
 
-\begin{itemize}
-\item $\{f: E \to B,\; c:E\},\; x:B \vdash \lambda z:B.\,x \; : \; B \to B$.
-\item $\{f: E \to B,\; c:E\},\; x:B \vdash f \; c \; : \; B$.
-\end{itemize}
+
+$\{f: E \to B,\; c:E\},\; x:B \vdash \lambda z:B.\,x \; : \; B \to
+  B$ \\
+$\{f: E \to B,\; c:E\},\; x:B \vdash f \; c \; : \; B$
 
 However, following typing relationship doesn't hold if we replace
 $x$ with $f \; c$.
 
-\begin{center}
 $\{f: E \to B,\; c:E\} \vdash \lambda z:B.\,f \; c \; : \; B \to B$.
-\end{center}
 
 In fact, the substituted term $\lambda z:B.\,f \; c$ cannot be typed,
-as according to the typing rules, it cannot capture the capability
-variable $c$ in the environment. To overcome this problem, we
-stipulate that the term $s$ to be substituted must be a
+as according to the typing rule \textsc{T-Abs}, it cannot capture the
+capability variable $c$ in the environment. To overcome this problem,
+we stipulate that the term $s$ to be substituted must be a
 value. Remember that in current system, both lambda abstractions and
 variables are values, thus substitution of capability variables can
 also happen. The new formulation is as follows:
@@ -293,18 +298,20 @@ also happen. The new formulation is as follows:
 
 Interestingly, this strict evaluation requirement contrasts
 capability-based effect systems with monad-based effect systems. In
-Haskell, if it adopts strict evaluation, it will be impossible to track
-effects in the type system, as demonstrated by following code snippet:
+Haskell, if it adopts strict evaluation, it will be impossible to
+track effects in the type system, as demonstrated by following code
+snippet:
 
 \begin{lstlisting}[language=Haskell]
   inc n = (\x -> n + 1) (putStrLn (show n))
 \end{lstlisting}
 
-The function \emph{inc} has the type $(Num\;a, Show\;a) \Rightarrow a
-\to a$. By just checking its type, we would think it has no side
-effects because no IO monads appear in the type signature. However, if
-it adopts strict evaluation, the \emph{putStrLn} will be executed, thus
-breaks the monad-based effect system.
+The function \emph{inc} has the type
+$(Num\;a, Show\;a) \Rightarrow a \to a$. By just checking its type, we
+would think it has no side effects because no IO monads appear in the
+type signature. However, if Haskell adopts strict evaluation, the
+function call \emph{putStrLn} will be executed, thus breaks the
+monad-based effect system.
 
 \subsection{Effect Safety}
 
