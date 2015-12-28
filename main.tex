@@ -9,13 +9,15 @@
 \usepackage{amsmath}  % \text{}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage{framed} % frames
+\usepackage{framed}       % frames
 \usepackage{hyperref}
-\usepackage{amssymb}  % empty set
-\usepackage{multicol} % multi-column
-\usepackage{tabu} % advanced table layout
-\usepackage{chngcntr} % figure numbering per chapter
+\usepackage{amssymb}      % empty set
+\usepackage{multicol}     % multi-column
+\usepackage{tabu}         % advanced table layout
+\usepackage{chngcntr}     % figure numbering per chapter
 \usepackage{lib/bcprules} % typeset inference rule
+\usepackage[hang,flushmargin]{footmisc}  % footnote indent
+\usepackage{parskip}      % no par indent
 
 % figure numbering
 \counterwithin{figure}{section}
@@ -63,18 +65,22 @@
 \newtheorem*{theorem}{\textsc{Theorem}}
 \newtheorem*{lemma}{\textsc{Lemma}}
 
-\onehalfspacing
+% layout
+% \setlength\parindent{0pt}     % no indent
+% \setlength{\parskip}{8pt}     % par spacing
+\onehalfspacing               % line spacing
 
 %end the preamble and start the document
 \begin{document}
 
 \input{content/cover}
-%% \include{content/dedication}        % include a dedication.tex file
-%% \include{content/acknowlegements}   % include an acknowledgements.tex file
+%% \include{content/dedication}     % include a dedication.tex file
+\include{content/acknowledge}        % include an acknowledge.tex file
 \include{content/abstract}          % include the abstract
 
 \tableofcontents            % generate and include a table of contents
-% \listoffigures              % generate and include a list of figures
+\newpage
+\listoffigures              % generate and include a list of figures
 
 %now include the files of latex for each of the chapters etc
 \include{content/introduction}
