@@ -43,7 +43,7 @@
   % frame=tb,
   language=scala,
   aboveskip=3mm,
-  belowskip=3mm,
+  belowskip=1mm,
   showstringspaces=false,
   columns=flexible,
   basicstyle={\small\ttfamily},
@@ -60,7 +60,17 @@
 
 % definitions, theorems
 
-\theoremstyle{remark}
+\newtheoremstyle{theorem}% ⟨name⟩
+{6pt}%⟨Space above⟩
+{2pt}%⟨Space below⟩
+{}%⟨Body font⟩
+{}%⟨Indent amount⟩
+{}% ⟨Theorem head font⟩
+{.}%⟨Punctuation after theorem head⟩
+{.5em}%⟨Space after theorem head⟩2
+{}%⟨Theorem head spec (can be left empty, meaning ‘normal’)⟩
+
+\theoremstyle{theorem}
 \newtheorem*{definition}{\textsc{Definition}}
 \newtheorem*{theorem}{\textsc{Theorem}}
 \newtheorem*{lemma}{\textsc{Lemma}}
