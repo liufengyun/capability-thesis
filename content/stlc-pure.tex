@@ -391,7 +391,7 @@ following formulation:
 
 \begin{definition}[Effect-Safety-Informally-4]
   It's impossible to construct a term $t$ of capability type in any
-  pure environment without variables of non-inhabitable types.
+  pure environment with only variables of inhabitable types.
 \end{definition}
 
 \subsubsection{Inhabitability}
@@ -437,11 +437,17 @@ STLC-Pure. However, we can do better with following definition:
   $x:B,\; y:E \vdash v : T$.
 \end{definition}
 
-What if the term $t$ in the second definition is an application? In that
-case, $t$ must be able to take a step until it becomes a value. And the
-preservation theorem tells us the type remains unchanged during
-evaluation. This final definition makes proofs related to
-inhabitability simpler.
+What if the term $t$ in the second definition is an application? In
+that case, $t$ must be able to take a step until it becomes a
+value. And the preservation theorem tells us the type remains
+unchanged during evaluation. This final definition makes proofs
+related to inhabitability simpler. It's useful to give a definition of
+inhabitable environments as well:
+
+\begin{definition}[Inhabitable-Environment]
+  An environment $\Gamma$ is inhabitable if it only contains variables
+  of inhabitable types.
+\end{definition}
 
 \subsubsection{Formalization}
 
@@ -449,8 +455,8 @@ With the formal definition of inhabitability, we can easily formalize
 the informal statement of effect safety as follows:
 
 \begin{definition}[Effect-Safety-Inhabitability]
-  If $\Gamma$ is a pure environment with only variables of inhabitable
-  types, then there doesn't exist $t$ with $\Gamma \vdash t : E$.
+  If $\Gamma$ is a pure and inhabitable environment, then there
+  doesn't exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
 However, this formulation doesn't give rise to a direct proof. In
@@ -458,8 +464,8 @@ fact, this statement is too strong -- some non-inhabitable types, such
 as $E \to B \to E$, don't enable us to create a term of the type $E$,
 thus it's safe to be kept in the environment. This means it's possible
 to impose a looser restriction on $\Gamma$, as long as all inhabitable
-types that can appear in a pure environment can also appear in
-$\Gamma$.
+types that can appear in a pure and inhabitable environment can also
+appear in $\Gamma$.
 
 When we examine the problem more closely, we found that through the
 lens of \emph{Curry Howard Isomorphism}, effect safety actually says
@@ -545,18 +551,20 @@ capable of proving E, together with a group of premises incapable of
 proving E.
 
 \emph{Why this formulation of healthy environment is acceptable?} This
-formulation is acceptable because all inhabitable types that can
-appear in the pure environment can also appear in the healthy
-environment. This claim has been formally proved:
+formulation is acceptable because a pure and inhabitable environment
+is also a healthy environment. This claim has been formally proved:
 
-\begin{theorem}[Inhabitable-Capsafe]
+\begin{lemma}[Inhabitable-Capsafe]
   If the type T is inhabitable, then either T is capsafe or $T = E$.
+\end{lemma}
+
+\begin{theorem}[Inhabitable-Pure-Healthy]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
 \end{theorem}
 
-From the theorem above, it's obvious that a pure environment $\Gamma$
-with only variables of inhabitable types is also a healthy
-environment. Thus, any property proved for a healthy environment also
-holds for $\Gamma$. Therefore, effect safety can be reformulated more
+From the theorem above, it's obvious that any property proved for a
+healthy environment also holds for a pure and inhabitable
+environment. Therefore, effect safety can be reformulated more
 generally as follows:
 
 \begin{definition}[Effect-Safety]
