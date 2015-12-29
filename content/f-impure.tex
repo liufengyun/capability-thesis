@@ -100,6 +100,8 @@ the system STLC-Impure and F-Pure.
 
 \textbf{Pure Environment}
 
+\hfill
+
 \begin{center}
 \begin{tabular}{l c l}
 pure($\varnothing$)             & = &   $\varnothing$ \\
@@ -166,24 +168,30 @@ effect safety.
 
 \subsubsection{Formulation}
 
-Given that we've seen how universal types and free function types are
-extended in the formulation of \emph{healthy environment}, we can
-easily combine them to arrive at the formulation shown in
-Figure~\ref{fig:f-impure-healthy-definition}, with the changes from
-F-Pure highlighted. As in the system STLC-Impure, we'll need two
-statements about effect safety.
+As in the system STLC-Impure, in the presence of free functions, we'll
+need two statements of effect safety:
 
-\begin{definition}[Effect-Safety-1]
-  If $\Gamma$ is healthy, there doesn't exist $t$ with
-  $\Gamma \vdash t : E$.
+\begin{definition}[Effect-Safety-Inhabitability-1]
+  If $\Gamma$ is a pure and inhabitable environment, then there
+  doesn't exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
-\begin{definition}[Effect-Safety-2]
-  If $\Gamma$ is healthy and $\Gamma \vdash t_1 \; t_2 : T$, then
-  there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+\begin{definition}[Effect-Safety-Inhabitability-2]
+  If $\Gamma$ is a pure and inhabitable environment, and
+  $\Gamma \vdash t_1 \; t_2 : T$, then there exists U, V such that
+  $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-\begin{figure}
+
+As in the system STLC-Pure, the proof of these two statements depends
+on a weaker and more general statement about \emph{healthy
+  environments}. Given that we've seen how universal types and free
+function types are extended in the formulation of \emph{healthy
+  environment}, we can easily combine them to arrive at the
+formulation shown in Figure~\ref{fig:f-impure-healthy-definition},
+with the changes from F-Pure highlighted.
+
+\begin{figure}[h]
 \begin{framed}
 
 % multi-column separator
@@ -256,6 +264,42 @@ statements about effect safety.
 \label{fig:f-impure-healthy-definition}
 \end{figure}
 
+\emph{Why this formulation of healthy environment is acceptable?} We
+need to ensure that a pure and inhabitable environment is also a
+healthy environment. This claim has been formally proved:
+
+\begin{lemma}[Inhabitable-Capsafe]
+  If the type T is inhabitable, then either T is capsafe or $T = E$ or
+  T is a free function type.
+\end{lemma}
+
+\begin{theorem}[Inhabitable-Pure-Healthy]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
+\end{theorem}
+
+From the theorem above, it's obvious that any property proved for a
+healthy environment also holds for a pure and inhabitable
+environment. Thus, it suffices to prove the following statements about
+healthy environments.
+
+\begin{definition}[Effect-Safety-1]
+  If $\Gamma$ is healthy, there doesn't exist $t$ with
+  $\Gamma \vdash t : E$.
+\end{definition}
+
+\begin{definition}[Effect-Safety-2]
+  If $\Gamma$ is pure and healthy, and $\Gamma \vdash t_1 \; t_2 : T$,
+  then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+\end{definition}
+
+Note that in the second statement of effect safety, we also impose
+that $\Gamma$ is pure. This is exactly the same case as we've seen in
+the system STLC-Impure. The justification is that the statement
+\emph{Effect-Safety-1} and \emph{Effect-Safety-2} logically imply the
+statement \emph{Effect-Safety-Inhabitability-1} and
+\emph{Effect-Safety-Inhabitability-2} respectively, thus it suffices
+to prove the statement \emph{Effect-Safety-1} and
+\emph{Effect-Safety-2}.
 
 \subsubsection{Proof}
 
@@ -263,16 +307,8 @@ The proof of the first effect safety statement is nearly the same as
 in the system F-Pure, thus we don't reiterate here.
 
 When we come the the proof of the second statement of effect safety,
-we encounter the same problem as in system STLC-Impure. First, we need
-to change the statement slightly, as now the definition of
-\emph{healthy} no longer implies \emph{pure}:
-
-\begin{definition}[Effect-Safety-2']
-  If $\Gamma$ is healthy and pure, and $\Gamma \vdash t_1 \; t_2 : T$, then
-  there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
-\end{definition}
-
-Second, we need to assume a set of axioms, as shown in
+we encounter the same problem as in system STLC-Impure. We need to
+assume a set of axioms, as shown in
 Figure~\ref{fig:f-impure-definition}. We highlighted the new added
 axioms to the axioms in STLC-Impure. The justification for the axioms
 \textsc{Ax-All} and \textsc{Ax-Var} is the same as the justification
@@ -339,16 +375,19 @@ typed under $pure(\Gamma)$. Then the inner lambda abstraction can be
 typed under $pure(\Gamma), X$, which is equal to $pure(\Gamma,
 X)$. Thus, it's fair enough to type the inner function as stoic.
 
+The justification for the axiom \textsc{Ax-Poly} is the same as given
+in STLC-Impure, thus we don't reiterate here.
+
 Assuming the axioms, it's straight-forward to prove a lemma
 \emph{Healthy-Pure-Stoic}, and the second statement of effect safety
 follows immediately from the lemma.
 
 \begin{lemma}[Healthy-Pure-Stoic]
-  If $\Gamma$ is healthy and pure,  and $\Gamma \vdash t : S
+  If $\Gamma$ is pure and healthy,  and $\Gamma \vdash t : S
   \Rightarrow T$, then $\Gamma \vdash t : S \to T$.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety-2']
-  If $\Gamma$ is healthy and pure, and $\Gamma \vdash t_1 \; t_2 :
-  T$, then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+  If $\Gamma$ is pure and healthy, and $\Gamma \vdash t_1 \; t_2 : T$,
+  then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{theorem}
