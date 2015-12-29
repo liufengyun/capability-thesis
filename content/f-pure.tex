@@ -211,15 +211,15 @@ As in STLC, the standard formulation is given based on inhabitable
 environments:
 
 \begin{definition}[Effect-Safety-Inhabitability]
-  If $\Gamma$ is a pure environment with only variables of inhabitable
-  types, then there doesn't exist $t$ with $\Gamma \vdash t : E$.
+  If $\Gamma$ is a pure and inhabitable environment, then there
+  doesn't exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
 The proof of the statement depends on a weaker and more general
 statement about \emph{healthy environments}. If we can arrive at such
-a definition of \emph{healthy environment} that a pure environment
-with only variables of inhabitable types is also healthy, then it
-suffices to prove the following statement about healthy environments:
+a definition of \emph{healthy environment} that a pure and inhabitable
+environment is also healthy, then it suffices to prove the following
+statement about healthy environments:
 
 \begin{definition}[Effect-Safety]
   If $\Gamma$ is healthy, there doesn't exist $t$ with
@@ -332,20 +332,22 @@ STLC-Pure highlighted.
 \end{figure}
 
 \emph{Why this formulation of healthy environment is acceptable?} We
-need to ensure that all inhabitable types that can
-appear in the pure environment can also appear in the healthy
-environment. This claim has been formally proved:
+need to ensure that a pure and inhabitable environment is also a
+healthy environment. This claim has been formally proved:
 
 \begin{theorem}[Inhabitable-Capsafe]
   If the type T is inhabitable, then either T is capsafe or $T = E$.
 \end{theorem}
 
-From the theorem above, it's obvious that a pure environment $\Gamma$
-with only variables of inhabitable types is also a healthy
-environment. Thus, any property proved for a healthy environment also
-holds for $\Gamma$. As the statement \emph{Effect-Safety} logically
-implies the statement \emph{Effect-Safety-Inhabitability}, it
-suffices to prove the statement \emph{Effect-Safety}.
+\begin{theorem}[Inhabitable-Pure-Healthy]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
+\end{theorem}
+
+From the theorem above, it's obvious that any property proved for a
+healthy environment also holds for a pure and inhabitable
+environment. As the statement \emph{Effect-Safety} logically implies
+the statement \emph{Effect-Safety-Inhabitability}, it suffices to
+prove the statement \emph{Effect-Safety}.
 
 \subsubsection{Proof}
 
