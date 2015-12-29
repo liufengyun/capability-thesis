@@ -380,14 +380,14 @@ guarantee that there cannot be actual side effects inside a pure stoic
 function. Thus, we need two statements about effect safety.
 
 \begin{definition}[Effect-Safety-Inhabitability-1]
-  If $\Gamma$ is a pure environment with only variables of inhabitable
-  types, then there doesn't exist $t$ with $\Gamma \vdash t : E$.
+  If $\Gamma$ is a pure and inhabitable environment, then there
+  doesn't exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
 \begin{definition}[Effect-Safety-Inhabitability-2]
-  If $\Gamma$ is a pure environment with only variables of inhabitable
-  types, $\Gamma \vdash t_1 \; t_2 : T$, then there exists U, V such
-  that $\Gamma \vdash t_1 : U \to V$.
+  If $\Gamma$ is a pure and inhabitable environment, and
+  $\Gamma \vdash t_1 \; t_2 : T$, then there exists U, V such that
+  $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
 A tempting formulation of the second effect safety statement would be
@@ -399,9 +399,9 @@ can be typed as the former can also be typed as the latter.
 As in the system STLC-Pure, the proof of these two statements depends
 on a weaker and more general statement about \emph{healthy
   environments}. If we can arrive at such a definition of
-\emph{healthy environment} that a pure environment with only variables
-of inhabitable types is also healthy, then it suffices to prove
-following two statements about healthy environments:
+\emph{healthy environment} that a pure and inhabitable environment is
+also healthy, then it suffices to prove following two statements about
+healthy environments:
 
 \begin{definition}[Effect-Safety-1]
   If $\Gamma$ is healthy, there doesn't exist $t$ with
@@ -509,26 +509,34 @@ in Figure~\ref{fig:stlc-impure-healthy-definition}.
 \end{figure}
 
 \emph{Why this formulation of healthy environment is acceptable?} We
-need to ensure that all inhabitable types that can
-appear in the pure environment can also appear in the healthy
-environment. This claim has been formally proved:
+need to ensure that a pure and inhabitable environment is also a
+healthy environment. This claim has been formally proved:
 
-\begin{theorem}[Inhabitable-Capsafe]
+\begin{lemma}[Inhabitable-Capsafe]
   If the type T is inhabitable, then either T is capsafe or $T = E$ or
   T is a free function type.
+\end{lemma}
+
+\begin{theorem}[Inhabitable-Pure-Healthy]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
 \end{theorem}
 
-From the theorem above, it's obvious that a pure environment $\Gamma$
-with only variables of inhabitable types is also a healthy
-environment. Thus, any property proved for a healthy environment also
-holds for $\Gamma$. It suffices to prove the statements about healthy
+From the theorem above, it's obvious that any property proved for a
+healthy environment also holds for a pure and inhabitable
+environment. Thus, it suffices to prove the statements about healthy
 environments.
 
 A consequence of this definition that a healthy environment is no
-longer a pure environment. However, this is not a problem. We know
-that a pure and inhabitable environment is a healthy environment, and
-it's certainly true that \emph{a pure and inhabitable environment is
-  also a pure and healthy environment}. Thus, we can define
+longer a pure environment. However, this is not a problem. From the
+theorem \emph{Inhabitable-Pure-Healthy} we can easily get following
+theorem:
+
+\begin{theorem}[Inhabitable-Pure-Healthy']
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also pure and
+  healthy.
+\end{theorem}
+
+Thus, we can define
 $healthy' \; E := healthy \; E \wedge pure \; E = E$. Effect safety
 proved only assuming \emph{healthy} also holds for $healthy'$. But
 what's the purpose of defining such a weaker concept of
