@@ -373,11 +373,35 @@ function types.
 
 With the presence of free functions, the previous formulation of
 effect safety is not enough. We not only need to ensure that it's
-impossible to construct a term of the capability type in healthy
+impossible to construct a term of the capability type in inhabitable
 environments, but also need to ensure only stoic functions can be
-called in healthy environments. The two conditions together guarantee
-that there cannot be actual side effects inside a pure stoic
+called in inhabitable environments. The two conditions together
+guarantee that there cannot be actual side effects inside a pure stoic
 function. Thus, we need two statements about effect safety.
+
+\begin{definition}[Effect-Safety-Inhabitability-1]
+  If $\Gamma$ is a pure environment with only variables of inhabitable
+  types, then there doesn't exist $t$ with $\Gamma \vdash t : E$.
+\end{definition}
+
+\begin{definition}[Effect-Safety-Inhabitability-2]
+  If $\Gamma$ is a pure environment with only variables of inhabitable
+  types, $\Gamma \vdash t_1 \; t_2 : T$, then there exists U, V such
+  that $\Gamma \vdash t_1 : U \to V$.
+\end{definition}
+
+A tempting formulation of the second effect safety statement would be
+that in an inhabitable environment it's impossible to construct a term
+of the free function type. However, this formulation has no hope to be
+proved, as $S \to T$ is a subtype of $S \Rightarrow T$, any term that
+can be typed as the former can also be typed as the latter.
+
+As in the system STLC-Pure, the proof of these two statements depends
+on a weaker and more general statement about \emph{healthy
+  environments}. If we can arrive at such a definition of
+\emph{healthy environment} that a pure environment with only variables
+of inhabitable types is also healthy, then it suffices to prove
+following two statements about healthy environments:
 
 \begin{definition}[Effect-Safety-1]
   If $\Gamma$ is healthy, there doesn't exist $t$ with
@@ -389,32 +413,36 @@ function. Thus, we need two statements about effect safety.
   there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-A tempting formulation of the second effect safety statement would be
-that in a healthy environment it's impossible to construct a term of
-free function type. However, this formulation has no hope to be
-proved, as $S \to T$ is a subtype of $S \Rightarrow T$, any term that
-can be typed as the former can also be typed as the latter.
-
-Now let's consider how to define \emph{capsafe} and \emph{caprod} for
-free function types. Our first attempt is to add following rule:
+Now we need to extend the definition of \emph{capsafe} and
+\emph{caprod} for free function types. Our first attempt is to add
+following rule:
 
 \infax[CP-Fun2]{ S \Rightarrow T \quad caprod }
 
 With this rule, the type $(B \Rightarrow B) \to E$ would be considered
 \emph{capsafe}, according to the \textsc{CS-Fun1} rule. However, with
 a variable $f$ of this type in the healthy environment, together with
-another variable $g$ of the capsafe type $B \to B$, it's possible to
-create the term \emph{f g}, which is of the capability type -- the
-first statement of effect safety breaks. On ther other hand, we can't
-do the opposite to take $S \Rightarrow T$ as \emph{capsafe}, as it
-would allow calling free functions in healthy environments -- the
-second statement of effect safety breaks.
+another variable $g$ of the \emph{capsafe} type $B \to B$, it's
+possible to create the term \emph{f g}, which is of the capability
+type E -- the first statement of effect safety breaks. This
+formulation also breaks the connection between pure inhabitable
+environments and healthy environments. In STLC-Pure, any inhabitable
+type T is either \emph{capsafe} or $T = E$. But in current
+formulation, the inhabitable type $B \to B \Rightarrow B$ is not
+\emph{capsafe}!
+
+On ther other hand, we can't do the opposite to take $S \Rightarrow T$
+as \emph{capsafe}, as it would allow calling free functions in healthy
+environments -- the second statement of effect safety breaks. In the
+meanwhile, the inhabitable type $(B \Rightarrow E) \to E$ becomes
+\emph{caprod}, thus it also breaks the connection between pure
+inhabitable environments and healthy environments.
 
 This dilemma prompts us to reexamin the meaning of \emph{capsafe} and
-\emph{caprod}. When these facilities were introduced in STLC-Pure,
-they are formulated in terms of the provability of the capability type
-E. From the perspective of provability of E, $S \to T$ and
-$S \Rightarrow T$ don't make much difference. Thus, free functions
+\emph{caprod}. When these facilities were first introduced in
+STLC-Pure, they were formulated in terms of the provability of the
+capability type E. From the perspective of provability of E, $S \to T$
+and $S \Rightarrow T$ don't make much difference. Thus, free functions
 types should be formulated the same way as sotic function types. We
 tried this approach, and it worked. The full formulation is presented
 in Figure~\ref{fig:stlc-impure-healthy-definition}.
@@ -491,14 +519,16 @@ environment. This claim has been formally proved:
 \end{theorem}
 
 From the theorem above, it's obvious that a pure environment $\Gamma$
-with only variables of inhabitable types is also a healthy and pure
-environment. Thus, any property proved for a healthy and pure
-environment also holds for $\Gamma$.
+with only variables of inhabitable types is also a healthy
+environment. Thus, any property proved for a healthy environment also
+holds for $\Gamma$. It suffices to prove the statements about healthy
+environments.
 
 A consequence of this definition that a healthy environment is no
-longer pure. Conceptually speaking, a healthy environment should
-always be a subset of the pure environment. However, this is not a
-problem. We can define
+longer a pure environment. However, this is not a problem. We know
+that a pure and inhabitable environment is a healthy environment, and
+it's certainly true that \emph{a pure and inhabitable environment is
+  also a pure and healthy environment}. Thus, we can define
 $healthy' \; E := healthy \; E \wedge pure \; E = E$. Effect safety
 proved only assuming \emph{healthy} also holds for $healthy'$. But
 what's the purpose of defining such a weaker concept of
@@ -513,12 +543,11 @@ second statement of effect safety:
   then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-
 \subsubsection{Proof}
 
 The proof of the first statement of effect safety is almost the same
-as in STLC-Pure. In the presence of subtyping, we need to add a
-\emph{Capsafe-Sub} lemma.  The first effect safety statement follows
+as in STLC-Pure. In the presence of subtyping, we need to add a lemma
+\emph{Capsafe-Sub}.  The first effect safety statement follows
 immediately from the lemma \emph{Healthy-Capsafe}.
 
 \begin{lemma}[Capsafe-Not-Caprod]
@@ -620,10 +649,12 @@ rule of free functions:
 According to the definition of \emph{pure}, we know that following two
 equations holds:
 
-\begin{itemize}
-\item $pure(pure(\Gamma)) = pure(\Gamma)$
-\item $pure(\Gamma, x:B) = pure(\Gamma), x:B$
-\end{itemize}
+\begin{center}
+\begin{tabular}{l c l}
+$pure(pure(\Gamma))$ & = & $pure(\Gamma)$ \\
+$pure(\Gamma, x:B)$ & = & $pure(\Gamma), x:B$
+\end{tabular}
+\end{center}
 
 From the equations above, we can get following equation:
 
@@ -667,14 +698,14 @@ follows immediately from the lemma.
   T$, then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{theorem}
 
-Note that unlike the proof of the first effect safety statement, the
-proof of the second statement of effect safety assumes that $\Gamma$
-is pure. This is due to the fact that \emph{healthy} no longer implies
-\emph{pure}. Conceptually speaking, a healthy environment should
-always be a subset of pure environment. To clear the worry of readers,
-we can define $healthy' \; E := healthy \; E \wedge pure \; E = E$.
-The first statement of effect safety is proved only assuming the
-weaker \emph{healthy}, it certainly holds for $healthy'$ as well.
+% Note that unlike the proof of the first effect safety statement, the
+% proof of the second statement of effect safety assumes that $\Gamma$
+% is pure. This is due to the fact that \emph{healthy} no longer implies
+% \emph{pure}. Conceptually speaking, a healthy environment should
+% always be a subset of pure environment. To clear the worry of readers,
+% we can define $healthy' \; E := healthy \; E \wedge pure \; E = E$.
+% The first statement of effect safety is proved only assuming the
+% weaker \emph{healthy}, it certainly holds for $healthy'$ as well.
 
 \subsection{Effect Polymorphism}
 
