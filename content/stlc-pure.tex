@@ -449,7 +449,7 @@ With the formal definition of inhabitability, we can easily formalize
 the informal statement of effect safety as follows:
 
 \begin{definition}[Effect-Safety-Inhabitability]
-  If $\Gamma$ is a pure environment with only variables inhabitable
+  If $\Gamma$ is a pure environment with only variables of inhabitable
   types, then there doesn't exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
@@ -563,6 +563,10 @@ generally as follows:
   If $\Gamma$ is healthy, then there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{definition}
+
+The statement \emph{Effect-Safety} logically implies the statement
+\emph{Effect-Safety-Inhabitability}. Thus, it suffices to prove the
+statement \emph{Effect-Safety}.
 
 \subsubsection{Proof}
 
