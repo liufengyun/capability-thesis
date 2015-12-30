@@ -267,10 +267,11 @@ If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
 \end{theorem}
 
 We proved both theorems in Coq based on the locally-nameless
-representation. The proof of progress is the same as in STLC. However,
-there is a significant difference in the proof of preservation. In the
-classic proof of preservation for STLC (as shown in TAPL), it depends
-on a substitution lemma, which is formulated as follows:
+representation\cite{chargueraud-11-ln}. The proof of progress is the
+same as in STLC. However, there is a significant difference in the
+proof of preservation. In the classic proof of preservation for STLC
+(as shown in TAPL), it depends on a substitution lemma, which is
+formulated as follows:
 
 \begin{lemma}[Subsitution-Classic]
 If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
