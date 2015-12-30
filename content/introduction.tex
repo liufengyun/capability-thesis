@@ -19,11 +19,12 @@ def pmap(xs: List[Int], f: Int => Int): List[Int]
 \end{lstlisting}
 
 However, currently it's impossible for the library author to impose
-the constraint in the type system. A type-and-effect system has been
-proposed for Scala\cite{lukas2014effect}, but is not well received in
-the Scala community, mainly due to its notational verbosity in
-handling \emph{effect polymorphism}. The problem of \emph{effect
-  polymorphism} can be illustrated by the \emph{map} function:
+the constraint in the type system. A central problem in introducing an
+effect system in Scala is how to handle the problem of \emph{effect
+  polymoprhism}.
+
+The problem of \emph{effect polymorphism} can be illustrated by the
+\emph{map} function:
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -35,10 +36,23 @@ handling \emph{effect polymorphism}. The problem of \emph{effect
 In an effect system, the effect of \emph{map} depends on the passed in
 function \emph{f}. If \emph{f} has IO effects, then \emph{map} also
 has IO effects. If \emph{f} is pure, then \emph{map} is pure as
-well. In order to make effect polymorphism work, proposed
-type-and-effect systems usually require programmers to annotate the
-function \emph{map} to say that its effect depends on the function
-\emph{f}, which incurs some notational burden on programmers.
+well.
+
+A type-and-effect system has been proposed for
+Scala\cite{lukas2014effect}. The proposed type-and-effect system
+requires programmers to annotate the function \emph{map} as follows:
+
+\begin{lstlisting}[language=Scala]
+def map[A, B](f: A -> B)(l: List[A]): List[B] @pure(f)
+\end{lstlisting}
+
+The annotation says that the effect of \emph{map} depends on the
+function \emph{f}.  Though this work has made some improvements in
+handling \emph{effect polymorphism} compared to previous
+type-and-effect systems, it still incurs some notational burden on
+programmers. The system is not well received in the Scala community,
+mainly due to its notational verbosity in handling \emph{effect
+  polymorphism}
 
 Monad-based effect systems have a success in Haskell. However, as we
 will see, monad-based effect systems only work in lazy evaluation
