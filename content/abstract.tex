@@ -10,11 +10,14 @@ maintain both a monadic and non-monadic version of the same code.
 
 In this study we took another approach and investigated
 \emph{capability-based} effect systems. In such systems, an instance
-of capability type is required to make side effects. To ensure
-capabilities are passed as function parameters, we introduced
-\emph{stoic functions} which observe a \emph{variable-capturing
-  discipline} , in contrast to \emph{free functions}, which have no
-constraints in capturing variables.
+of capability type is required to make side effects, and capabilities
+are passed via function parameters. Thus, by tracking capabilities in
+the type system, we can track effects in the program. To ensure
+capabilities are passed as function parameters instead of being
+captured from the environment, we introduced \emph{stoic functions}
+which observe a \emph{variable-capturing discipline} , in contrast to
+\emph{free functions}, which have no constraints in capturing
+variables.
 
 Generally speaking, capability-based effect systems are easier to
 understand and use than monad-based effect systems. More importantly,
