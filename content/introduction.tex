@@ -11,8 +11,8 @@ The main motivation is to turn Scala into an effect-disciplined
 programming language. Currently, Scala doesn't have the ability to
 track effects in the type system. This poses a problem in distributed
 and parallel programming. For example, in parallel computing, there's
-often the need to stipulate that the function passed to \emph{pmap}
-has no side effects.
+often the need to stipulate that the functions passed to \emph{pmap}
+have no side effects.
 
 \begin{lstlisting}[language=Scala]
 def pmap(xs: List[Int], f: Int => Int): List[Int]
@@ -67,8 +67,8 @@ instance of capability is required in order to make effects. If
 capabilities are passed as function parameters, by tracking
 capabilities in the type system we can track effects in the program.
 
-To ensure that capabilities are passed by function parameters, instead
-of being captured from the environment, we need to impose a
+To ensure that capabilities are passed through function parameters,
+instead of being captured from the environment, we need to impose a
 \emph{variable-capturing discipline}, stipulating that capability
 variables cannot be captured. Functions observe the discipline are
 called \emph{stoic functions}, while functions don't oberve the
