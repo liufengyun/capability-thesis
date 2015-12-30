@@ -138,11 +138,11 @@ functions to have access to free functions, we'll loose the ability to
 track the effects of stoic functions in the type system.
 
 A different design choice we could make is to introduce free universal
-abstractions in the system. From the viewpoint of practicality, such a
-type will not be very useful in real-world programming, as in practice
-polymorphic functions rarely capture free variables, not mention
-capability variables. Thus for the sake of simplicity, we don't pursue
-the extension here.
+abstractions in the system. From the viewpoint of practicality, such
+an extension will not be very useful in real-world programming, as in
+practice polymorphic functions rarely capture free variables, not
+mention capability variables. Thus for the sake of simplicity, we
+don't pursue the extension here.
 
 \subsection{Soundness}
 
@@ -378,7 +378,7 @@ X)$. Thus, it's fair enough to type the inner function as stoic.
 The justification for the axiom \textsc{Ax-Poly} is the same as given
 in STLC-Impure, thus we don't reiterate here.
 
-Assuming the axioms, it's straight-forward to prove a lemma
+Assuming these axioms, it's straight-forward to prove a lemma
 \emph{Healthy-Pure-Stoic}, and the second statement of effect safety
 follows immediately from the lemma.
 
