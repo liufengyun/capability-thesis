@@ -92,10 +92,10 @@ called \emph{stoic functions}, while functions don't oberve the
 discipline are called \emph{free functions}.
 
 With the combination of free functions and stoic functions,
-\emph{capability-based} effect systems can solve the problem of
-\emph{effect polymorphism} easily, while incurring no syntactical
-burden. For example, instead of having two versions of \emph{map},
-following \emph{map} is effect polymorphic.
+capability-based effect systems can solve the problem of \emph{effect
+  polymorphism} easily, while incurring no syntactical burden. For
+example, instead of having two versions of \emph{map}, following
+\emph{map} is effect polymorphic.
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -107,7 +107,7 @@ following \emph{map} is effect polymorphic.
 When the passed function \emph{f} is pure, \emph{map} is pure as
 well. In contrast, if \emph{f} is impure, then \emph{map} is also
 impure. No additional annotation is required for effect polymorphism
-to work. We'll see details of effect polymorphism in system
+to work. We'll see details of effect polymorphism in the system
 STLC-Impure.
 
 \subsection{Contributions}
@@ -122,10 +122,10 @@ The main contributions of this study are as follows:
   locally-nameless representation\cite{chargueraud-11-ln} and hosted
   on github\footnote{\url{https://github.com/liufengyun/stoic}}.
 \item Proposed an approach to solve the problem of \emph{effect
-    polymorphism} in capability-based effect systems with both free
-  functions and stoic functions. The solution is much simpler and more
-  elegant than in type-and-effect systems and monad-based effect
-  systems.
+    polymorphism} in capability-based effect systems with the
+  combination of free functions and stoic functions. The solution is
+  much simpler and more elegant than in type-and-effect systems and
+  monad-based effect systems.
 \end{itemize}
 
 \subsection{Structure of Report}
