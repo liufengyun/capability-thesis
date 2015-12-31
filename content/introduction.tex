@@ -89,26 +89,50 @@ instead of being captured from the environment, we need to impose a
 \emph{variable-capturing discipline}, stipulating that capability
 variables cannot be captured. Functions observe the discipline are
 called \emph{stoic functions}, while functions don't oberve the
-discipline are called \emph{free functions}.
+discipline are called \emph{free functions}. We use $\to$ to denote
+the type of stoic functions and $\Rightarrow$ to denote the type of
+free functions. Following example shows that incorrect capturing of
+capability variables in a stoic function will generate an error:
+
+\begin{lstlisting}[language=Scala]
+def map(xs: List[Int], f: Int => Int): List[Int]
+def pmap(xs: List[Int], f: Int -> Int): List[Int]
+def print(x: Any)(implicit c: IO): ()
+
+def bar(xs: List[Int])(implicit c: IO) =
+    map(xs, { x => print(x); x })
+
+def foo(xs: List[Int])(implicit c: IO) =
+    pmap(xs, { x => print(x); x })    // Error, can't capture c:IO
+\end{lstlisting}
 
 With the combination of free functions and stoic functions,
 capability-based effect systems can solve the problem of \emph{effect
   polymorphism} easily, while incurring no syntactical burden. For
-example, instead of having two versions of \emph{map}, following
-\emph{map} is effect polymorphic.
+example, instead of having two versions of \emph{map}, only one
+polymorphic implementation is required here:
 
 \begin{lstlisting}[language=Scala]
-  def map[A,B](f: A => B)(l: List[A]) = l match {
+  private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
     case Nil => Nil
     case x::xs => f(x)::map(f)(l)
   }
+
+  def map[A,B](f: A -> B) = mapImpl(f)
+
+  def map[A,B](c: IO)(f: IO -> A => B) = mapImpl(f c)
 \end{lstlisting}
 
-When the passed function \emph{f} is pure, \emph{map} is pure as
-well. In contrast, if \emph{f} is impure, then \emph{map} is also
-impure. No additional annotation is required for effect polymorphism
-to work. We'll see details of effect polymorphism in the system
-STLC-Impure.
+This example shows that the function \emph{f} passed to the two
+\emph{map}s must be pure or only have IO effects respecitvely. The
+type system ensures that the first \emph{map} is typed as pure while
+the second \emph{map} can only have IO effects, and both are stoic
+functions. It's straight-forward to add new \emph{map} interfaces to
+allow more kinds of exceptions without changing the implementation. If
+the liberary author doesn't care what effects there might have, he can
+expose the function \emph{mapImpl} directly to users.  We'll see
+details of effect polymorphism in the system STLC-Impure in Section
+\ref{sec:effect-polymorphism}.
 
 \subsection{Contributions}
 
@@ -122,10 +146,11 @@ The main contributions of this study are as follows:
   locally-nameless representation\cite{chargueraud-11-ln} and hosted
   on github\footnote{\url{https://github.com/liufengyun/stoic}}.
 \item Proposed an approach to solve the problem of \emph{effect
-    polymorphism} in capability-based effect systems with the
-  combination of free functions and stoic functions. The solution is
-  much simpler and more elegant than in type-and-effect systems and
-  monad-based effect systems.
+    polymorphism} in capability-based effect systems with both free
+  functions and stoic functions (Section
+  \ref{sec:effect-polymorphism}). The solution is much simpler and
+  more elegant than in type-and-effect systems and monad-based effect
+  systems.
 \end{itemize}
 
 \subsection{Structure of Report}
