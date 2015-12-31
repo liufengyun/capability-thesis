@@ -142,11 +142,11 @@ programming.
 \subsubsection{Stoic Functions and Free Functions}
 
 The variable-capturing discipline makes the functions in STLC-Pure
-essentially different from functions in standard STLC. In STLC,
-functions can capture any variables in scope, while in STLC-Pure
-functions can only capture variables whose type is not a capability
-type. To differentiate them (which is important as in later systems
-both exist), we call the more effect-disciplined functions \emph{stoic
+very different from functions in standard STLC. In STLC, functions can
+capture any variables in scope, while in STLC-Pure functions can only
+capture variables whose type is not a capability type. To
+differentiate them (which is important as in later systems both
+exist), we call the more effect-disciplined functions \emph{stoic
   functions} (or stoics) and the other \emph{free functions}.
 
 Stoic functions are essential in capability-based effect systems. If
@@ -215,7 +215,7 @@ the capability type can never be evaluated, as the call-by-value
 semantics require the right-hand side of an application to be a
 value. The same is true for the base type B -- there is no way to
 create a value of type B, thus a function taking a parameter of the
-base type can never be evaluated as well.
+base type can never be evaluated too.
 
 A soundness proof for such a system is not very convincing, as
 substitution of a term with a value of the base type or capability
@@ -229,7 +229,7 @@ the system. In fact, in adding variables as values, we only added 5
 lines of code in our soundness proof, and effect safety proof remains
 the same.
 
-\subsubsection{What If a Function Has More than One Side Effects}
+\subsubsection{What If a Function Has More than One Side Effect}
 
 The current system doesn't support a function to have more than one
 kind of effects. For example, in the following code snippet, $c1$
