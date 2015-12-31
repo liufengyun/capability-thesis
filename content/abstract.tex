@@ -10,9 +10,9 @@ maintain both a monadic and non-monadic version of the same code.
 
 In this study we took another approach and investigated
 \emph{capability-based} effect systems. In such systems, an instance
-of capability type is required to make side effects, and capabilities
-are passed via function parameters. Thus, by tracking capabilities in
-the type system, we can track effects in the program. To ensure
+of capability is required to make side effects, and capabilities are
+passed via function parameters. Thus, by tracking capabilities in the
+type system, we can track effects in the program. To ensure
 capabilities are passed as function parameters instead of being
 captured from the environment, we introduced \emph{stoic functions}
 which observe a \emph{variable-capturing discipline} , in contrast to
@@ -26,11 +26,11 @@ systems can handle \emph{effect polymorphism} elegantly. These merits
 make capability-based effect systems stand a better chance to be
 adopted by the programming community.
 
-In this report we present four capability-based type-and-effect
+In this report, we present four capability-based type-and-effect
 systems of increasing complexity, namely STLC-Pure, STLC-Impure,
-F-Pure and F-Impure.  The system SLTC-Pure and F-Pure demonstrated
-that capability-based effect systems can be used in pure functional
-languages to track effects. The system STLC-Impure and F-Impure
-demonstrated that in a capability-based effect system with both free
-functions and stoic functions, the problem of \emph{effect
-  polymorphism} can be solved trivially.
+F-Pure and F-Impure. STLC-Pure is a variant of standard STLC with only
+stoic functions, and the latter three is a gradual enrichment of
+STLC-Pure with free functions, subtyping and universal types. We
+discuss the subtleties of the meta-theories of each system. We also
+show how to solve the problem of effect polymorphism with free
+functions and stoic functions.
