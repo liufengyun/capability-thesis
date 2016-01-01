@@ -157,11 +157,11 @@ are effect-disciplined in the sense that the only way for stoic
 functions to have side effects is to pass a capability as parameter,
 thus it can be captured by the type system.
 
-It's important to note that stoic functions are not necessarily pure
-functions. Stoic functions can have side effects, and if they do have
-side effects they are honest about that in their type signature. For
-example, following function \emph{hello} is a stoic function which has
-IO effects\footnote{For the sake of readability, we'll use a syntax
+Stoic functions are not necessarily pure functions. Stoic functions
+can have side effects, and if they do have side effects they are
+honest about that in their type signature. For example, following
+function \emph{hello} is a stoic function which has IO
+effects\footnote{For the sake of readability, we'll use a syntax
   similar to Scala. However, we'll use $\to$ for the type of stoic
   functions, and $\Rightarrow$ for free functions.}.
 
@@ -169,23 +169,22 @@ IO effects\footnote{For the sake of readability, we'll use a syntax
   def hello(c:IO) = println("hello, world!", c)
 \end{lstlisting}
 
-In the following code snippet, we can be sure that the function
-\emph{f} is pure, as it doesn't take any capability as parameter. In
-the definition of \emph{f}, it's impossible to call functions to
-create side effects, as in STLC-Pure all functions that can have side
-effects take some capability as parameter.
+In the following code snippet, the function \emph{f} must be pure, as
+it doesn't take any capability as parameter.
 
 \begin{lstlisting}[language=Scala]
   def twice(f: Int -> Int)(x: Int) = f (f x)
 \end{lstlisting}
 
+In the definition of \emph{f}, it's impossible to call functions to
+create side effects, as in STLC-Pure all functions that can have side
+effects take some capability as parameter.
+
 \subsubsection{Where do Effects Come From}
 
-Careful readers might have noticed that in current effect system,
-there is no formalization of effects. Indeed, that's an intentional
-design choice. We assume the existence of primitive functions like
-\emph{println} and \emph{readln}, which take capability parameters to
-create side effects.
+There is no formalization of effects in current effect system. We
+assume the existence of primitive functions like \emph{println} and
+\emph{readln}, which take capabilities to create side effects.
 
 \begin{lstlisting}[language=Scala]
   def println: String -> IO -> ()
@@ -197,42 +196,35 @@ create side effects.
 
 \subsubsection{Where do Capabilities Come From}
 
-In current system it is impossible to create capabilities. Where do
-capabilities come from?  There are two possible answers. The first one
-is that all capabilities are from the run-time and passed to the
-program through the \emph{main} method.
+It is impossible to create capabilities in current system. Where do
+capabilities come from?  There are two possible answers: (1) all
+capabilities are from the run-time and passed to the program through
+the \emph{main} method. (2) there are no capabilities; they can be
+erased before evaluation, without affecting meaning of the program.
 
-The second one is that there are no capabilities. Capabilities can be
-erased before evaluation in principle, without affecting meaning of
-the program. However, in this study we only state this observation
-informally and leave the formal proof to future studies.
+% However, in this study we only state this observation informally and
+% leave the formal proof to future studies.
 
 \subsubsection{Why Treat Variables as Values}
 
-As discussed above, in current system, there is no way to create a
-value of capabilities. It means that a function taking a parameter of
-the capability type can never be evaluated, as the call-by-value
-semantics require the right-hand side of an application to be a
-value. The same is true for the base type B -- there is no way to
-create a value of type B, thus a function taking a parameter of the
-base type can never be evaluated too.
+As discussed above, there is no way to create a value of capabilities
+explicitly. Thus, a function taking a parameter of the capability type
+can never be evaluated in the \emph{call-by-value} semantics, unless
+variables are values. The same is true for the base type B.
 
-A soundness proof for such a system is not very convincing, as
-substitution of a term with a value of the base type or capability
-type can never happen in the system. Instead, if we treat variables as
-values, functions that takes a parameter of the base type or
-capability type can be evaluated with a variable of the base type or
-capability type. This makes the preservation proof more convincing.
+Treating variables as values ensures that substitution of a term with
+a value of the base type or capability type can actually happen in the
+system, thus makes the preservation proof more convincing.
 
-Adding variables as values doesn't break soundness or effect safety of
-the system. In fact, in adding variables as values, we only added 5
-lines of code in our soundness proof, and effect safety proof remains
-the same.
+% Adding variables as values doesn't break soundness or effect safety of
+% the system. In fact, in adding variables as values, we only added 5
+% lines of code in our soundness proof, and effect safety proof remains
+% the same.
 
 \subsubsection{What If a Function Has More than One Side Effect}
 
-The current system doesn't support a function to have more than one
-kind of effects. For example, in the following code snippet, $c1$
+There is no support for a function with more than one kind of effects
+in current system. For example, in the following code snippet, $c1$
 can't be used in the function body, as it's removed by \emph{pure} in
 the typing of the function body.
 
@@ -244,11 +236,9 @@ the typing of the function body.
 \end{lstlisting}
 
 It's straight-forward to extend the system with pairs or tuples to
-overcome the limit of the current system. However, in later chapters
-we'll see systems where there exists functions that are not restricted
-by the variable-capturing discipline.  In those systems, this problem
-is no longer an issue, thus we don't pursue the extension of pairs and
-tuples here.
+overcome the limitation. However, this is not an issue for systems
+with \emph{free functions}, thus we don't pursue the extension of
+pairs and tuples here.
 
 \subsection{Soundness}
 

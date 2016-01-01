@@ -58,8 +58,8 @@ incurs some notational burden on programmers, thus is not well
 received in the Scala community.
 
 Monad-based effect systems have a success in Haskell. However, as we
-will see, monad-based effect systems only work in lazy evaluation
-languages, which is not a good fit for Scala because Scala is
+will explain, monad-based effect systems only work in lazy evaluation
+languages; it is unsuitable for Scala because Scala is
 strict. On the other hand, monad-based effect systems also face the
 problem of \emph{effect polymorphism}. As reported in Chapter 1
 section 6 of the thesis\cite{lippmeier2009type}, almost every general
@@ -97,13 +97,13 @@ capability variables in a stoic function will generate an error:
 \begin{lstlisting}[language=Scala]
 def map(xs: List[Int], f: Int => Int): List[Int]
 def pmap(xs: List[Int], f: Int -> Int): List[Int]
-def print(x: Any)(implicit c: IO): ()
+def print(x: Any, c: IO): ()
 
-def bar(xs: List[Int])(implicit c: IO) =
-    map(xs, { x => print(x); x })
+def bar(xs: List[Int])(c: IO) =
+    map(xs, { x => print(x, c); x })
 
-def foo(xs: List[Int])(implicit c: IO) =
-    pmap(xs, { x => print(x); x })    // Error, can't capture c:IO
+def foo(xs: List[Int], c: IO) =
+    pmap(xs, { x => print(x, c); x })    // Error, can't capture c
 \end{lstlisting}
 
 With the combination of free functions and stoic functions,
@@ -129,7 +129,7 @@ type system ensures that the first \emph{map} is typed as pure while
 the second \emph{map} can only have IO effects, and both are stoic
 functions. It's straight-forward to add new \emph{map} interfaces to
 allow more kinds of exceptions without changing the implementation. If
-the liberary author doesn't care what effects there might have, he can
+the liberary author doesn't care what effects there might be, he can
 expose the function \emph{mapImpl} directly to users.  We'll see
 details of effect polymorphism in the system STLC-Impure in Section
 \ref{sec:effect-polymorphism}.
