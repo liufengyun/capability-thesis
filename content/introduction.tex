@@ -10,21 +10,21 @@ and contributions of this study.
 The main motivation is to turn Scala into an effect-disciplined
 programming language. Currently, Scala doesn't have the ability to
 track effects in the type system. This poses a problem in distributed
-and parallel programming. For example, in parallel computing, there's
-often the need to stipulate that the functions passed to \emph{pmap}
-have no side effects.
+and parallel computations. For example, in parallel computing, there's
+often the need to stipulate that the functions passed to the function
+\emph{pmap} have no side effects.
 
 \begin{lstlisting}[language=Scala]
 def pmap(xs: List[Int], f: Int => Int): List[Int]
 \end{lstlisting}
 
 However, currently it's impossible for the library author to impose
-the constraint in the type system. A central problem in introducing an
-effect system in Scala is how to handle the problem of \emph{effect
-  polymoprhism}.
+the constraint in the type system. The central problem in introducing
+a practical effect system in Scala is how to handle the problem of
+\emph{effect polymoprhism}.
 
 The problem of \emph{effect polymorphism} can be illustrated by the
-\emph{map} function:
+function \emph{map}:
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -52,19 +52,19 @@ variable for the generic effect:
 def map[A, B](f: A -> B)(l: List[A]): List[B] @pure(f)
 \end{lstlisting}
 
-The annotation says that the effect of \emph{map} depends on the
-function \emph{f}. Despite the syntactical improvements, it still
-incurs some notational burden on programmers, thus is not well
+The annotation $@pure(f)$ says that the effect of \emph{map} depends
+on the function \emph{f}. Despite the syntactical improvements, it
+still incurs some notational burden on programmers, thus is not well
 received in the Scala community.
 
 Monad-based effect systems have a success in Haskell. However, as we
-will explain, monad-based effect systems only work in lazy evaluation
-languages; it is unsuitable for Scala because Scala is
-strict. On the other hand, monad-based effect systems also face the
-problem of \emph{effect polymorphism}. As reported in Chapter 1
-section 6 of the thesis\cite{lippmeier2009type}, almost every general
-purpose higher-order function in Haskell needs both a monadic version
-and non-monadic version. For example, following code snippet shows the
+will explain, monad-based effect systems only work in lazy languages;
+it is unsuitable for Scala because Scala is strict. On the other hand,
+monad-based effect systems also face the problem of \emph{effect
+  polymorphism}. As reported in Chapter 1 section 6 of the
+thesis\cite{lippmeier2009type}, almost every general purpose
+higher-order function in Haskell needs both a monadic version and
+non-monadic version. For example, following code snippet shows the
 signature for two versions of the \emph{map} function. The duplication
 of code is a pity for programmers.
 
@@ -92,7 +92,7 @@ called \emph{stoic functions}, while functions don't oberve the
 discipline are called \emph{free functions}. We use $\to$ to denote
 the type of stoic functions and $\Rightarrow$ to denote the type of
 free functions. Following example shows that incorrect capturing of
-capability variables in a stoic function will generate an error:
+capability variables in a stoic function will generate a typing error:
 
 \begin{lstlisting}[language=Scala]
 def map(xs: List[Int], f: Int => Int): List[Int]
@@ -124,14 +124,14 @@ polymorphic implementation is required here:
 \end{lstlisting}
 
 This example shows that the function \emph{f} passed to the two
-\emph{map}s must be pure or only have IO effects respecitvely. The
-type system ensures that the first \emph{map} is typed as pure while
-the second \emph{map} can only have IO effects, and both are stoic
-functions. It's straight-forward to add new \emph{map} interfaces to
-allow more kinds of exceptions without changing the implementation. If
-the liberary author doesn't care what effects there might be, he can
-expose the function \emph{mapImpl} directly to users.  We'll see
-details of effect polymorphism in the system STLC-Impure in Section
+\emph{map}s must be pure or only have IO effects. The type system
+ensures that the first \emph{map} is typed as pure while the second
+\emph{map} can only have IO effects, and both are stoic
+functions. It's straight-forward to add a new \emph{map} interface to
+allow exceptions without changing the implementation. If the library
+author doesn't care what effects there might be, he can expose the
+function \emph{mapImpl} directly to users.  We'll see details of
+effect polymorphism in the system STLC-Impure in Section
 \ref{sec:effect-polymorphism}.
 
 \subsection{Contributions}
@@ -139,28 +139,33 @@ details of effect polymorphism in the system STLC-Impure in Section
 The main contributions of this study are as follows:
 
 \begin{itemize}
-\item Formulated and proved soundness and effect safety of four
+\item We formulated and proved soundness and effect safety of four
   capability-based effect systems, which can serve as the fundation
   for implementing capability-based effect system in functional
   programming languages. The formalization is done in Coq based on the
   locally-nameless representation\cite{chargueraud-11-ln} and hosted
   on github\footnote{\url{https://github.com/liufengyun/stoic}}.
-\item Proposed an approach to solve the problem of \emph{effect
+\item We proposed an approach to solve the problem of \emph{effect
     polymorphism} in capability-based effect systems with both free
   functions and stoic functions (Section
-  \ref{sec:effect-polymorphism}). The solution is much simpler and
-  more elegant than in type-and-effect systems and monad-based effect
-  systems.
+  \ref{sec:effect-polymorphism}), which is simpler than in
+  type-and-effect systems and monad-based effect systems.
 \end{itemize}
 
 \subsection{Structure of Report}
 
 In following chapters, we'll introduce four systems of increasing
-complexity, namely STLC-Pure, F-Pure, STLC-Impure and F-Impure.
+complexity, namely STLC-Pure, F-Pure, STLC-Impure and F-Impure. The
+latter three is a gradual enrichment of STLC-Pure with free functions,
+subtyping and universal types.
 
 \begin{itemize}
-\item STLC-Pure is an variant of STLC with only stoic functions.
+\item STLC-Pure is an variant of \emph{simply typed lambda-calculus}
+  with only stoic functions.
 \item STLC-Impure is an extension of STLC-Pure with free functions and subtyping.
 \item F-Pure is an extension of STLC-Pure with universal types.
 \item F-Impure is an extension of F-Pure with free functions.
 \end{itemize}
+
+We discuss \emph{effect polymorphism} in the chapter STLC-Impure
+(Section \ref{sec:effect-polymorphism}).
