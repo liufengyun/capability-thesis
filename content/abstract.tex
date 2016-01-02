@@ -1,36 +1,16 @@
 \section*{\centering Abstract}
 \addcontentsline{toc}{section}{Abstract}
 
-Type-and-effect systems have been around for about thirty years. But
-they have never gained popularity in the programming community, mainly
-due to the verbosity of its syntax. \emph{Monad-based} effect systems
-have a successful story in Haskell, but these systems can't handle
-\emph{effect polymorphism} well.  Haskell programmers often need to
-maintain both a monadic and non-monadic version of the same code.
+The problem of \emph{Effect polymoprhism} is the main obstacle to the
+wide adoption of effect systems. The absence of effect systems reduces
+compiler optimization opportunities of pure functions and decreases
+design flexibility of imposing effect constraints on the API in
+parallel and distributed computations.
 
-In this study we took another approach and investigated
-\emph{capability-based} effect systems. In such systems, an instance
-of capability is required to make side effects, and capabilities are
-passed via function parameters. Thus, by tracking capabilities in the
-type system, we can track effects in the program. To ensure
-capabilities are passed as function parameters instead of being
-captured from the environment, we introduced \emph{stoic functions}
-which observe a \emph{variable-capturing discipline} , in contrast to
-\emph{free functions}, which have no constraints in capturing
-variables.
 
-Generally speaking, capability-based effect systems are easier to
-understand and use than monad-based effect systems. More importantly,
-equipped with stoic functions and free functions, capability-based
-systems can handle \emph{effect polymorphism} elegantly. These merits
-make capability-based effect systems stand a better chance to be
-adopted by the programming community.
-
-In this report, we present four capability-based type-and-effect
-systems of increasing complexity, namely STLC-Pure, STLC-Impure,
-F-Pure and F-Impure. STLC-Pure is a variant of standard STLC with only
-stoic functions, and the latter three is a gradual enrichment of
-STLC-Pure with free functions, subtyping and universal types. We
-discuss the subtleties of the meta-theories of each system. We also
-show how to solve the problem of effect polymorphism with the
-combination of free functions and stoic functions.
+We show that \emph{capability-based} effect systems, when equipped
+with \emph{stoic functions} and \emph{free functions}, can easily
+solve the problem of \emph{effect polymorphism} without incurring any
+notational burden. This advantage makes capability-based effect
+systems stand a better chance to be adopted by the programming
+community.
