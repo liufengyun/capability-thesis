@@ -6,11 +6,12 @@ trait of capability-based effect systems. The interplay between
 programming patterns that trivially solve the problem of \emph{effect
   polymorphism}.
 
-Capability-based effect systems must be paired with strict evaluation,
-just like monad-based effect systems must be paired with lazy
-evaluation. A limitation in the two proposed systems with universal
-types, namely F-Pure and F-Impure, is that it's impossible to abstract
-over capability types.
+Capability-based effect systems have to be paired with strict
+evaluation, just like monad-based effect systems have to be paired
+with lazy evaluation.
+
+In the two proposed systems with universal types, namely F-Pure and
+F-Impure, it's impossible to abstract over capability types.
 
 \subsection{Related Work}
 
@@ -20,13 +21,13 @@ effect type parameterization \cite{lucassen1988polymorphic}, which is
 further developed by Talpin and Jouvelot to provide type-and-effect
 inference \cite{talpin1992polymorphic, talpin1994type}.
 
-Moggi introduced the usage of monads for effectful
-computations\cite{moggi1991notions}. Wadler popularized the usage of
+Moggi introduced the usage of monads for computation
+effects\cite{moggi1991notions}. Wadler popularized the usage of
 monads\cite{wadler1992comprehending, wadler1995monads} and proved that
 it's possible to transpose any type-and-effect system into a
 corresponding monad system\cite{wadler2003marriage}. Lippmeier
 proposed the usage of region variables and dependently kinded witness
-to encode mutability polymoprhism\cite{lippmeier2009witnessing}.
+to encode mutability polymorphism\cite{lippmeier2009witnessing}.
 
 Lukas \emph{et al.}  studied type-and-effect system for
 Scala\cite{rytz2012lightweight, rytz2013flow, lukas2014effect}.  In
@@ -40,16 +41,19 @@ plugin for the Scala compiler.
 
 Heather \emph{et al.} proposed a special function type called
 \emph{spores} for Scala\cite{miller2014spores}. Compared to normal
-functions, spores observe a variable capturing discipline -- the set
-of types allowed or not allowed to be captured is part of the type
-signature of spores, and can be flexibly customized by programmers.
+functions, spores observe a variable capturing discipline. The set of
+types allowed or not allowed to be captured is part of the type
+signature of spores, and can be flexibly customized by
+programmers. Spores are well suited for distributed and parallel
+computations, but don't generalize to a practical effect system.
 
 Crary \emph{et al.} proposed a capability calculus for typed
 region-based memory management\cite{crary1999typed}. The safety of
 deallocation of memory can be guaranteed by the type system. In the
 capability calculus, capabilities are sets of regions that are
 presently valid to access, in contrast to the abstract meaning of
-capabilities in our systems.
+capabilities in our systems. The difference is mainly due to the
+different focus of effects under study.
 
 \subsection{Future Work}
 

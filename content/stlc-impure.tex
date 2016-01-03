@@ -10,11 +10,11 @@ the system STLC-Pure.
 
 \subsection{Definitions}
 
-Initially, we arrived at a formualtion of the system shown in
+Initially, we arrived at a formulation of the system shown in
 Figure~\ref{fig:stlc-impure-definition-first}. It's a straight-forward
-extension of SLTC-Pure with subtyping and free functions.
+extension of STLC-Pure with subtyping and free functions.
 
-The definition is all good, except that perservation breaks. The
+The definition is all good, except that preservation breaks. The
 problem is caused by using an impure term as \emph{Top}. To see a
 concrete example, let's assume $\Gamma = \{c:E\}$. It's obvious that
 following term is well-typed under $\Gamma$ as $B \to Top$:
@@ -29,7 +29,7 @@ However, after one evaluation step\footnote{Note that variables are
   $\lambda x:B. c$.}, we get the term $\lambda y:B. \; c$, which can
 at best be typed as $B \Rightarrow Top$. Thus preservation doesn't
 hold in current formulation. This problem leads us to two different
-formuations.
+formulations.
 
 \begin{figure}
 \begin{framed}
@@ -145,7 +145,7 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 The first one is to introduce two different Top types, one is pure and
 the other is impure\footnote{This idea is suggested by Sandro
   Stucki.}. The capability type E and free function type
-$S \Rightarrow T$ are not subtype of the pure Top. The subtyping
+$S \Rightarrow T$ are not subtypes of the pure Top. The subtyping
 hierarchy is shown in
 Figure~\ref{fig:stlc-impure-subtyping-tree}. This formulation works
 well, and we've proved soundness and effect safety for the
@@ -317,23 +317,21 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 Note that in current system, we need to change the definition of the
 function \emph{pure} to exclude free function types from the pure
 environment. This restriction is important, because there's no way to
-know what side effects there might be inside free functions. If we
-allow stoic functions to have access to free functions, we'll loose
-the ability to track the effects of stoic functions in the type
-system.
+know what side effects there might be inside free functions. If stoic
+functions have access to free functions, we'll loose the ability to
+track the effects of stoic functions in the type system.
 
 In principle, we can keep some free functions that can never be called
 in the pure environment, such as $(B \to E) \Rightarrow B$, as it's
 impossible to get an actual instance of the inhabitable type $B \to E$
-in order to call this function. However, from the perspective of
-practicity, it's not useful to have functions in the environment if
-they can never be called. Thus, to simplify the system without
-sacrificing usability, we removed all free function types from the
-pure environment.
+in order to call this function. However, it's not useful to have
+functions in the environment if they can never be called. Thus, to
+simplify the system without sacrificing usability, we removed all free
+function types from the pure environment.
 
 \subsection{Soundness}
 
-We proved both progress and preservation in Coq.
+We proved both progress and preservation of the system.
 
 \begin{theorem}[Progress]
 If $\varnothing \vdash t : T$, then either $t$ is a value or there is some
@@ -346,7 +344,7 @@ If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
 \end{theorem}
 
 As you can imagine, now we need two different substitution lemmas in
-the proof of perservation, corresponding to the two reduction rules.
+the proof of preservation, corresponding to the two reduction rules.
 
 \begin{lemma}[Subsitution-Not-Top]
   If $\Gamma,\; x:S \vdash t : T$, $S \neq Top$, s is a value and
@@ -357,9 +355,8 @@ the proof of perservation, corresponding to the two reduction rules.
   If $\Gamma,\; x:Top \vdash t : T$, then $\Gamma \vdash [x \mapsto top]t : T$.
 \end{lemma}
 
-We restrict $s$ to be a value in the lemma
-\emph{Substitution-Not-Top}, for the same reason as we've seen in the
-system STLC-Pure, thus we don't reiterate here.
+We restrict $s$ to be a value in the lemma \emph{Substitution-Not-Top}
+for the same reason as in the system STLC-Pure.
 
 \subsection{Effect Safety}
 
@@ -397,7 +394,7 @@ $S \Rightarrow T$, any term that can be typed as the former can also
 be typed as the latter.
 
 As in the system STLC-Pure, the proof of these two statements depends
-on a weaker and more general statement about \emph{healthy
+on two weaker and more general statements about \emph{healthy
   environments}. If we can arrive at such a definition of
 \emph{healthy environment} that a pure and inhabitable environment is
 also healthy, then it suffices to prove following two statements about
@@ -430,19 +427,19 @@ environments. A pure and inhabitable environment is no longer
 healthy. For example, the type $B \to B \Rightarrow B$ is pure and
 inhabitable, but it's not \emph{capsafe}.
 
-On ther other hand, we can't do the opposite to take $S \Rightarrow T$
+On the other hand, we cannot do the opposite to take $S \Rightarrow T$
 as \emph{capsafe}, as it would allow calling free functions in healthy
 environments; the second statement of effect safety breaks. In the
 meanwhile, the pure and inhabitable type $(B \Rightarrow E) \to E$ is
 not \emph{capsafe}, thus a pure and inhabitable environment is no
 longer a healthy environment.
 
-This dilemma prompts us to reexamin the meaning of \emph{capsafe} and
+This dilemma prompts us to reexamine the meaning of \emph{capsafe} and
 \emph{caprod}. When these facilities were first introduced in
 STLC-Pure, they were formulated in terms of the provability of the
 capability type E. From the perspective of provability of E, $S \to T$
 and $S \Rightarrow T$ don't make much difference. Thus, free function
-types should be formulated the same way as sotic function types. We
+types should be formulated the same way as stoic function types. We
 tried this approach, and it worked\footnote{Sandro Stucki first
   suggested to take this approach.}. The full formulation is presented
 in Figure~\ref{fig:stlc-impure-healthy-definition}.
@@ -510,23 +507,21 @@ in Figure~\ref{fig:stlc-impure-healthy-definition}.
 
 Now a healthy environment is no longer pure. For example, the type
 $B \Rightarrow B$ is \emph{capsafe}, but it's not pure. As a
-consequence of this formulation, we need sligtly update the definition
-of the second statement of effect safety:
+consequence, we need to slightly update the definition of the second
+statement of effect safety:
 
 \begin{definition}[Effect-Safety-2']
   If $\Gamma$ is pure and healthy, and $\Gamma \vdash t_1 \; t_2 : T$,
   then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-\emph{Why this formulation of healthy environment is acceptable?} In
-short, because the statement \emph{Effect-Safety-1} and
+Why this formulation of healthy environment is acceptable? In short,
+it's because the statement \emph{Effect-Safety-1} and
 \emph{Effect-Safety-2'} logically imply the statement
 \emph{Effect-Safety-Inhabitability-1} and
-\emph{Effect-Safety-Inhabitability-2} respectively. Therefore, it
-suffices to prove the statement \emph{Effect-Safety-1} and
-\emph{Effect-Safety-2'}.
+\emph{Effect-Safety-Inhabitability-2} respectively.
 
-The logical implication holds because a pure and inhabitable
+The logical implications hold because a pure and inhabitable
 environment is also a healthy (and pure) environment. This claim has
 been formally proved:
 
@@ -536,23 +531,29 @@ been formally proved:
 \end{lemma}
 
 \begin{theorem}[Inhabitable-Pure-Healthy]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is healthy.
 \end{theorem}
 
 \begin{theorem}[Inhabitable-Pure-Healthy']
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also pure and
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is pure and
   healthy.
 \end{theorem}
 
 Note that the last theorem follows immediately from the second one, as
 we already know from the premise that $\Gamma$ is pure.
 
+% From the theorems above, it's obvious that any property proved for a
+% healthy (and pure) environment also holds for a pure and inhabitable
+% environment. Therefore, it suffices to prove the statement
+% \emph{Effect-Safety-1} and \emph{Effect-Safety-2'}.
+
 \subsubsection{Proof}
 
 The proof of the first statement of effect safety is almost the same
-as in STLC-Pure. In the presence of subtyping, we need to add a lemma
-\emph{Capsafe-Sub}.  The first effect safety statement follows
-immediately from the lemma \emph{Healthy-Capsafe}.
+as in STLC-Pure. The only change worth mention is that, in the
+presence of subtyping, an additional lemma \emph{Capsafe-Sub} is
+required.  The first effect safety statement follows immediately from
+the lemma \emph{Healthy-Capsafe}.
 
 \begin{lemma}[Capsafe-Not-Caprod]
  If type T is capsafe, then T is not caprod.
@@ -571,7 +572,7 @@ immediately from the lemma \emph{Healthy-Capsafe}.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety-1]
-  If $\Gamma$ is healhty, then there doesn't exist term $t$ with
+  If $\Gamma$ is healthy, then there doesn't exist term $t$ with
   $\Gamma \vdash t : E$.
 \end{theorem}
 
@@ -732,7 +733,7 @@ variables can be captured by $t_1$?
   \Rightarrow V) \to S \Rightarrow T$.
 \end{center}
 
-As the functioin is stoic, the only impure variable can be captured is
+As the function is stoic, the only impure variable can be captured is
 $f$. Now, if we supply a stoic function as parameter to the function,
 it has the same effect as saying that $f$ has the type $U \to
 V$.
@@ -745,8 +746,8 @@ justification for the axiom \textsc{Ax-Poly}.
 
 Effect polymorphism is an advantage of capability-based effect systems
 over monad-based effect systems. In Haskell, there is always the need
-to maintain two copies of higher-order functions, as following code
-snippet shows:
+to maintain two copies of higher-order functions, as demonstrated by
+following code:
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
@@ -765,9 +766,9 @@ snippet shows:
 \end{lstlisting}
 
 The non-monadic version and the monadic version of code are the same
-in essence. It's a pity that we have to duplicate the same code twice
-in monad-based effect systems. In capability-based effect systems, we
-only need to maintain one copy of the code:
+in essence. It's a pity that we have to duplicate the same code. In
+capability-based effect systems, only one copy of the code is
+required:
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -780,11 +781,11 @@ only need to maintain one copy of the code:
 The \emph{map} function above has the type
 $(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. Is \emph{map} a
 pure function? It depends on how it's used. When supplied with a
-function $f$ of type $A \Rightarrow B$ with side effects, \emph{map f}
-has the type $List[A] \Rightarrow List[B]$, thus is impure. When
-supplied with a pure function $f$ of type $A \to B$, \emph{map f} can
-be typed as $List[A] \to List[B]$ according to the axiom
-\textsc{Ax-Poly}, thus is pure.
+function $f$ of the type $A \Rightarrow B$ with side effects,
+\emph{map f} has the type $List[A] \Rightarrow List[B]$, thus is
+impure. When supplied with a pure function $f$ of the type $A \to B$,
+\emph{map f} can be typed as $List[A] \to List[B]$ according to the
+axiom \textsc{Ax-Poly}, thus is pure.
 
 Following code snippet demonstrates the usage of \emph{map} in both
 pure and impure settings.
@@ -826,5 +827,5 @@ In the code above, we only have one implementation of the function
 \emph{private}. All callings of the \emph{map} function has to go
 through the two exposed interface. The two interfaces imposes that the
 passed function \emph{f} must either be pure or only have IO side
-effects. It straight-forward to add a new interface to allow exception
-effects without changing the implementation.
+effects. It's straight-forward to add a new interface to allow
+exception effects without changing the implementation.

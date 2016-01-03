@@ -6,7 +6,7 @@ seen as an extension of the system STLC-Impure with universal types,
 but without subtyping. Extending the system with subtyping would lead
 us to bounded quantification, which we are still working on. Given the
 importance of parametric polymorphism and the fact that subtyping is
-not a necessary addon of functional programming, the system
+not a necessary add-on of functional programming, the system
 \emph{F-Impure} deserves a separate presentation here.
 
 We'll first introduce the formalization, then discuss soundness and
@@ -129,26 +129,24 @@ F-Pure, with the difference from the system F-Impure highlighted. As
 can be seen from the figure, we introduced free function types and
 added a typing rule for free functions. As we have no subtyping in the
 system, we have to add a \textsc{T-Degen} rule to restore the
-subtyping relationship between stoic function types and free function
+subtyping relation between stoic function types and free function
 types.
 
-As in STLC-Impure, we also adapted the definition of \emph{pure} to
-exclude free function types from pure environments. If we allow stoic
-functions to have access to free functions, we'll loose the ability to
-track the effects of stoic functions in the type system.
+As in STLC-Impure, we adapted the definition of \emph{pure} to exclude
+free function types from pure environments. If stoic functions have
+access to free functions, we'll loose the ability to track the effects
+of stoic functions in the type system.
 
 A different design choice we could make is to introduce free universal
-abstractions in the system. From the viewpoint of practicality, such
-an extension will not be very useful in real-world programming, as in
-practice polymorphic functions rarely capture free variables, not
-mention capability variables. Thus for the sake of simplicity, we
-don't pursue the extension here.
+abstractions in the system. Such an extension will not be very useful
+in real-world programming, as in practice polymorphic functions rarely
+capture free variables, not mention capability variables. Thus for the
+sake of simplicity, we don't pursue the extension.
 
 \subsection{Soundness}
 
-We proved both progress and preservation in Coq. The subtleties in the
-proof are the same as stated in system F-Pure, thus we don't reiterate
-there.
+We proved both progress and preservation of the system. The subtleties
+in the proof are the same as stated in the system F-Pure.
 
 \begin{theorem}[Progress]
 If $\varnothing \vdash t : T$, then either $t$ is a value or there is some
@@ -162,13 +160,13 @@ If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
 
 \subsection{Effect Safety}
 
-We'll first introduce the formulation, which is a combination of the
-formualtion in STLC-Impure and F-Pure, then discuss the proof of
+We first introduce the formulation, which is a combination of the
+formulation in STLC-Impure and F-Pure, then discuss the proof of
 effect safety.
 
 \subsubsection{Formulation}
 
-As in the system STLC-Impure, in the presence of free functions, we'll
+As in the system STLC-Impure, in the presence of free functions, we
 need two statements of effect safety:
 
 \begin{definition}[Effect-Safety-Inhabitability-1]
@@ -183,8 +181,8 @@ need two statements of effect safety:
 \end{definition}
 
 
-As in the system STLC-Pure, the proof of these two statements depends
-on a weaker and more general statement about \emph{healthy
+As in the system STLC-Impure, the proof of these two statements
+depends on two weaker and more general statements about \emph{healthy
   environments}. Given that we've seen how universal types and free
 function types are extended in the formulation of \emph{healthy
   environment}, we can easily combine them to arrive at the
@@ -264,23 +262,11 @@ with the changes from F-Pure highlighted.
 \label{fig:f-impure-healthy-definition}
 \end{figure}
 
-\emph{Why this formulation of healthy environment is acceptable?} We
-need to ensure that a pure and inhabitable environment is also a
-healthy environment. This claim has been formally proved:
-
-\begin{lemma}[Inhabitable-Capsafe]
-  If the type T is inhabitable, then either T is capsafe or $T = E$ or
-  T is a free function type.
-\end{lemma}
-
-\begin{theorem}[Inhabitable-Pure-Healthy]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
-\end{theorem}
-
-From the theorem above, it's obvious that any property proved for a
-healthy environment also holds for a pure and inhabitable
-environment. Thus, it suffices to prove the following statements about
-healthy environments.
+Why this formulation of healthy environment is acceptable? In short,
+it's because the statement \emph{Effect-Safety-Inhabitability-1} and
+\emph{Effect-Safety-Inhabitability-2} are logically implied by the
+statement \emph{Effect-Safety-1} and \emph{Effect-Safety-2}
+respectively.
 
 \begin{definition}[Effect-Safety-1]
   If $\Gamma$ is healthy, there doesn't exist $t$ with
@@ -292,31 +278,46 @@ healthy environments.
   then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-Note that in the second statement of effect safety, we also impose
-that $\Gamma$ is pure. This is exactly the same case as we've seen in
-the system STLC-Impure. The justification is that the statement
-\emph{Effect-Safety-1} and \emph{Effect-Safety-2} logically imply the
-statement \emph{Effect-Safety-Inhabitability-1} and
-\emph{Effect-Safety-Inhabitability-2} respectively, thus it suffices
-to prove the statement \emph{Effect-Safety-1} and
-\emph{Effect-Safety-2}.
+The logical implications hold because a pure and inhabitable
+environment is also a healthy (and pure) environment. This claim has
+been formally proved:
+
+\begin{lemma}[Inhabitable-Capsafe]
+  If the type T is inhabitable, then either T is capsafe or $T = E$ or
+  T is a free function type.
+\end{lemma}
+
+\begin{theorem}[Inhabitable-Pure-Healthy]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
+\end{theorem}
+
+\begin{theorem}[Inhabitable-Pure-Healthy']
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is pure and
+  healthy.
+\end{theorem}
+
+Note that the last theorem follows immediately from the second one, as
+we already know from the premise that $\Gamma$ is pure.
+
+% From the theorem above, it's obvious that any property proved for a
+% healthy environment also holds for a pure and inhabitable
+% environment. Thus, it suffices to prove the following statements about
+% healthy environments.
 
 \subsubsection{Proof}
 
-The proof of the first effect safety statement is nearly the same as
-in the system F-Pure, thus we don't reiterate here.
+The proof of the first effect safety statement is almost the same as
+in the system F-Pure, thus we omit here.
 
-When we come the the proof of the second statement of effect safety,
-we encounter the same problem as in system STLC-Impure. We need to
-assume a set of axioms, as shown in
-Figure~\ref{fig:f-impure-definition}. We highlighted the new added
-axioms to the axioms in STLC-Impure. The justification for the axioms
+The proof of the second statement of effect safety faces the same
+problem as in the system STLC-Impure. We need to assume a set of
+axioms, as shown in Figure~\ref{fig:f-impure-axioms}, with the newly
+added axioms highlighted. The justification for the axiom
 \textsc{Ax-All} and \textsc{Ax-Var} is the same as the justification
-for the axiom \textsc{Ax-Base}, which we've seen in the system
-STLC-Impure. In short, because the outer function is stoic and the
-parameter is pure, the inner function can actually capture no
-capabilities or free functions, thus it's fair enough to type the
-inner function as stoic as well.
+for the axiom \textsc{Ax-Base} in STLC-Impure. In short, because the
+outer function is stoic and the first parameter is pure, the inner
+function cannot capture variables of capabilities or free functions,
+thus it's fair enough to type the inner function as stoic.
 
 \begin{figure}[h]
 \begin{framed}
@@ -376,7 +377,7 @@ typed under $pure(\Gamma), X$, which is equal to $pure(\Gamma,
 X)$. Thus, it's fair enough to type the inner function as stoic.
 
 The justification for the axiom \textsc{Ax-Poly} is the same as given
-in STLC-Impure, thus we don't reiterate here.
+in STLC-Impure, thus we omit here.
 
 Assuming these axioms, it's straight-forward to prove a lemma
 \emph{Healthy-Pure-Stoic}, and the second statement of effect safety

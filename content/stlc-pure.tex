@@ -272,9 +272,8 @@ If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
 \end{lemma}
 
 However, this substitution lemma doesn't hold in current system. For a
-counter-example, let's assume that $\Gamma = \{f: E \to B,\;
-  c:E\}$, then it's obviously that following two typings hold:
-
+counter-example, let's assume that $\Gamma = \{f: E \to B,\; c:E\}$,
+then it's obviously that following two typing relations hold:
 
 $\{f: E \to B,\; c:E\},\; x:B \vdash \lambda z:B.\,x \; : \; B \to
   B$ \\
@@ -548,10 +547,9 @@ justified to remove it from the healthy environment.
 % capable of proving E, together with a group of premises incapable of
 % proving E.
 
-\emph{Why this formulation of healthy environment is acceptable?} This
-formulation is acceptable because the statement
-\emph{Effect-Safety-Inhabitability} is logically implied by the more
-general statement \emph{Effect-Safety}:
+Why this formulation of healthy environment is acceptable? In short,
+it is because the statement \emph{Effect-Safety-Inhabitability} is
+logically implied by the more general statement \emph{Effect-Safety}:
 
 \begin{definition}[Effect-Safety]
   If $\Gamma$ is healthy, then there doesn't exist $t$ with
@@ -567,13 +565,13 @@ formally proved:
 \end{lemma}
 
 \begin{theorem}[Inhabitable-Pure-Healthy]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is healthy.
 \end{theorem}
 
-From the theorem above, it's obvious that any property proved for a
-healthy environment also holds for a pure and inhabitable
-environment. Therefore, it suffices to prove the statement
-\emph{Effect-Safety}.
+% From the theorem above, it's obvious that any property proved for a
+% healthy environment also holds for a pure and inhabitable
+% environment. Therefore, it suffices to prove the statement
+% \emph{Effect-Safety}.
 
 \subsubsection{Proof}
 
@@ -601,7 +599,7 @@ the lemma \emph{Healthy-Capsafe}.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety]
-  If $\Gamma$ is healhty, then there doesn't exist $t$ with
+  If $\Gamma$ is healthy, then there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{theorem}
 

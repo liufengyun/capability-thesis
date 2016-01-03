@@ -21,7 +21,7 @@ def pmap(xs: List[Int], f: Int => Int): List[Int]
 However, currently it's impossible for the library author to impose
 the constraint in the type system. The central problem in introducing
 a practical effect system in Scala is how to handle the problem of
-\emph{effect polymoprhism}.
+\emph{effect polymorphism}.
 
 The problem of \emph{effect polymorphism} can be illustrated by the
 function \emph{map}:
@@ -88,7 +88,7 @@ To ensure that capabilities are passed through function parameters,
 instead of being captured from the environment, we need to impose a
 \emph{variable-capturing discipline}, stipulating that capability
 variables cannot be captured. Functions observe the discipline are
-called \emph{stoic functions}, while functions don't oberve the
+called \emph{stoic functions}, while functions don't observe the
 discipline are called \emph{free functions}. We use $\to$ to denote
 the type of stoic functions and $\Rightarrow$ to denote the type of
 free functions. Following example shows that incorrect capturing of
@@ -140,7 +140,7 @@ The main contributions of this study are as follows:
 
 \begin{itemize}
 \item We formulated and proved soundness and effect safety of four
-  capability-based effect systems, which can serve as the fundation
+  capability-based effect systems, which can serve as the foundation
   for implementing capability-based effect system in functional
   programming languages. The formalization is done in Coq based on the
   locally-nameless representation\cite{chargueraud-11-ln} and hosted
