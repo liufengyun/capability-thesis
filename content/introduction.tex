@@ -128,9 +128,9 @@ This example shows that the function \emph{f} passed to the two
 ensures that the first \emph{map} is typed as pure while the second
 \emph{map} can only have IO effects, and both are stoic
 functions. It's straight-forward to add a new \emph{map} interface to
-allow exceptions without changing the implementation. If the library
-author doesn't care what effects there might be, he can expose the
-function \emph{mapImpl} directly to users.  We'll see details of
+allow exception effects without changing the implementation. If the
+library author doesn't care what effects there might be, he can expose
+the function \emph{mapImpl} directly to users.  We'll see details of
 effect polymorphism in the system STLC-Impure in Section
 \ref{sec:effect-polymorphism}.
 
