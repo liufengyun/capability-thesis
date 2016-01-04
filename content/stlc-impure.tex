@@ -773,7 +773,7 @@ required:
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
     case Nil => Nil
-    case x::xs => f(x)::map(f)(l)
+    case x::xs => f(x)::map(f)(xs)
   }
 \end{lstlisting}
 % haskell two versions of map
@@ -814,7 +814,7 @@ polymorphism work in such cases? The answer is as follows:
 \begin{lstlisting}[language=Scala]
   private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
     case Nil => Nil
-    case x::xs => f(x)::map(f)(l)
+    case x::xs => f(x)::map(f)(xs)
   }
 
   def map[A,B](f: A -> B) = mapImpl(f)
