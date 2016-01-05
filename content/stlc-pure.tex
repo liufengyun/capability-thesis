@@ -141,8 +141,9 @@ which is usually considered to be an essential feature of functional
 programming.
 
 We also tried to exclude variables of the type $E$ or $T \to E$ (for
-any T) from the pure environment. This version also rejects more types
-than necessary, thus reduces expressiveness of the system.
+any T) from the pure environment. As an over-approximation, this
+version is certainly effect-safe. However, it rejects more types than
+necessary, thus reduces expressiveness of the system.
 
 \subsubsection{Stoic Functions and Free Functions}
 
@@ -218,8 +219,9 @@ E can never be executed in the \emph{call-by-value} semantics, unless
 variables are values. The same is true for the base type B.
 
 Treating variables as values ensures that substitution of a term with
-a value of the base type B or capability type E can actually happen in
-the system, thus makes the preservation proof more convincing.
+a value of the base type B or the capability type E can actually
+happen in the system, thus makes the preservation proof more
+convincing.
 
 % Adding variables as values doesn't break soundness or effect safety of
 % the system. In fact, in adding variables as values, we only added 5
@@ -246,6 +248,8 @@ systems with \emph{free functions}, thus we don't pursue the extension
 of pairs and tuples here.
 
 \subsection{Soundness}
+
+\label{sec:stlc-pure-soundness}
 
 We follow the standard formulation of soundness in TAPL
 \cite{bpierce2002types}, which consists of \emph{progress} and
@@ -279,8 +283,8 @@ $\{f: E \to B,\; c:E\},\; x:B \vdash \lambda z:B.\,x \; : \; B \to
   B$ \\
 $\{f: E \to B,\; c:E\},\; x:B \vdash f \; c \; : \; B$
 
-However, following typing relationship doesn't hold if we replace
-$x$ with $f \; c$.
+However, following typing relation doesn't hold if we replace $x$ with
+$f \; c$.
 
 $\{f: E \to B,\; c:E\} \vdash \lambda z:B.\,f \; c \; : \; B \to B$.
 
@@ -299,7 +303,7 @@ type B can also happen. The new formulation is as follows:
 
 Interestingly, this strict evaluation requirement contrasts
 capability-based effect systems with monad-based effect systems. In
-Haskell, if it adopts strict evaluation, it will be impossible to
+Haskell, if strict evaluation is adopted, it will be impossible to
 track effects in the type system, as demonstrated by following code
 snippet:
 
@@ -350,17 +354,17 @@ $pure(\Gamma),\; x: S$ is equal to $pure(\Gamma,\; x: S)$.
 { pure(\Gamma),\; x: S \vdash t_2 : T }
 { \Gamma \vdash \lambda x:S.\;t_2 : S \to T }
 
-Thus, instead of saying a function $\lambda x:S.t_2 : S$ cannot have
-side effects inside, we can say the term $t_2$ cannot have side
-effects in a pure environment. As we know, to have side effects, we
-must supply a capability as parameter. Thus, the term $t_2$ cannot
-have side effects if we cannot construct a term of the capability type
-E in a pure environment. This observation leads us to the following
-statement of effect safety:
+Thus, instead of saying the function $\lambda x:S.t_2$ cannot have
+side effects inside, we say the term $t_2$ cannot have side effects in
+a pure environment. As we know, to have side effects, we must supply a
+capability as parameter. Thus, the term $t_2$ cannot have side effects
+if we cannot construct a term of the capability type E in a pure
+environment. This observation leads us to the following statement of
+effect safety:
 
 \begin{definition}[Effect-Safety-Informally-3]
-  It's impossible to construct a term $t$ of the capability type E in
-  a pure environment.
+  It's impossible to construct a term of the capability type E in a
+  pure environment.
 \end{definition}
 
 However, this formulation cannot be proved.  For a counter-example,
@@ -381,8 +385,8 @@ of the capability type E in this restricted environment. We arrive at
 following formulation:
 
 \begin{definition}[Effect-Safety-Informally-4]
-  It's impossible to construct a term $t$ of the capability type E in
-  a pure environment with only variables of inhabitable types.
+  It's impossible to construct a term of the capability type E in a
+  pure environment with only variables of inhabitable types.
 \end{definition}
 
 \subsubsection{Inhabitability}
@@ -409,9 +413,9 @@ the empty environment. Thus, a tentative definition is as follows:
 
 However, this definition is not satisfactory in our case, as in system
 STLC-Pure there doesn't exist values for the base type B and the
-capability type B, except variables; we do want both types to be
-inhabitable. A natural approach is to extend the empty environment
-with one variable of the base type and the capability type
+capability type E, except variables. However, we do want both types to
+be inhabitable. A natural approach is to extend the empty environment
+with one variable of the base type and one of the capability type
 respectively:
 
 \begin{definition}[Inhabitability-Second-Try]
@@ -457,8 +461,8 @@ fact, this statement is too strong -- some non-inhabitable types, such
 as $E \to B \to E$, don't enable us to create a term of the type $E$,
 thus it's safe to be kept in the environment. This implies it's
 possible to impose a looser restriction on $\Gamma$, as long as all
-inhabitable types that can appear in a pure and inhabitable
-environment can also appear in $\Gamma$.
+types that can appear in a pure and inhabitable environment can also
+appear in $\Gamma$.
 
 When we examine the problem more closely, we found that through the
 lens of \emph{Curry Howard Isomorphism}, effect safety actually says

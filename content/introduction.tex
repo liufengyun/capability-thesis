@@ -18,9 +18,9 @@ often the need to stipulate that the functions passed to the function
 def pmap(xs: List[Int], f: Int => Int): List[Int]
 \end{lstlisting}
 
-However, currently it's impossible for the library author to impose
-the constraint in the type system. The central problem in introducing
-a practical effect system in Scala is how to handle the problem of
+However, currently it's impossible for library authors to impose the
+constraint in the type system. The central problem in introducing a
+practical effect system in Scala is how to handle the problem of
 \emph{effect polymorphism}.
 
 The problem of \emph{effect polymorphism} can be illustrated by the
@@ -41,7 +41,7 @@ type-and-effect systems (such as \cite{lucassen1988polymorphic}) is to
 introduce a new type variable E to denote the generic effect:
 
 \begin{lstlisting}[language=Scala]
-def map[A, B, E](f: A -> B @E)(l: List[A]): List[B] @E
+def map[A, B, E](f: A => B @E)(l: List[A]): List[B] @E
 \end{lstlisting}
 
 A type-and-effect system has been proposed for
@@ -49,7 +49,7 @@ Scala\cite{lukas2014effect}, which avoids introducing a new type
 variable for the generic effect:
 
 \begin{lstlisting}[language=Scala]
-def map[A, B](f: A -> B)(l: List[A]): List[B] @pure(f)
+def map[A, B](f: A => B)(l: List[A]): List[B] @pure(f)
 \end{lstlisting}
 
 The annotation $@pure(f)$ says that the effect of \emph{map} depends
@@ -58,15 +58,15 @@ still incurs some notational burden on programmers, thus is not well
 received in the Scala community.
 
 Monad-based effect systems have a success in Haskell. However, as we
-will explain, monad-based effect systems only work in lazy languages;
-it is unsuitable for Scala because Scala is strict. On the other hand,
-monad-based effect systems also face the problem of \emph{effect
-  polymorphism}. As reported in Chapter 1 section 6 of the
-thesis\cite{lippmeier2009type}, almost every general purpose
-higher-order function in Haskell needs both a monadic version and
-non-monadic version. For example, following code snippet shows the
-signature for two versions of the \emph{map} function. The duplication
-of code is a pity for programmers.
+will explain (section \ref{sec:stlc-pure-soundness}), monad-based
+effect systems only work in lazy languages; it is unsuitable for Scala
+because Scala is strict. On the other hand, monad-based effect systems
+also face the problem of \emph{effect polymorphism}. As reported in
+section 1.6 of the thesis\cite{lippmeier2009type}, almost every
+general purpose higher-order function in Haskell needs both a monadic
+version and non-monadic version. For example, following code snippet
+shows the signature for two versions of the \emph{map} function. The
+duplication of code is a pity for programmers.
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
@@ -110,7 +110,7 @@ With the combination of free functions and stoic functions,
 capability-based effect systems can solve the problem of \emph{effect
   polymorphism} easily, while incurring no syntactical burden. For
 example, instead of having two versions of \emph{map}, only one
-polymorphic implementation is required here:
+polymorphic implementation is required without any annotation:
 
 \begin{lstlisting}[language=Scala]
   private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {

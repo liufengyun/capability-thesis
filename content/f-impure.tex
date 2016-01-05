@@ -125,19 +125,19 @@ pure($\Gamma$, X)  & = &  pure($\Gamma$), X  \\
 \subsection{Definitions}
 
 Figure~\ref{fig:f-impure-definition} presents the full definition of
-F-Pure, with the difference from the system F-Impure highlighted. As
+F-Impure, with the difference from the system F-Impure highlighted. As
 can be seen from the figure, we introduced free function types and
-added a typing rule for free functions. As we have no subtyping in the
-system, we have to add a \textsc{T-Degen} rule to restore the
-subtyping relation between stoic function types and free function
-types.
+added a typing rule for free functions. We have to add a
+\textsc{T-Degen} rule to restore the subtyping relation between stoic
+function types and free function types, as there is no subtyping in
+the system.
 
 As in STLC-Impure, we adapted the definition of \emph{pure} to exclude
 free function types from pure environments. If stoic functions have
 access to free functions, we'll loose the ability to track the effects
 of stoic functions in the type system.
 
-A different design choice we could make is to introduce free universal
+A different design choice we could make is to introduce free type
 abstractions in the system. Such an extension will not be very useful
 in real-world programming, as in practice polymorphic functions rarely
 capture free variables, not mention capability variables. Thus for the

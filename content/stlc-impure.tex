@@ -1,8 +1,8 @@
 \section{System STLC-Impure}
 
 This chapter describes an extension of the system STLC-Pure with free
-functions. As there's a subtyping relation between the stoic functions
-and free functions, it's natural to integrate subtyping in the system.
+functions. As there's a subtyping relation between stoic functions and
+free functions, it's natural to integrate subtyping in the system.
 
 We'll first introduce the formalization, then discuss soundness and
 effect safety. In the discussion, we'll focus on its difference from
@@ -420,9 +420,9 @@ With this rule, the type $(B \Rightarrow B) \to E$ would be considered
 \emph{capsafe}, according to the \textsc{CS-Fun1} rule. However, with
 a variable $f$ of this type in the healthy environment, together with
 another variable $g$ of the \emph{capsafe} type $B \to B$, the
-constructed term \emph{f g}, which is of the capability type E; the
-first statement of effect safety breaks. This formulation also breaks
-the connection between pure inhabitable environments and healthy
+constructed term \emph{f g} has the capability type E; the first
+statement of effect safety breaks. This formulation also breaks the
+connection between pure inhabitable environments and healthy
 environments. A pure and inhabitable environment is no longer
 healthy. For example, the type $B \to B \Rightarrow B$ is pure and
 inhabitable, but it's not \emph{capsafe}.
@@ -437,10 +437,10 @@ longer a healthy environment.
 This dilemma prompts us to reexamine the meaning of \emph{capsafe} and
 \emph{caprod}. When these facilities were first introduced in
 STLC-Pure, they were formulated in terms of the provability of the
-capability type E. From the perspective of provability of E, $S \to T$
-and $S \Rightarrow T$ don't make much difference. Thus, free function
-types should be formulated the same way as stoic function types. We
-tried this approach, and it worked\footnote{Sandro Stucki first
+capability type E. From the perspective of the provability of E,
+$S \to T$ and $S \Rightarrow T$ don't make much difference. Thus, free
+function types should be formulated the same way as stoic function
+types. We tried this approach, and it worked\footnote{Sandro Stucki
   suggested to take this approach.}. The full formulation is presented
 in Figure~\ref{fig:stlc-impure-healthy-definition}.
 

@@ -386,14 +386,13 @@ the type T.
 % \end{lemma}
 
 \begin{lemma}[Capsafe-All-Subst]
-  If $\forall X.T$ is capsafe, then for all type U, $[X \mapsto U]T$
+  If $\forall X.T$ is capsafe, then for any type U, $[X \mapsto U]T$
   is capsafe.
 \end{lemma}
 
 To prove the lemma \emph{Healthy-Capsafe}, we need a similar
 definition on terms, and then do a double induction on the degree of
-terms and the typing relation. Effect safety follows immediately from
-the lemma \emph{Healthy-Capsafe}.
+terms and the typing relation.
 
 \begin{definition}[Degree of Term]
   The degree of a term $t$ is defined as follows:
@@ -408,6 +407,9 @@ the lemma \emph{Healthy-Capsafe}.
     \end{cases}
   \end{equation*}
 \end{definition}
+
+Effect safety follows immediately from the lemma
+\emph{Healthy-Capsafe}.
 
 \begin{lemma}[Healthy-Capsafe]
   If $\Gamma$ is healthy and $\Gamma \vdash t : T$, then T is capsafe.
