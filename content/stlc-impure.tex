@@ -417,9 +417,9 @@ following rule:
 \infax[CP-Fun2]{ S \Rightarrow T \quad caprod }
 
 With this rule, the type $(B \Rightarrow B) \to E$ would be considered
-\emph{capsafe}, according to the \textsc{CS-Fun1} rule. However, with
-a variable $f$ of this type in the healthy environment, together with
-another variable $g$ of the \emph{capsafe} type $B \to B$, the
+\emph{capsafe}, according to the rule \textsc{CS-Fun1}. However, with
+a variable $f$ of this type and another variable $g$ of the
+\emph{capsafe} type $B \to B$ in the healthy environment, the
 constructed term \emph{f g} has the capability type E; the first
 statement of effect safety breaks. This formulation also breaks the
 connection between pure inhabitable environments and healthy
@@ -644,8 +644,8 @@ should be the typing rule for stoic functions:
 
 Then what's the rule used in the typing of $\lambda y:S. \; t_1$? If
 it's first typed as $S \to T$ and then subsumed as $S \Rightarrow T$,
-then we are done. Otherwise, $\lambda y:S. \; t_1$ is typed using the
-rule of free functions:
+we are done. Otherwise, $\lambda y:S. \; t_1$ is typed using the rule
+of free functions:
 
 \infrule[Step-2]
 { pure(\Gamma),\; x: B,\; y:S \vdash t_1 : T }
@@ -675,8 +675,8 @@ typed as stoic function:
 { pure(pure(\Gamma),\; x: B),\; y:S \vdash t_1 : T }
 { pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \to T }
 
-Because we know $\lambda y:S. \; t_1$ is typed as $S \to T$, so we can
-update Step-1 as following:
+Given that $\lambda y:S. \; t_1$ can be typed as $S \to T$, Step-1 can
+be updated as follows:
 
 \infrule[Step-1']
 { pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \to T }
@@ -735,14 +735,13 @@ variables can be captured by $t_1$?
 
 As the function is stoic, the only impure variable can be captured is
 $f$. Now, if we supply a stoic function as parameter to the function,
-it has the same effect as saying that $f$ has the type $U \to
-V$.
+it has the same effect as saying that $f$ has the type $U \to V$.
 Thus, in this context, the function can be typed as
-$(U \to V) \to S \Rightarrow T$.  Now according to the
-\textsc{Ax-Stoic} axiom, the term can also be typed as
-$(U \to V) \to S \to T$. Then according to the standard \textsc{T-App}
-rule, the type of the application is $S \to T$. That's the
-justification for the axiom \textsc{Ax-Poly}.
+$(U \to V) \to S \Rightarrow T$.  Now according to the axiom
+\textsc{Ax-Stoic}, the term can also be typed as
+$(U \to V) \to S \to T$. Finally by the rule \textsc{T-App}, the type
+of the application is $S \to T$. That's the justification for the
+axiom \textsc{Ax-Poly}.
 
 Effect polymorphism is an advantage of capability-based effect systems
 over monad-based effect systems. In Haskell, there is always the need
@@ -766,7 +765,7 @@ following code:
 \end{lstlisting}
 
 The non-monadic version and the monadic version of code are the same
-in essence. It's a pity that we have to duplicate the same code. In
+in essence. It's a pity to have no choice but duplicate the code. In
 capability-based effect systems, only one copy of the code is
 required:
 
@@ -825,7 +824,7 @@ polymorphism work in such cases? The answer is as follows:
 In the code above, we only have one implementation of the function
 \emph{map}, and we protect the implementation with the keyword
 \emph{private}. All callings of the \emph{map} function has to go
-through the two exposed interface. The two interfaces imposes that the
-passed function \emph{f} must either be pure or only have IO side
+through the two exposed interfaces. The two interfaces imposes that
+the passed function \emph{f} must either be pure or only have IO side
 effects. It's straight-forward to add a new interface to allow
 exception effects without changing the implementation.

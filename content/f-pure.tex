@@ -152,11 +152,11 @@ $\forall T. T \to B \to T$:
   $t = \lambda T. \; \lambda x:T. \; \lambda y:B. \; x$
 \end{center}
 
-If we allow $E$ as parameter to type application, the term $t [E]$ has
-the type $E \to B \to E$. However, after one evaluation step, the term
-$\lambda x:E. \; \lambda y:B. \; x$ cannot be typed anymore, as the
-capability variable $x$ cannot be captured in the inner-most lambda;
-thus preservation breaks.
+If we allow $E$ as parameter to type application, the term $t [E]$
+would have the type $E \to B \to E$. However, after one evaluation
+step, the term $\lambda x:E. \; \lambda y:B. \; x$ cannot be typed
+anymore, as the capability variable $x$ cannot be captured in the
+inner-most lambda; thus preservation breaks.
 
 The definition of the function \emph{pure} is changed slightly by
 allowing type variables to be in the pure environment. This is

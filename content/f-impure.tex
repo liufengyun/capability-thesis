@@ -95,7 +95,8 @@ the system STLC-Impure and F-Pure.
 { \Gamma \vdash \lambda X.t_2 : \forall X. T }
 
 \infrule[T-TApp]
-{ \Gamma \vdash t_1 : \forall X.T \andalso T_2 \neq E }
+{ \Gamma \vdash t_1 : \forall X.T \andalso T_2 \neq E
+  \andalso \colorbox{shade}{$T_2 \neq U \Rightarrow V$} }
 { \Gamma \vdash t_1 \; [T_2] : [X \mapsto T_2]T }
 
 \textbf{Pure Environment}
@@ -136,6 +137,24 @@ As in STLC-Impure, we adapted the definition of \emph{pure} to exclude
 free function types from pure environments. If stoic functions have
 access to free functions, we'll loose the ability to track the effects
 of stoic functions in the type system.
+
+The rule \textsc{T-TApp} is also changed by disallowing free function
+types as type parameter in type application. Without this restriction,
+preservation of the system breaks, as demonstrated by following term
+$t$, which has the type $\forall T. T \to B \to T$:
+
+\begin{center}
+  $t = \lambda T. \; \lambda x:T. \; \lambda y:B. \; x$
+\end{center}
+
+If we allow $U \Rightarrow V$ as parameter to type application, the
+term $t [U \Rightarrow V]$ would have the type
+$(U \Rightarrow V) \to B \to (U \Rightarrow V)$.  However, after one
+evaluation step, the term
+$\lambda x:U \Rightarrow V. \; \lambda y:B. \; x$ can at best be typed
+as $(U \Rightarrow V) \to B \Rightarrow (U \Rightarrow V)$, because
+the inner-most lambda has to be of the free function type in order to
+capture the variable $x$; thus preservation breaks.
 
 A different design choice we could make is to introduce free type
 abstractions in the system. Such an extension will not be very useful

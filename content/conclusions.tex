@@ -12,7 +12,8 @@ evaluation, just like monad-based effect systems have to be paired
 with lazy evaluation.
 
 In the two proposed systems with universal types, namely F-Pure and
-F-Impure, it's impossible to abstract over capability types.
+F-Impure, it's impossible to abstract over capability types and free
+function types.
 
 \subsection{Related Work}
 
@@ -59,9 +60,10 @@ different focus of effects under study.
 \subsection{Future Work}
 
 One approach to make parametric polymorphism work for capability types
-is to integrate \emph{bounded quantification} with capabilities. This
-is the what we are working on now. We've managed to prove soundness of
-the system, and the proof of effect safety is in progress.
+and free function types is to integrate \emph{bounded quantification}
+with capabilities. This is the what we are working on now. We've
+managed to prove soundness of the system, and the proof of effect
+safety is in progress.
 
 Another direction of work is to extend the proposed systems with some
 implicit calculus, in order to avoid explicitly passing capabilities

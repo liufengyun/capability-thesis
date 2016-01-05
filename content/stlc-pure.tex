@@ -19,9 +19,9 @@ foundation for more complex systems in later chapters.
 \subsection{Definitions}
 
 Formally, STLC-Pure is obtained by introducing a capability type and
-imposing a variable capability-capturing discipline on lambda
-abstractions.  Figure~\ref{fig:stlc-pure-definition} presents the full
-definition of STLC-Pure.
+imposing a variable-capturing discipline on lambda abstractions.
+Figure~\ref{fig:stlc-pure-definition} presents the full definition of
+STLC-Pure.
 
 The syntax is almost the same as standard STLC, except the addition of
 the capability type \emph{E} and the taking of variables as
@@ -48,11 +48,11 @@ below.
 \\
   v   & ::= &                    & values:              \\
       &     & $\lambda$ x:T.t    & abstraction value    \\
-      &     & x                  & variable value       \\
+      &     & \colorbox{shade}{x}& variable value       \\
 \\
   T   & ::= &                    & types:               \\
       &     & B                  & basic type           \\
-      &     & E                  & capability type      \\
+      &     & \colorbox{shade}{E}& capability type      \\
       &     & T $\to$ T          & type of functions    \\
 \end{tabu}
 
@@ -87,7 +87,7 @@ below.
 { \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
 { \Gamma \vdash t_1 \; t_2 : T }
 
-\textbf{Pure Environment}
+\colorbox{shade}{\textbf{Pure Environment}}
 
 \hfill
 
@@ -121,7 +121,7 @@ whose type is not a capability type can be captured in a lambda
 abstraction.
 
 The discipline is implemented with the helper function \emph{pure},
-which removes any variable bindings of the capability type \emph{E}
+which removes all variable bindings of the capability type \emph{E}
 from the typing environment. It's easy to verify that the function
 \emph{pure} satisfies following properties:
 
@@ -206,7 +206,7 @@ It is impossible to create capabilities in current system. Where do
 capabilities come from?  There are two possible answers: (1) all
 capabilities are from the run-time and passed to the program through
 the \emph{main} method. (2) there are no capabilities; they can be
-erased before evaluation, without affecting meaning of the program.
+erased before evaluation, without affecting the meaning of program.
 
 % However, in this study we only state this observation informally and
 % leave the formal proof to future studies.
@@ -294,7 +294,7 @@ capability variable $c$ in the environment. To overcome this problem,
 we stipulate that the term $s$ must be a value. Remember that in
 current system, both lambda abstractions and variables are values,
 thus substitution of variables of the capability type E and the base
-type B can also happen. The new formulation is as follows:
+type B can happen. The new formulation is as follows:
 
 \begin{lemma}[Subsitution-New]
   If $\Gamma,\; x:S \vdash t : T$, s is a value and
@@ -346,7 +346,7 @@ capability parameters:
 \end{definition}
 
 This formulation looks more satisfactory, but it's a little
-cumbersome. If we inspect the \textsc{T-Abs} typing rule closely, we
+cumbersome. If we inspect the typing rule \textsc{T-Abs} closely, we
 can find that if \emph{S} is not a capability type,
 $pure(\Gamma),\; x: S$ is equal to $pure(\Gamma,\; x: S)$.
 
@@ -356,11 +356,10 @@ $pure(\Gamma),\; x: S$ is equal to $pure(\Gamma,\; x: S)$.
 
 Thus, instead of saying the function $\lambda x:S.t_2$ cannot have
 side effects inside, we say the term $t_2$ cannot have side effects in
-a pure environment. As we know, to have side effects, we must supply a
-capability as parameter. Thus, the term $t_2$ cannot have side effects
-if we cannot construct a term of the capability type E in a pure
-environment. This observation leads us to the following statement of
-effect safety:
+a pure environment. As we know, capabilities are required to make side
+effects. Thus, the term $t_2$ cannot have side effects if we cannot
+construct a term of the capability type E in a pure environment. This
+observation leads us to the following statement of effect safety:
 
 \begin{definition}[Effect-Safety-Informally-3]
   It's impossible to construct a term of the capability type E in a
@@ -457,7 +456,7 @@ safety as follows:
 \end{definition}
 
 However, this formulation doesn't give rise to a direct proof. In
-fact, this statement is too strong -- some non-inhabitable types, such
+fact, this statement is too strong. Some non-inhabitable types, such
 as $E \to B \to E$, don't enable us to create a term of the type $E$,
 thus it's safe to be kept in the environment. This implies it's
 possible to impose a looser restriction on $\Gamma$, as long as all

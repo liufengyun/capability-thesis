@@ -110,7 +110,8 @@ With the combination of free functions and stoic functions,
 capability-based effect systems can solve the problem of \emph{effect
   polymorphism} easily, while incurring no syntactical burden. For
 example, instead of having two versions of \emph{map}, only one
-polymorphic implementation is required without any annotation:
+polymorphic implementation is required and there's no need for
+additional annotation:
 
 \begin{lstlisting}[language=Scala]
   private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
