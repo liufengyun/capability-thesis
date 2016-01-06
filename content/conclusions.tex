@@ -36,10 +36,11 @@ Scala\cite{rytz2012lightweight, rytz2013flow, lukas2014effect}.  In
 lightweight polymorphic effects\cite{rytz2012lightweight}, the
 dichotomy between \emph{effect-polymorphic function type} and
 \emph{monomorphic function type} resembles the dichotomy between
-\emph{stoic function type} and \emph{free function type}.  They
-unified the two function types in a framework called \emph{relative
-  effect annotation} based on dependent types. They also implemented a
-plugin for the Scala compiler.
+\emph{stoic function type} and \emph{free function type}. However, in
+the system effect polymorphism doesn't work for curried functions. To
+overcome this problem, they unified the two function types in a
+framework called \emph{relative effect annotation} based on dependent
+types. They also implemented a plugin for the Scala compiler.
 
 Heather \emph{et al.} proposed a special function type called
 \emph{spores} for Scala\cite{miller2014spores}. Compared to normal
@@ -59,17 +60,25 @@ different focus of effects under study.
 
 \subsection{Future Work}
 
+Objects and mutation are predominant features of industrial
+languages. To provide a more practical model for industrial languages,
+it's useful to extend existing systems with record types and mutation.
+
+Effect masking can be a useful feature in real-world programming,
+especially when dealing with exception effects. It's worthy to enrich
+existing systems with effect masking.
+
 One approach to make parametric polymorphism work for capability types
 and free function types is to integrate \emph{bounded quantification}
 with capabilities. This is the what we are working on now. We've
 managed to prove soundness of the system, and the proof of effect
 safety is in progress.
 
-Another direction of work is to extend the proposed systems with some
-implicit calculus, in order to avoid explicitly passing capabilities
-around in the code. This would result in significant savings in
-boilerplate code, thus make the system more friendly to programmers.
+% Another direction of work is to extend the proposed systems with some
+% implicit calculus, in order to avoid explicitly passing capabilities
+% around in the code. This would result in significant savings in
+% boilerplate code, thus make the system more friendly to programmers.
 
-The most exciting work would be to implement a capability-based effect
-system in Scala or other industrial programming languages and
-popularize the usage of effect systems in the programming community.
+% The most exciting work would be to implement a capability-based effect
+% system in Scala or other industrial programming languages and
+% popularize the usage of effect systems in the programming community.
