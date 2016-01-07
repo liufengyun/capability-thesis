@@ -46,9 +46,10 @@ Heather \emph{et al.} proposed a special function type called
 \emph{spores} for Scala\cite{miller2014spores}. Compared to normal
 functions, spores observe a variable capturing discipline. The set of
 types allowed or not allowed to be captured is part of the type
-signature of spores, and can be flexibly customized by
-programmers. Spores are well suited for distributed and parallel
-computations, but don't generalize to a practical effect system.
+signature of spores, thus can be used by library authors to impose
+constraints on parameters of function types. Spores are well suited
+for distributed and parallel computations, but don't generalize to a
+practical effect system.
 
 Crary \emph{et al.} proposed a capability calculus for typed
 region-based memory management\cite{crary1999typed}. The safety of
@@ -65,8 +66,8 @@ languages. To provide a more practical model for industrial languages,
 it's useful to extend existing systems with record types and mutation.
 
 Effect masking can be a useful feature in real-world programming,
-especially when dealing with exception effects. It's worthy to enrich
-existing systems with effect masking.
+especially when dealing with exception effects. It's worthy to explore
+how to support effect masking in existing systems.
 
 One approach to make parametric polymorphism work for capability types
 and free function types is to integrate \emph{bounded quantification}
