@@ -200,9 +200,85 @@ previous section.
 \subsection{Effect Safety}
 
 We follow the same approach as in the system STLC-Pure in the
-formulation of effect safety. The formulation is an extension of the
-definition of \emph{capsafe} and \emph{caprod} in STLC-Pure with
-universal types.
+formulation of effect safety.
+
+\subsubsection{Inhabitability}
+
+In the presence of universal types, we need to adapt the definition of
+inhabitable types and inhabitable environments.
+
+The definition of inhabitable environment in STLC-Pure would reject a
+well-formed environment with type variables like
+$\{T, S, f: T \to S, x:T\}$, which could be the environment for
+the following well-defined function:
+
+\begin{lstlisting}[language=Scala]
+  def apply[T, S](f: T -> S)(x: T) = f x
+\end{lstlisting}
+
+To handle this problem, we propose the definition of \emph{inhabitable
+  types} and \emph{inhabitable environment} as shown in
+Figure~\ref{fig:f-pure-inhabitability}.
+
+\begin{figure}[h]
+\begin{framed}
+
+% multi-column separator
+\setlength{\columnseprule}{0.4pt}
+\begin{multicols}{2}
+
+\textbf{Primitive Environment}
+
+\infax[P-Base]
+{ x:B, \; y:E \quad primitive }
+
+\infrule[P-TVar]
+{ \Sigma \quad primitive }
+{ \Sigma ,\; X \quad primitive }
+
+\infrule[P-Type]
+{ \Sigma \quad primitive }
+{ \Sigma ,\; x:X \quad primitive }
+
+\textbf{Inhabitable Type}
+
+\infrule[IT]
+{\Sigma \; primitive \andalso \Sigma \vdash v : T}
+{ T \quad inhabitable }
+
+\columnbreak
+
+\textbf{Inhabitable Environment}
+
+\infax[IE-Empty]
+{ \varnothing \quad inhabitable }
+
+\infrule[IE-TVar]
+{ \Gamma \quad inhabitable }
+{ \Gamma ,\; X \quad inhabitable }
+
+\infrule[IE-Type]
+{ \Gamma \; inhabitable \andalso T \; inhabitable   }
+{ \Gamma ,\; x:T \quad inhabitable }
+
+\end{multicols}
+\end{framed}
+
+\caption{System F-Pure Inhabitable Environments }
+\label{fig:f-pure-inhabitability}
+\end{figure}
+
+The definition of inhabitable types depends on \emph{primitive
+  environments}. A primitive environment is the extension of the
+environment $\{x:B, y:E\}$ with any type variables and type variable
+bindings. This definition would take types like $X$, $X \to Y$ as
+inhabitable, as expected.
+
+The definition of inhabitable environment not only allow bindings of
+inhabitable types, but also allow any type variables to be present in
+an inhabitable environment. This definition ensures that only
+non-inhabitable types, such as $B \to E$, $\forall X.X$ and
+$\forall X.\forall Y.X \to Y$ are rejected from pure environments.
 
 \subsubsection{Formulation}
 
