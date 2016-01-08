@@ -1,7 +1,7 @@
 \section{System STLC-Pure}
 
 This chapter describes a variant of the \emph{simply typed
-  lambda-calculus} with the extension of capabilities. We call this
+  lambda calculus} with the extension of capabilities. We call this
 system \emph{STLC-Pure}, because in this system all functions must
 observe a variable-capturing discipline.
 
@@ -166,25 +166,26 @@ thus it can be captured by the type system.
 Stoic functions are not necessarily pure functions. Stoic functions
 can have side effects, and if they do have side effects they are
 honest about that in their type signature. For example, following
-function \emph{hello} is a stoic function which has IO
-effects\footnote{For the sake of readability, we'll use a syntax
-  similar to Scala. In particular, we'll use $\to$ for the type of
-  stoic functions, and $\Rightarrow$ for free functions.}.
+function \emph{hello} is a stoic function with IO effects\footnote{For
+  the sake of readability, we'll use a syntax similar to Scala. In
+  particular, we'll use $\to$ for the type of stoic functions, and
+  $\Rightarrow$ for free functions.}.
 
 \begin{lstlisting}[language=Scala]
   def hello(c:IO) = println("hello, world!", c)
 \end{lstlisting}
 
 In the following code snippet, the function \emph{f} must be pure, as
-it doesn't take any capability as parameter.
+it doesn't take any capability as parameter. The type system
+guarantees that the function indeed cannot make any side effects.
 
 \begin{lstlisting}[language=Scala]
   def twice(f: Int -> Int)(x: Int) = f (f x)
 \end{lstlisting}
 
-In the definition of \emph{f}, it's impossible to call functions to
-create side effects, as in STLC-Pure all functions that can have side
-effects take some capability as parameter.
+% In the functions passed, it's impossible to call functions to
+% create side effects, as in STLC-Pure all functions that can have side
+% effects take some capability as parameter.
 
 \subsubsection{Where do Effects Come From}
 
@@ -206,7 +207,7 @@ It is impossible to create capabilities in current system. Where do
 capabilities come from?  There are two possible answers: (1) all
 capabilities are from the run-time and passed to the program through
 the \emph{main} method. (2) there are no capabilities; they can be
-erased before evaluation, without affecting the meaning of program.
+erased before evaluation, without changing the meaning of programs.
 
 % However, in this study we only state this observation informally and
 % leave the formal proof to future studies.
@@ -327,9 +328,9 @@ prove effect safety of the system.
 
 \subsubsection{Informal Formulation}
 
-A straight-forward violation of effect safety is for pure functions to
-have side effects inside the function body. Thus, a tentative
-formulation would be as follows:
+A straight-forward violation of effect safety is for functions that
+are taken as pure to have side effects inside the function body. Thus,
+a tentative formulation would be as follows:
 
 \begin{definition}[Effect-Safety-Informally-1]
 A function typed in a pure environment cannot have side effects inside.
@@ -368,16 +369,18 @@ observation leads us to the following statement of effect safety:
 
 However, this formulation cannot be proved.  For a counter-example,
 let's assume $\Gamma = \{f: B \to E, \; x: B\}$. It's obvious that
-$\Gamma$ is pure, but we can construct the term $f \; x$ which is of
-the capability type E.
+$\Gamma$ is pure, but we can construct the term $f \; x$ of the
+capability type E.
 
 The cause of the problem is that in a pure environment, there might
 exist non-inhabitable types like $B \to E$.  Existence of
 non-inhabitable types in a pure environment doesn't pose a problem to
-the system; a function taking a parameter of a non-inhabitable type can
-never be actually called, thus is always effect-safe.
+the system; a function taking a parameter of a non-inhabitable type
+can never be actually called, thus is always effect-safe. So we only
+need to consider environments with only variables of inhabitable
+types.
 
-To convince the readers that current system is effect-safe, we need to
+To convince readers that current system is effect-safe, we need to
 exclude and only exclude non-inhabitable types from the pure
 environment and then prove that it is impossible to construct a term
 of the capability type E in this restricted environment. We arrive at
@@ -398,31 +401,31 @@ inhabitable. We need to ensure that $\Gamma$ only contains inhabitable
 types. Otherwise, any type is inhabitable if $\Gamma$ contains a
 variable of the corresponding type.
 
-If $x:S \in \Gamma$ and S is inhabitable, then we can remove x:S from
-$\Gamma$ and substitute x in the term t with the term that inhabits
-the type S to obtain a new term $t'$. The substitution lemma tells us
-that the new term $t'$ still has the type T. Continue this line of
-thought, we'll find out that all inhabitable types can be inhabited in
-the empty environment. Thus, a tentative definition is as follows:
+Given $\Gamma \vdash t: T$, $x:S \in \Gamma$ and S is inhabitable, we
+can remove x:S from $\Gamma$ and substitute x in the term t with the
+term that inhabits the type S to obtain a new term $t'$. The
+substitution lemma tells us that the new term $t'$ still has the type
+T. Continue this line of thought, we'll find out that all inhabitable
+types can be inhabited in the empty environment. Thus, a tentative
+definition is as follows:
 
 \begin{definition}[Inhabitability-First-Try]
   A type T is inhabitable if there exists a term t with $\varnothing
   \vdash t : T$.
 \end{definition}
 
-However, this definition is not satisfactory in our case, as in system
+However, this definition is not satisfactory in our case, as in
 STLC-Pure there doesn't exist values for the base type B and the
-capability type E, except variables. However, we do want both types to
-be inhabitable. A natural approach is to extend the empty environment
-with one variable of the base type and one of the capability type
-respectively:
+capability type E, except variables, and we do want both types to be
+inhabitable. A natural approach is to extend the empty environment
+with one variable of the base type and one of the capability type:
 
 \begin{definition}[Inhabitability-Second-Try]
   A type T is inhabitable if there exists a term t with
   $x:B,\; y:E \vdash t : T$.
 \end{definition}
 
-This definition indeed gives us all inhabitable types in system
+This definition indeed gives us all inhabitable types in
 STLC-Pure. Types like $E$, $B$, $E \to B$, $E \to E$,
 $(B \to E) \to E$, etc., are all inhabitable, while types like
 $B \to E$ and $E \to B \to E$ are non-inhabitable. However, we can do
@@ -434,10 +437,15 @@ better with following definition:
 \end{definition}
 
 What if the term $t$ in the second definition is an application? In
-that case, $t$ must be able to take a step until it becomes a
-value. And the preservation theorem tells us the type remains
-unchanged during evaluation. This final definition makes proofs
-related to inhabitability simpler. It's useful to give a definition of
+that case, $t$ must be able to take a step until it becomes a value
+due to \emph{progress} and \emph{normalization} of the
+system\footnote{We didn't prove normalization of STLC-Pure, but the
+  proof should be similar to the proof in standard STLC. We only
+  proved progress in the empty environment, and the proof can be
+  adapted to prove progress under $\{x:B, y:E\}$.}. And the
+\emph{preservation} theorem tells us the type remains unchanged during
+evaluation. This final definition makes proofs related to
+inhabitability simpler. It's useful to give a definition of
 inhabitable environments as well:
 
 \begin{definition}[Inhabitable-Environment]
@@ -642,18 +650,18 @@ $\{b:B, x:T, y:S, \dots, z:U\} \vdash t: E$
 
 The type $U$ is pure and inhabitable, as $\Gamma$ is pure and
 inhabitable. According to the definition of \emph{inhabitability},
-there exists a value u with $\{x:B, y:E\} \vdash u: U$. As u is a
+there exists a value u with $\{b:B, e:E\} \vdash u: U$. As u is a
 value, it can be either a variable or a function. If u is a variable,
-it can only be $x$, as $U$ is a closed type. If u is a function, we
-have $\{x:B\} \vdash u: U$, as the typing rule \textsc{T-Abs} will
-remove the binding $y:E$ from the environment. In both cases, we have
-$\{x:B\} \vdash u: U$. Now using the substitution lemma, we have:
+it can only be $b$, as $U$ is a closed type. If u is a function, we
+have $\{b:B\} \vdash u: U$, as the typing rule \textsc{T-Abs} will
+remove the binding $e:E$ from the environment. In both cases, we have
+$\{b:B\} \vdash u: U$. Now using the substitution lemma, we have:
 
 \begin{center}
 $\{b:B, x:T, y:S, \dots\} \vdash [z \mapsto u]t: E$
 \end{center}
 
-Continue this process, we can reduce the typing environment to be
+Continuing this process, we can reduce the typing environment to be
 $\{b:B\}$ and the term to $t'$:
 
 \begin{center}
@@ -671,14 +679,14 @@ to become a value $v$:
 $\{b:B\} \vdash v: E$
 \end{center}
 
-To summarize, we have given an intuitive proof that
+To summarize, we have given an intuitive proof of following statement:
 
 \begin{center}
   $\neg \; \text{Effect-Safety-Inhabitability} \to \neg \;
   \text{Effect-Safety-Intuitive}$
 \end{center}
 
-By the logic law \emph{contraposition}, we have
+By the logic law \emph{contraposition}, we have:
 
 \begin{center}
   $ \text{Effect-Safety-Intuitive} \to
@@ -695,6 +703,7 @@ presence of free functions, the formulation of
 \emph{Effect-Safety-Intuitive} becomes trickier, as we have to keep a
 variable of the capability type E in the environment for the typing of
 free functions and justify that $v$ cannot be the capability
-variable. Thus, we don't take this approach in the formal development.
+variable. Therefore, we don't take this approach in the formal
+development.
 
 % extensions and practicality

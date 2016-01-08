@@ -108,7 +108,7 @@ def foo(xs: List[Int], c: IO) =
 
 With the combination of free functions and stoic functions,
 capability-based effect systems can solve the problem of \emph{effect
-  polymorphism} easily, while incurring no syntactical burden. For
+  polymorphism} easily, while incurring no syntactical overhead. For
 example, instead of having two versions of \emph{map}, only one
 polymorphic implementation is required and there's no need for
 additional annotation:
@@ -161,7 +161,7 @@ latter three is a gradual enrichment of STLC-Pure with free functions,
 subtyping and universal types.
 
 \begin{itemize}
-\item STLC-Pure is an variant of \emph{simply typed lambda-calculus}
+\item STLC-Pure is a variant of \emph{simply typed lambda calculus}
   with only stoic functions.
 \item STLC-Impure is an extension of STLC-Pure with free functions and subtyping.
 \item F-Pure is an extension of STLC-Pure with universal types.
