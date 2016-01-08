@@ -606,6 +606,91 @@ the lemma \emph{Healthy-Capsafe}.
   $\Gamma \vdash t : E$.
 \end{theorem}
 
-% \subsection{Discussion}
+\subsubsection{An Intuitive Proof}
+
+There exists an intuitive proof of effect safety without resorting to
+healthy environments. The main insight is that the statement
+\emph{Effect-Safety-Inhabitability} is logically implied by the
+statement \emph{Effect-Safety-Intuitive}:
+
+\begin{definition}[Effect-Safety-Inhabitability]
+  If $\Gamma$ is a pure and inhabitable environment, then there
+  doesn't exist $t$ with $\Gamma \vdash t : E$.
+\end{definition}
+
+\begin{definition}[Effect-Safety-Intuitive]
+  There doesn't exist value $v$ with $x:B \vdash v : E$.
+\end{definition}
+
+The statement \emph{Effect-Safety-Intuitive} trivially holds, because
+the value $v$ can either be a variable or a function, in neither case
+can it be typed as the capability type E.
+
+Why does the logical implication hold? In short, if
+\emph{Effect-Safety-Inhabitability} doesn't hold, then
+\emph{Effect-Safety-Intuitive} doesn't hold either. Thus, the latter
+logically implies the former.
+
+For a pure and inhabitable environment
+$\Gamma = \{x:T, y:S, \dots, z:U\}$, if there exists t with
+$\Gamma \vdash t : E$, then the typing relation still holds by
+extending the environment with $b:B$:
+
+\begin{center}
+$\{b:B, x:T, y:S, \dots, z:U\} \vdash t: E$
+\end{center}
+
+The type $U$ is pure and inhabitable, as $\Gamma$ is pure and
+inhabitable. According to the definition of \emph{inhabitability},
+there exists a value u with $\{x:B, y:E\} \vdash u: U$. As u is a
+value, it can be either a variable or a function. If u is a variable,
+it can only be $x$, as $U$ is a closed type. If u is a function, we
+have $\{x:B\} \vdash u: U$, as the typing rule \textsc{T-Abs} will
+remove the binding $y:E$ from the environment. In both cases, we have
+$\{x:B\} \vdash u: U$. Now using the substitution lemma, we have:
+
+\begin{center}
+$\{b:B, x:T, y:S, \dots\} \vdash [z \mapsto u]t: E$
+\end{center}
+
+Continue this process, we can reduce the typing environment to be
+$\{b:B\}$ and the term to $t'$:
+
+\begin{center}
+$\{b:B\} \vdash t': E$
+\end{center}
+
+Now combining \emph{progress}\footnote{We only proved that progress
+  holds in an empty environment, it's easy to prove it also holds
+  under $\{b:B\}$.} and \emph{normalization}\footnote{We didn't prove
+  this theorem, but the proof should be similar to the proof in STLC.}
+of STLC-Pure, $t'$ can take finite evaluation steps to become a value
+$v$:
+
+\begin{center}
+$\{b:B\} \vdash v: E$
+\end{center}
+
+To summarize, we have given an intuitive proof that
+
+\begin{center}
+  $\neg \; \text{Effect-Safety-Inhabitability} \to \neg \;
+  \text{Effect-Safety-Intuitive}$
+\end{center}
+
+By the logic law \emph{contraposition}, we have
+
+\begin{center}
+  $ \text{Effect-Safety-Intuitive} \to
+  \text{Effect-Safety-Inhabitability} $
+\end{center}
+
+As \emph{Effect-Safety-Intuitive} trivially holds, by \emph{modus
+  ponens}, \emph{Effect-Safety-Inhabitability} follows.
+
+Though this proof is conceptually simpler, the mechanized proof
+necessitates the proof of the normalization theorem, which is more
+involved than the proof based on healthy environments. Thus, we don't
+take this approach in the formal development.
 
 % extensions and practicality
