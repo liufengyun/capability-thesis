@@ -13,3 +13,15 @@ solve the problem of \emph{effect polymorphism} without incurring
 notational burden on programmers. This advantage makes
 capability-based effect systems stand a better chance to be adopted by
 the programming community.
+
+The central idea of \emph{capability-based} effect system is that an
+instance of capability is required in order to make side effects. If
+capabilities are passed as function parameters, by tracking
+capabilities in the type system we can track effects in the program.
+
+To ensure that capabilities are passed through function parameters,
+instead of being captured from the environment, we need to impose a
+\emph{variable-capturing discipline}, stipulating that capability
+variables cannot be captured. Functions observe the discipline are
+called \emph{stoic functions}, while functions don't observe the
+discipline are called \emph{free functions}.
