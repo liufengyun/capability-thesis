@@ -17,19 +17,18 @@ extension of STLC-Pure with subtyping and free functions.
 The definition is all good, except that preservation breaks. The
 problem is caused by using an impure term as \emph{Top}. To see a
 concrete example, let's assume $\Gamma = \{c:E\}$. It's obvious that
-following term is well-typed under $\Gamma$ as $B \to Top$:
+following typing relation holds:
 
 \begin{center}
-  $(\lambda x:Top. \; \lambda y:B. \; x) \; c$
+  $\{c:E\} \vdash (\lambda x:Top. \; \lambda y:B. \; x) \; c \; : \; B \to Top$
 \end{center}
 
 However, after one evaluation step\footnote{Note that variables are
   values, thus we can take a step here. We can also construct a
   counter-example by wrap $c$ in a free function like
   $\lambda x:B. c$.}, we get the term $\lambda y:B. \; c$, which can
-at best be typed as $B \Rightarrow Top$. Thus preservation doesn't
-hold in current formulation. This problem leads us to two different
-formulations.
+at best be typed as $B \Rightarrow Top$. Thus preservation
+breaks. This problem leads us to two different formulations.
 
 \begin{figure}
 \begin{framed}
@@ -121,9 +120,8 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 { S <: U \andalso U <: T }
 { S <: T }
 
-\infrule[S-Degen]
-{ S \to T }
-{ S \Rightarrow T }
+\infax[S-Degen]
+{ S \to T <: S \Rightarrow T }
 
 \infrule[S-Fun1]
 { S1 <: S2 \andalso T2 <: T1 }
@@ -179,6 +177,8 @@ observation inspires us to introduce a \emph{top} value and replace
 the standard \textsc{E-AppAbs} rule with two evaluation rules as
 follows:
 
+\begin{multicols}{2}
+
 \infrule[E-AppAbs1]
 { T \neq Top }
 { (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
@@ -186,6 +186,8 @@ follows:
 \infrule[E-AppAbs2]
 { T = Top }
 { (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto top]t_1 }
+
+\end{multicols}
 
 The two rules have the effect that if a function takes a parameter of
 the type Top, when called it will drop the passed parameter and
@@ -293,9 +295,8 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 { S <: U \andalso U <: T }
 { S <: T }
 
-\infrule[S-Degen]
-{ S \to T }
-{ S \Rightarrow T }
+\infax[S-Degen]
+{ S \to T <: S \Rightarrow T }
 
 \infrule[S-Fun1]
 { S1 <: S2 \andalso T2 <: T1 }
@@ -585,7 +586,7 @@ $t_1 \; t_2$ in a pure and healthy environment, then $t_1$ can be
 typed as $S \to T$ for some S and T. To see an example why it cannot
 be proved, let's assume
 $\Gamma = \{f: B \to B \Rightarrow B, \; x: B\}$. It's obvious
-$\Gamma$ is healthy and pure, however, $f \; x$ in the term
+$\Gamma$ is healthy and pure. However, $f \; x$ in the term
 $(f \; x) \;x$ has the type $B \Rightarrow B$. It's impossible to
 prove that $f \; x$ has the type $B \to B$. If $f$ is not a variable,
 but a fully defined function, then we can prove that $f$ also has the
@@ -688,7 +689,7 @@ be updated as follows:
 Put all the steps together, we obtained
 $\Gamma \vdash t : B \to S \to T$ from the fact
 $\Gamma \vdash t : B \to S \Rightarrow T$. That's the justification
-for the \textsc{Ax-Base} rule. The justifications for \textsc{Ax-Top}
+for the axiom \textsc{Ax-Base}. The justifications for \textsc{Ax-Top}
 and \textsc{Ax-Stoic} are similar. The axiom \textsc{Ax-Poly} is an
 interesting one, which deserves a separate section.
 
@@ -728,8 +729,8 @@ systems.
   t_2 : S \to T }
 
 
-Suppose following typing relation holds, what impure
-variables can be captured by $t_1$?
+The axiom can be justified as follows. Suppose following typing
+relation holds, what impure variables can be captured by $t_1$?
 
 \begin{center}
   $\Gamma \vdash \lambda f:U \Rightarrow V. \; \lambda y:S. \; t_1 : (U
@@ -802,12 +803,11 @@ pure and impure settings.
   }
 \end{lstlisting}
 
-In the code above, the lambda passed to \emph{map} in
-\emph{squareImpure} is not stoic, as it captures the capability
-$c$. The function \emph{squareImpure} has the type
-$List[Int] \to IO \to List[Int]$, and \emph{squarePure} has the type
-$List[Int] \to List[Int]$. All effects are captured in the type system
-even in the presence of (local) free functions.
+The function passed to \emph{map} in \emph{squareImpure} is not stoic,
+as it captures the capability $c$. The function \emph{squareImpure}
+has the type $List[Int] \to IO \to List[Int]$, and \emph{squarePure}
+has the type $List[Int] \to List[Int]$. All effects are captured in
+the type system even in the presence of (local) free functions.
 
 The reader might be wondering, what if we want to stipulate that the
 passed function \emph{f} can only have IO effects? How does effect
@@ -827,7 +827,7 @@ polymorphism work in such cases? The answer is as follows:
 In the code above, we only have one implementation of the function
 \emph{map}, and we protect the implementation with the keyword
 \emph{private}. All callings of the \emph{map} function has to go
-through the two exposed interfaces. The two interfaces imposes that
-the passed function \emph{f} must either be pure or only have IO side
+through the two exposed interfaces. The two interfaces impose that the
+passed function \emph{f} must either be pure or only have IO side
 effects. It's straight-forward to add a new interface to allow
 exception effects without changing the implementation.
