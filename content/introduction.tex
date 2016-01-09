@@ -44,6 +44,22 @@ introduce a new type variable E to denote the generic effect:
 def map[A, B, E](f: A => B @E)(l: List[A]): List[B] @E
 \end{lstlisting}
 
+Java, the only industrial language integrated with an effect system,
+exemplifies the classical approach to effect polymorphism:
+
+\begin{lstlisting}[language=Java]
+  public interface FunctionE<T, U, E extends Exception> {
+    public U apply(T t) throws E;
+  }
+  public interface List<T> {
+    public <U, E extends Exception> List<U>
+           mapE(FunctionE<T, U, E> f) throws E;
+  }
+\end{lstlisting}
+
+Due to the verbosity of syntax, effect polymorphism is not widely used
+in Java, which reduces the effectiveness of the effect system.
+
 A type-and-effect system has been proposed for
 Scala\cite{lukas2014effect}, which avoids introducing a new type
 variable for the generic effect:
