@@ -25,7 +25,13 @@ Lucassen and Gifford first introduced type-and-effect
 systems\cite{gifford1986integrating} and effect polymorphism using
 effect type parameterization \cite{lucassen1988polymorphic}, which is
 further developed by Talpin and Jouvelot to provide type-and-effect
-inference \cite{talpin1992polymorphic, talpin1994type}.
+inference \cite{talpin1992polymorphic,
+  talpin1994type}. Type-and-effect inference can greatly reduce
+verbosity in syntax, but it only works in languages with global type
+inference, while Scala is based on local type inference. Even in those
+languages with global type-and-effect inference, the type signature
+for effect-polymorphic functions are much more complex than in
+capability-based effect systems, which is an obstacle to programmers.
 
 Moggi introduced the usage of monads for computation
 effects\cite{moggi1991notions}. Wadler popularized the usage of
@@ -55,13 +61,13 @@ constraints on parameters of function types. Spores are well suited
 for distributed and parallel computations, but don't generalize to a
 practical effect system.
 
-Crary \emph{et al.} proposed a capability calculus for typed
-region-based memory management\cite{crary1999typed}. The safety of
-deallocation of memory can be guaranteed by the type system. In the
-capability calculus, capabilities are sets of regions that are
-presently valid to access, in contrast to the abstract meaning of
-capabilities in our systems. The difference is mainly due to the
-different focus of effects under study.
+Crary \emph{et al.} proposed a capability calculus for region-based
+memory management\cite{crary1999typed}. The safety of deallocation of
+memory can be guaranteed by the type system. In the capability
+calculus, a capability is a set of regions that are presently valid to
+access, in contrast to the abstract meaning of capabilities in our
+systems. The difference is mainly due to the different focus of
+effects under study.
 
 \subsection{Future Work}
 
@@ -71,7 +77,7 @@ it's useful to extend existing systems with record types and mutation.
 
 Effect masking can be a useful feature in real-world programming,
 especially when dealing with exception effects. It's worthy to explore
-how to support effect masking in existing systems.
+effect masking in existing systems.
 
 One approach to make parametric polymorphism work for capability types
 and free function types is to integrate \emph{bounded quantification}
