@@ -67,14 +67,16 @@ the system to avoid duplicate annotations.
 % Despite the syntactical improvements, it still incurs some notational
 % burden on programmers.
 
-Heather \emph{et al.} proposed a special function type called
+Heather \emph{et al.} proposed a variant of functions called
 \emph{spores} for Scala\cite{miller2014spores}. Compared to normal
 functions, spores observe a variable capturing discipline. The set of
-types can or cannot be captured is part of the type signature of
+types that can or cannot be captured is part of the type signature of
 spores, thus can be used by library authors to impose constraints on
-parameters of function types. Spores are well suited for distributed
-and parallel computations, but don't generalize to a practical effect
-system due to the verbosity in syntax.
+parameters of function types.
+
+% Spores are well suited for distributed and parallel computations, but
+% don't generalize to a practical effect system due to the verbosity in
+% syntax.
 
 Crary \emph{et al.} proposed a capability calculus for region-based
 memory management\cite{crary1999typed}. The safety of deallocation of
