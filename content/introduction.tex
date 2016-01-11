@@ -44,8 +44,9 @@ introduce a new type variable E to denote the generic effect:
 def map[A, B, E](f: A => B @E)(l: List[A]): List[B] @E
 \end{lstlisting}
 
-Java, the only industrial language integrated with an effect system,
-exemplifies the classical approach to effect polymorphism:
+Java, the only industrial language integrated with an effect system
+for checked exceptions, exemplifies the classical approach to effect
+polymorphism:
 
 \begin{lstlisting}[language=Java]
   public interface FunctionE<T, U, E extends Exception> {
@@ -57,8 +58,8 @@ exemplifies the classical approach to effect polymorphism:
   }
 \end{lstlisting}
 
-Due to the verbosity of syntax, effect polymorphism is not widely used
-in Java, which reduces the effectiveness of the effect system.
+Due to the verbosity of syntax, effect polymorphism is rarely used in
+Java, which reduces the effectiveness of the effect system.
 
 A type-and-effect system has been proposed for
 Scala\cite{lukas2014effect}, which avoids introducing a new type
@@ -141,9 +142,9 @@ additional annotation:
 \end{lstlisting}
 
 This example shows that the function \emph{f} passed to the two
-\emph{map}s must be pure or only have IO effects. The type system
-ensures that the first \emph{map} is typed as pure while the second
-\emph{map} can only have IO effects, and both are stoic
+\emph{map}s must be either pure or only have IO effects. The type
+system ensures that the first \emph{map} is typed as pure while the
+second \emph{map} can only have IO effects, and both are stoic
 functions. It's straight-forward to add a new \emph{map} interface to
 allow exception effects without changing the implementation. If the
 library author doesn't care what effects there might be, he can expose
