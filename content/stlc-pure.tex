@@ -696,14 +696,11 @@ By the logical law \emph{contraposition}, we have:
 As \emph{Effect-Safety-Intuitive} trivially holds,
 \emph{Effect-Safety-Inhabitability} follows by \emph{modus ponens}.
 
-Though this proof is conceptually simpler, the mechanized proof
-necessitates the proof of the normalization theorem, which is more
-involved than the proof based on healthy environments. Also, in the
-presence of free functions, the formulation of
-\emph{Effect-Safety-Intuitive} becomes trickier, as we have to keep a
-variable of the capability type E in the environment for the typing of
-free functions and justify that $v$ cannot be the capability
-variable. Therefore, we don't take this approach in the formal
+Though conceptually simpler, the mechanized proof necessitates the
+proof of the normalization theorem, which is more involved than the
+proof based on healthy environments. On the other hand, the approach
+based on healthy environments works even if normalization doesn't
+hold. Therefore, we don't take the intuitive approach in the formal
 development.
 
 % extensions and practicality
