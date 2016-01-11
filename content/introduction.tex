@@ -24,13 +24,13 @@ Scala:
 def pmap(xs: List[Int], f: Int => Int): List[Int]
 \end{lstlisting}
 
-The absence of an effect system also makes a lot of compiler
-optimizations impossible. An effect system can differentiate pure code
-from impure code in a program, thus enables optimizations of pure
-code. For example, independent pure expressions can be executed in
-parallel; pure code that is dead can be safely eliminated; common pure
-expressions can be reduce to one computation; pure operations on data
-structures can be fused\cite{coutts2007stream}.
+An effect system can differentiate pure code from impure code in a
+program, thus enables optimization of pure code. For example,
+independent pure expressions can be executed in parallel; pure code
+that is dead can be safely eliminated; common pure expressions can be
+reduce to one computation; pure operations on data structures can be
+fused\cite{coutts2007stream}. The absence of an effect system makes
+these optimizations impossible.
 
 The central problem in introducing a practical effect system in Scala
 is how to handle the problem of \emph{effect polymorphism}.
