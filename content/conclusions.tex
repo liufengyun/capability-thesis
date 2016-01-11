@@ -37,9 +37,12 @@ Moggi introduced the usage of monads for computation
 effects\cite{moggi1991notions}. Wadler popularized the usage of
 monads\cite{wadler1992comprehending, wadler1995monads} and proved that
 it's possible to transpose any type-and-effect system into a
-corresponding monad system\cite{wadler2003marriage}. Lippmeier
-proposed the usage of region variables and dependently kinded witness
-to encode mutability polymorphism\cite{lippmeier2009witnessing}.
+corresponding monad system\cite{wadler2003marriage}. As reported in
+section 1.6 of the thesis\cite{lippmeier2009type}, almost every
+general purpose higher-order function in Haskell needs both a monadic
+version and non-monadic version. Lippmeier proposed the usage of
+region variables and dependently kinded witness to encode mutability
+polymorphism\cite{lippmeier2009witnessing}.
 
 Lukas \emph{et al.}  studied type-and-effect systems for
 Scala\cite{rytz2012lightweight, rytz2013flow, lukas2014effect}.  In
@@ -50,16 +53,26 @@ dichotomy between \emph{effect-polymorphic function type} and
 the system effect polymorphism doesn't work for curried functions. To
 overcome this problem, they unified the two function types in a
 framework called \emph{relative effect annotation} based on dependent
-types. They also implemented a plugin for the Scala compiler.
+types. In this system, the function \emph{map} can be marked as
+effect-polymorphic without introducing a generic effect variable:
+
+\begin{lstlisting}[language=Scala]
+def map[A, B](f: A => B)(l: List[A]): List[B] @pure(f)
+\end{lstlisting}
+
+The annotation $@pure(f)$ says that the effect of \emph{map} depends
+on the function \emph{f}. Despite the syntactical improvements, it
+still incurs some notational burden on programmers, thus is not well
+received in the Scala community.
 
 Heather \emph{et al.} proposed a special function type called
 \emph{spores} for Scala\cite{miller2014spores}. Compared to normal
 functions, spores observe a variable capturing discipline. The set of
-types allowed or not allowed to be captured is part of the type
-signature of spores, thus can be used by library authors to impose
-constraints on parameters of function types. Spores are well suited
-for distributed and parallel computations, but don't generalize to a
-practical effect system.
+types can or cannot be captured is part of the type signature of
+spores, thus can be used by library authors to impose constraints on
+parameters of function types. Spores are well suited for distributed
+and parallel computations, but don't generalize to a practical effect
+system due to the verbosity in syntax.
 
 Crary \emph{et al.} proposed a capability calculus for region-based
 memory management\cite{crary1999typed}. The safety of deallocation of
