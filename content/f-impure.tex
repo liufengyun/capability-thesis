@@ -368,15 +368,14 @@ thus it's fair enough to type the inner function as stoic.
 \columnbreak
 
 \infrule[Ax-All]
-{ \colorbox{shade}{$\Gamma \vdash t : \forall X.T \to S \Rightarrow T$} }
-{ \colorbox{shade}{$\Gamma \vdash t : \forall X.T \to S \to T$} }
+{ \colorbox{shade}{$\Gamma \vdash t : (\forall X.T) \to S \Rightarrow T$} }
+{ \colorbox{shade}{$\Gamma \vdash t : (\forall X.T) \to S \to T$} }
 
 \hfill\\
 
-\infrule[Ax-TApp]
-{ \colorbox{shade}{$\Gamma \vdash t : \forall X.T_1 \Rightarrow T_2$} }
-{ \colorbox{shade}{$\Gamma \vdash t \; [U] : [X \mapsto U]T_1 \to [X
-    \mapsto U]T_2$} }
+\infrule[Ax-TAbs]
+{ \colorbox{shade}{$\Gamma \vdash t : \forall X.(T_1 \Rightarrow T_2)$} }
+{ \colorbox{shade}{$\Gamma \vdash t : \forall X.(T_1 \to T_2)$} }
 
 \hfill\\
 
@@ -391,12 +390,12 @@ thus it's fair enough to type the inner function as stoic.
 \label{fig:f-impure-axioms}
 \end{figure}
 
-The justification for the axiom \textsc{Ax-TApp} is similar. If a term
+The justification for the axiom \textsc{Ax-TAbs} is similar. If a term
 $t$ can be typed as $\forall X.T_1 \Rightarrow T_2$ under $\Gamma$,
 according to the typing rule \textsc{T-All}, the whole term can be
-typed under $pure(\Gamma)$. Then the inner lambda abstraction can be
-typed under $pure(\Gamma), X$, which is equal to $pure(\Gamma,
-X)$. Thus, it's fair enough to type the inner function as stoic.
+typed under $pure(\Gamma)$. Then the inner function can be typed under
+$pure(\Gamma), X$, which is equal to $pure(\Gamma, X)$. Thus, it's
+fair enough to type the inner function as stoic.
 
 The justification for the axiom \textsc{Ax-Poly} is the same as given
 in STLC-Impure, thus we omit here.
