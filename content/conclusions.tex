@@ -78,13 +78,17 @@ parameters of function types.
 % don't generalize to a practical effect system due to the verbosity in
 % syntax.
 
-Crary \emph{et al.} proposed a capability calculus for region-based
-memory management\cite{crary1999typed}. The safety of deallocation of
-memory can be guaranteed by the type system. In the capability
-calculus, a capability is a set of regions that are presently valid to
-access, in contrast to the abstract meaning of capabilities in our
-systems. The difference is mainly due to the different focus of
-effects under study.
+Crary \emph{et al.} proposed a capability calculus for typed memory
+management\cite{crary1999typed}, which improves the LIFO-style
+(last-in, first-out) region-based memory management introduced by
+Tofte and Talpin\cite{tofte1997region} by allowing arbitrary
+allocation and deallocation order. The safety of deallocation of
+memory is guaranteed by the type system. In the capability calculus, a
+capability is a set of regions that are presently valid to access. It
+tracks uniqueness of capabilities in the type system to control
+aliasing of capabilities. Functions may be polymorphic over types,
+regions or capabilities. Capability variables cannot be captured in
+closures and have to be passed around in the program.
 
 \subsection{Future Work}
 
