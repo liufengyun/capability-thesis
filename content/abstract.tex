@@ -1,27 +1,27 @@
 \section*{\centering Abstract}
 \addcontentsline{toc}{section}{Abstract}
 
-The problem of \emph{effect polymorphism} is the main obstacle to the
-wide adoption of effect systems in the programming community. The
-absence of effect systems reduces compiler optimization opportunities
-and deprives programmers of the freedom to impose effect constraints
-on APIs in parallel and distributed computations.
+The problem of \emph{effect polymorphism} is the main obstacle to wide
+adoption of effect systems in the programming community. The absence
+of effect systems reduces compiler optimization opportunities and
+disables effect constraints on APIs in parallel and distributed
+computations.
 
 This study shows that \emph{capability-based} effect systems, equipped
 with \emph{stoic functions} and \emph{free functions}, can easily
 solve the problem of \emph{effect polymorphism} without incurring
-notational burden on programmers. This advantage makes
+notational burden on programmers. With this advantage,
 capability-based effect systems stand a better chance to be adopted by
 the programming community.
 
-The central idea of \emph{capability-based} effect system is that an
-instance of capability is required in order to make side effects. If
+The central idea of \emph{capability-based} effect system is that a
+capability is required in order to perform side effects. If
 capabilities are passed as function parameters, by tracking
 capabilities in the type system we can track effects in the program.
 
 To ensure that capabilities are passed through function parameters,
 instead of being captured from the environment, we need to impose a
 \emph{variable-capturing discipline}, stipulating that capability
-variables cannot be captured. Functions that observe the discipline
-are called \emph{stoic functions}, while functions that don't observe
-the discipline are called \emph{free functions}.
+variables cannot be captured. Functions observing the discipline are
+called \emph{stoic functions}, while functions not observing the
+discipline are called \emph{free functions}.
