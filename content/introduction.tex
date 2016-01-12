@@ -13,19 +13,19 @@ The main motivation of this study is to turn Scala into an
 effect-disciplined programming language. Currently, Scala doesn't have
 the ability to track effects in the type system.
 
-The absence of an effect system deprives programmers of the freedom to
-impose effect constraints on APIs in parallel and distributed
-computations. For example, in parallel computing, there's often the
-need to stipulate that the functions passed to the function
-\emph{pmap} have no side effects, which is currently impossible in
-Scala:
+The absence of an effect system disables programmers from imposing
+effect constraints on APIs in parallel and distributed
+computations. For example, in parallel computing, the functions passed
+to the function \emph{pmap} should have no side effects, in order to
+enable parallel processing on lists without changing semantics of the
+program; however, it is currently impossible to do so in Scala:
 
 \begin{lstlisting}[language=Scala]
 def pmap(xs: List[Int], f: Int => Int): List[Int]
 \end{lstlisting}
 
 An effect system can differentiate pure code from impure code in a
-program, thus enables optimization of pure code. For example,
+program, thus enabling optimization of pure code. For example,
 independent pure expressions can be executed in parallel; pure code
 that is dead can be safely eliminated; common pure expressions can be
 reduce to one computation; pure operations on data structures can be
@@ -82,8 +82,8 @@ this problem.
 
 \subsection{Capability-Based Effect Systems}
 
-The central idea of \emph{capability-based} effect system is that an
-instance of capability is required in order to make side effects. If
+The central idea of \emph{capability-based} effect system is that a
+capability is required in order to perform side effects. If
 capabilities are passed as function parameters, by tracking
 capabilities in the type system we can track effects in the program.
 
@@ -94,8 +94,9 @@ variables cannot be captured. Functions observe the discipline are
 called \emph{stoic functions}, while functions don't observe the
 discipline are called \emph{free functions}. We use $\to$ to denote
 the type of stoic functions and $\Rightarrow$ to denote the type of
-free functions. Following example shows that incorrect capturing of
-capability variables in a stoic function will generate a typing error:
+free functions. The following example shows that incorrect capturing
+of capability variables in a stoic function will generate a typing
+error:
 
 \begin{lstlisting}[language=Scala]
 def map(xs: List[Int], f: Int => Int): List[Int]
@@ -106,8 +107,15 @@ def bar(xs: List[Int])(c: IO) =
     map(xs, { x => print(x, c); x })
 
 def foo(xs: List[Int], c: IO) =
-    pmap(xs, { x => print(x, c); x })    // Error, can't capture c
+    pmap(xs, { x => print(x, c); x })    // Error, stoic function required
 \end{lstlisting}
+
+In the code above, the function \emph{map} can take either a stoic
+function or a free function, while the function \emph{pmap} can only
+take a stoic function. The type signature $Int \to Int$ in \emph{pmap}
+ensures that functions passed to \emph{pmap} must be pure. That's why
+there is a typing error in the function \emph{foo}, as the passed
+anonymous function is a free function instead of stoic function.
 
 With the combination of free functions and stoic functions,
 capability-based effect systems can solve the problem of \emph{effect
@@ -116,26 +124,26 @@ example, the effect-polymorphic function \emph{map} can be implemented
 as follows:
 
 \begin{lstlisting}[language=Scala]
-  private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
+  def map[A,B](f: A => B)(l: List[A]) = l match {
     case Nil => Nil
     case x::xs => f(x)::map(f)(xs)
   }
-
-  def map[A,B](f: A -> B) = mapImpl(f)
-
-  def map[A,B](c: IO)(f: IO -> A => B) = mapImpl(f c)
+  def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+  def squarePure(l: List[Int]) = map { x => x*x } l
 \end{lstlisting}
 
-This example shows that the function \emph{f} passed to the two
-\emph{map}s must be either pure or only have IO effects. The type
-system ensures that the first \emph{map} is typed as pure while the
-second \emph{map} can only have IO effects, and both are stoic
-functions. It's straight-forward to add a new \emph{map} interface to
-allow exception effects without changing the implementation. If the
-library author doesn't care what effects there might be, he can expose
-the function \emph{mapImpl} directly to users.  We'll see details of
-effect polymorphism in the system STLC-Impure in Section
-\ref{sec:effect-polymorphism}.
+In the code above, the function \emph{map} is exactly the same as it
+can be written in Scala now, which would be typed as
+$(A \to B) \to List[A] \Rightarrow List[B]$. The function
+\emph{squareImpure} is stoic, which would be typed as
+$IO \to List[Int] \Rightarrow List[Int]$. The function
+\emph{squarePure} is also stoic, which would be typed as
+$List[Int] \to List[Int]$. By just checking the type signature, we can
+conclude that \emph{squareImpure} can only have IO effects and
+\emph{squarePure} is pure. As you can see, no annotation is required,
+effect polymorphism just works. We'll see details of effect
+polymorphism in the chapter STLC-Impure (Section
+\ref{sec:effect-polymorphism}).
 
 \subsection{Contributions}
 
