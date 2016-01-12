@@ -805,20 +805,21 @@ capability-based effect systems without resorting to the axiom
 be demonstrated by following example:
 
 \begin{lstlisting}[language=Scala]
-  private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
+  def map[A,B](f: A => B)(l: List[A]) = l match {
     case Nil => Nil
     case x::xs => f(x)::map(f)(xs)
   }
-  def map[A,B](f: A -> B)(l: List[A]) = mapImpl(f)(l)
+  def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+  def squarePure(l: List[Int]) = map { x => x*x } l
 \end{lstlisting}
 
-Note that the only change we made compared to the previous example is
-to add the parameter $l: List[A]$ explicitly to the second \emph{map},
-instead of using currying. This seemingly trivial change makes a big
-difference in capability-based effect systems. Now the second
-\emph{map} can be typed as follows $(A \to B) \to List[A] \to List[B]$
-without resorting to the axiom \textsc{Ax-Poly}.
-
+Note that the only change we made compared to the example in
+\emph{axiom-based polymorphism} is to add the parameter $l: List[Int]$
+explicitly to \emph{squarePure}, instead of using currying. This
+seemingly trivial change makes a big difference in capability-based
+effect systems. Now \emph{squarePure} can be typed as
+$List[Int] \to List[Int]$ without resorting to the axiom
+\textsc{Ax-Poly}.
 
 \subsubsection{Stoic Polymorphism}
 
@@ -834,9 +835,9 @@ example:
 \end{lstlisting}
 
 In the code above, the function \emph{twice} is typed as
-$(Int \Rightarrow Int) \to Int$. Just checking the type signature of
-\emph{twice}, we know it might have side effects, if the passed
-function \emph{f} has side effects. Without any annotations or
+$(Int \Rightarrow Int) \to Int$. By just checking the type signature
+of \emph{twice}, we know it might have side effects, if the passed
+function \emph{f} has side effects. Without any annotation or
 resorting to any axiom, the type system automatically types
 \emph{pure} as $Int \to Int$ and \emph{impure} as
 $Int \to IO \to Int$.
@@ -868,8 +869,8 @@ in essence. It's a pity to have no choice but duplicate the code.
 Type-and-effect systems based on type-and-effect
 inference\cite{talpin1992polymorphic, talpin1994type} can greatly
 reduce syntactical overhead, but it still complicates the type
-signature of effect-polymorphic functions by using effect type
-variables.
+signature of effect-polymorphic functions by introducing effect type
+variables, thus forming an obstacle to programmers.
 
 Effect polymorphism is an advantage of capability-based effect systems
 over other kinds of effect systems. In capability-based effect
