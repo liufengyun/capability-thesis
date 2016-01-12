@@ -690,8 +690,26 @@ Put all the steps together, we obtained
 $\Gamma \vdash t : B \to S \to T$ from the fact
 $\Gamma \vdash t : B \to S \Rightarrow T$. That's the justification
 for the axiom \textsc{Ax-Base}. The justifications for \textsc{Ax-Top}
-and \textsc{Ax-Stoic} are similar. The axiom \textsc{Ax-Poly} is an
-interesting one, which deserves a separate section.
+and \textsc{Ax-Stoic} are similar.
+
+The axiom \textsc{Ax-Poly} can be justified as follows. Suppose
+following typing relation holds, what impure variables can be captured
+by $t_1$?
+
+\begin{center}
+  $\Gamma \vdash \lambda f:U \Rightarrow V. \; \lambda y:S. \; t_1 : (U
+  \Rightarrow V) \to S \Rightarrow T$.
+\end{center}
+
+As the function is stoic, the only impure variable can be captured is
+$f$. Now, if we supply a stoic function as parameter to the function,
+it has the same effect as saying that $f$ has the type $U \to V$.
+Thus, in this context, the function can be typed as
+$(U \to V) \to S \Rightarrow T$.  Now according to the axiom
+\textsc{Ax-Stoic}, the term can also be typed as
+$(U \to V) \to S \to T$. Finally by the rule \textsc{T-App}, the type
+of the application is $S \to T$. That's the justification for the
+axiom \textsc{Ax-Poly}.
 
 Assuming the axioms above, it's straight-forward to prove a lemma
 \emph{Healthy-Pure-Stoic}, and the second statement of effect safety
@@ -720,37 +738,113 @@ follows immediately from the lemma.
 
 \label{sec:effect-polymorphism}
 
-The axiom \textsc{Ax-Poly}, which we call \emph{effect polymorphism},
-reflects an important property of capability-based effect
-systems.
+There are three kinds of effect polymorphism in capability-based
+effect systems, namely axiom-based polymorphism, curry polymorphism
+and stoic polymorphism. The first one depends on the axiom
+\textsc{Ax-Poly}, while the other two are inherent in capability-based
+effect systems.
 
-\infrule[Ax-Poly] { \Gamma \vdash t_2 : U \to V \andalso \Gamma \vdash
-  t_1 : (U \Rightarrow V) \to S \Rightarrow T } { \Gamma \vdash t_1 \;
-  t_2 : S \to T }
+\subsubsection{Axiom-Based Polymorphism}
+
+Axiom-based polymorphism is based on the axiom \textsc{Ax-Poly}. It
+can be illustrated by the following example:
+
+\begin{lstlisting}[language=Scala]
+  def map[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(xs)
+  }
+  def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+  def squarePure = map { x => x*x }
+\end{lstlisting}
+
+In the above, the function \emph{map} has the type
+$(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. Without the axiom
+\textsc{Ax-Poly}, the function \emph{squareImpure} can be typed as
+$IO \to List[Int] \Rightarrow List[Int]$, while the function
+\emph{squarePure} can be typed as $List[Int] \Rightarrow List[Int]$.
+Effect polymorphism doesn't work, as \emph{squarePure} can actually be
+typed as a stoic function.
+
+In the presence of the axiom \textsc{Ax-Poly}, \emph{squarePure} can
+be typed as $List[Int] \to List[Int]$, as the function passed to
+\emph{map} has the stoic function type $Int \to Int$. Now both
+\emph{squarePure} and \emph{squareImpure} are typed as stoic
+functions, all effects are captured in the type system even in the
+presence of (local) free functions.
+
+The reader might be wondering, what if we want to stipulate that the
+passed function \emph{f} can only have IO effects? How does effect
+polymorphism work in such cases? The answer is as follows:
+
+\begin{lstlisting}[language=Scala]
+  private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(xs)
+  }
+
+  def map[A,B](f: A -> B) = mapImpl(f)
+
+  def map[A,B](c: IO)(f: IO -> A => B) = mapImpl(f c)
+\end{lstlisting}
+
+In the code above, we protect implementation function \emph{mapImpl}
+with the keyword \emph{private}.  All callings of the \emph{map}
+function has to go through the two exposed interfaces. The two
+interfaces impose that the passed function \emph{f} must either be
+pure or only have IO side effects. It's straight-forward to add a new
+interface to allow exception effects without changing the
+implementation.
+
+\subsubsection{Currying Polymorphism}
+
+There is another kind of effect polymorphism inherent in
+capability-based effect systems without resorting to the axiom
+\textsc{Ax-Poly}. This kind of polymorphism is related to
+\emph{currying}, thus is called \emph{currying polymorphism}. It can
+be demonstrated by following example:
+
+\begin{lstlisting}[language=Scala]
+  private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(xs)
+  }
+  def map[A,B](f: A -> B)(l: List[A]) = mapImpl(f)(l)
+\end{lstlisting}
+
+Note that the only change we made compared to the previous example is
+to add the parameter $l: List[A]$ explicitly to the second \emph{map},
+instead of using currying. This seemingly trivial change makes a big
+difference in capability-based effect systems. Now the second
+\emph{map} can be typed as follows $(A \to B) \to List[A] \to List[B]$
+without resorting to the axiom \textsc{Ax-Poly}.
 
 
-The axiom can be justified as follows. Suppose following typing
-relation holds, what impure variables can be captured by $t_1$?
+\subsubsection{Stoic Polymorphism}
 
-\begin{center}
-  $\Gamma \vdash \lambda f:U \Rightarrow V. \; \lambda y:S. \; t_1 : (U
-  \Rightarrow V) \to S \Rightarrow T$.
-\end{center}
+Stoic functions that take a free function and return a value of a pure
+type are inherently effect polymorphic, thus is called \emph{stoic
+  polymorphism}.  Stoic polymorphism can be illustrated by following
+example:
 
-As the function is stoic, the only impure variable can be captured is
-$f$. Now, if we supply a stoic function as parameter to the function,
-it has the same effect as saying that $f$ has the type $U \to V$.
-Thus, in this context, the function can be typed as
-$(U \to V) \to S \Rightarrow T$.  Now according to the axiom
-\textsc{Ax-Stoic}, the term can also be typed as
-$(U \to V) \to S \to T$. Finally by the rule \textsc{T-App}, the type
-of the application is $S \to T$. That's the justification for the
-axiom \textsc{Ax-Poly}.
+\begin{lstlisting}[language=Scala]
+  def twice(f: Int => Int) = f (f 0)
+  def pure(x: Int) = twice { n => n + x }
+  def impure(x: Int)(c: IO) = twice { n => println(n)(c); n + x }
+\end{lstlisting}
 
-Effect polymorphism is an advantage of capability-based effect systems
-over monad-based effect systems. In Haskell, there is always the need
-to maintain two copies of higher-order functions, as demonstrated by
-following code:
+In the code above, the function \emph{twice} is typed as
+$(Int \Rightarrow Int) \to Int$. Just checking the type signature of
+\emph{twice}, we know it might have side effects, if the passed
+function \emph{f} has side effects. Without any annotations or
+resorting to any axiom, the type system automatically types
+\emph{pure} as $Int \to Int$ and \emph{impure} as
+$Int \to IO \to Int$.
+
+\subsubsection{Discussion}
+
+In Haskell, there is always the need to maintain two copies of
+higher-order functions, as demonstrated by following code:
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
@@ -769,65 +863,17 @@ following code:
 \end{lstlisting}
 
 The non-monadic version and the monadic version of code are the same
-in essence. It's a pity to have no choice but duplicate the code. In
-capability-based effect systems, only one copy of the code is
-required:
+in essence. It's a pity to have no choice but duplicate the code.
 
-\begin{lstlisting}[language=Scala]
-  def map[A,B](f: A => B)(l: List[A]) = l match {
-    case Nil => Nil
-    case x::xs => f(x)::map(f)(xs)
-  }
-\end{lstlisting}
-% haskell two versions of map
+Type-and-effect systems based on type-and-effect
+inference\cite{talpin1992polymorphic, talpin1994type} can greatly
+reduce syntactical overhead, but it still complicates the type
+signature of effect-polymorphic functions by using effect type
+variables.
 
-The \emph{map} function above has the type
-$(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. Is \emph{map} a
-pure function? It depends on how it's used. When supplied with a
-function $f$ of the type $A \Rightarrow B$ with side effects,
-\emph{map f} has the type $List[A] \Rightarrow List[B]$, thus is
-impure. When supplied with a pure function $f$ of the type $A \to B$,
-\emph{map f} can be typed as $List[A] \to List[B]$ according to the
-axiom \textsc{Ax-Poly}, thus is pure.
-
-Following code snippet demonstrates the usage of \emph{map} in both
-pure and impure settings.
-
-\begin{lstlisting}[language=Scala]
-  def squareImpure(list: List[Int])(c: IO) = {
-    map { x => println(x)(c); x*x } list
-  }
-
-  def squarePure(list: List[Int]) = {
-    map { x => x*x } list
-  }
-\end{lstlisting}
-
-The function passed to \emph{map} in \emph{squareImpure} is not stoic,
-as it captures the capability $c$. The function \emph{squareImpure}
-has the type $List[Int] \to IO \to List[Int]$, and \emph{squarePure}
-has the type $List[Int] \to List[Int]$. All effects are captured in
-the type system even in the presence of (local) free functions.
-
-The reader might be wondering, what if we want to stipulate that the
-passed function \emph{f} can only have IO effects? How does effect
-polymorphism work in such cases? The answer is as follows:
-
-\begin{lstlisting}[language=Scala]
-  private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
-    case Nil => Nil
-    case x::xs => f(x)::map(f)(xs)
-  }
-
-  def map[A,B](f: A -> B) = mapImpl(f)
-
-  def map[A,B](c: IO)(f: IO -> A => B) = mapImpl(f c)
-\end{lstlisting}
-
-In the code above, we only have one implementation of the function
-\emph{map}, and we protect the implementation with the keyword
-\emph{private}. All callings of the \emph{map} function has to go
-through the two exposed interfaces. The two interfaces impose that the
-passed function \emph{f} must either be pure or only have IO side
-effects. It's straight-forward to add a new interface to allow
-exception effects without changing the implementation.
+Effect polymorphism is an advantage of capability-based effect systems
+over other kinds of effect systems. In capability-based effect
+systems, effect polymorphism can be easily achieved without
+introducing generic effect type variables in the type signature, or
+depending on additional annotations, or in the worst case duplicating
+code.
