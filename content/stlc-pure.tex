@@ -650,12 +650,14 @@ $\{b:B, x:T, y:S, \dots, z:U\} \vdash t: E$
 
 The type $U$ is pure and inhabitable, as $\Gamma$ is pure and
 inhabitable. According to the definition of \emph{inhabitability},
-there exists a value u with $\{b:B, e:E\} \vdash u: U$. As u is a
-value, it can be either a variable or a function. If u is a variable,
-it can only be $b$, as $U$ is a closed type. If u is a function, we
-have $\{b:B\} \vdash u: U$, as the typing rule \textsc{T-Abs} will
-remove the binding $e:E$ from the environment. In both cases, we have
-$\{b:B\} \vdash u: U$. Now using the substitution lemma, we have:
+there exists a value $u$ with $\{b:B, e:E\} \vdash u: U$. As $u$ is a
+value, it can be either a variable or a function. If $u$ is a
+variable, it can only be $b$, as $U$ is a pure type and the variable
+$e$ binds to the impure capbility type $E$. If $u$ is a function, we
+have $\{b:B\} \vdash u: U$, as in the typing of stoic functions the
+rule \textsc{T-Abs} will remove the binding $e:E$ from the
+environment. In both cases, we have $\{b:B\} \vdash u: U$. Now using
+the substitution lemma, we have:
 
 \begin{center}
 $\{b:B, x:T, y:S, \dots\} \vdash [z \mapsto u]t: E$
