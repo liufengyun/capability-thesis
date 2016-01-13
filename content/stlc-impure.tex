@@ -837,7 +837,7 @@ can be illustrated by the following example:
 In the code above, the function \emph{twice} is typed as
 $(Int \Rightarrow Int) \to Int$. By just checking the type signature
 of \emph{twice}, we know it might have side effects, if the passed
-function \emph{f} has side effects. Without any annotation or
+function \emph{f} has side effects. Without adding any annotation or
 resorting to any axiom, the type system automatically types
 \emph{pure} as $Int \to Int$ and \emph{impure} as
 $Int \to IO \to Int$.
@@ -869,8 +869,12 @@ in essence. It's a pity to have no choice but duplicate the code.
 Type-and-effect systems based on type-and-effect
 inference\cite{talpin1992polymorphic, talpin1994type} can greatly
 reduce syntactical overhead, but it still complicates the type
-signature of effect-polymorphic functions by introducing effect type
-variables, thus forming an obstacle to programmers.
+signature of effect-polymorphic functions by introducing generic
+effect type variables. For example, the type signature inferred for
+the effect-polymorphic function \emph{map} would look like
+$\forall E.(A \to B @E) \to List[A] \to List[B] @E$, which is a little
+daunting to programmers, compared to
+$(A \Rightarrow B) \to List[A] \to List[B]$ in our case.
 
 Effect polymorphism is an advantage of capability-based effect systems
 over other kinds of effect systems. In capability-based effect
