@@ -191,7 +191,10 @@ follows:
 
 The two rules have the effect that if a function takes a parameter of
 the type Top, when called it will drop the passed parameter and
-replace it with the value \emph{top}. We follow this approach in the
+replace it with the value \emph{top}. There is no need to consider the
+case that the parameter type $T$ is like $B \to Top$ or
+$(Top \to B) \Rightarrow B$, as function types cannot mask impure
+terms as pure like Top does. We follow this approach in the
 formulation and the full definition is presented in
 Figure~\ref{fig:stlc-impure-definition}.
 
