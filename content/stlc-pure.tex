@@ -206,7 +206,7 @@ assume the existence of primitive functions like \emph{println} and
 It is impossible to create capabilities in current system. Where do
 capabilities come from?  There are two possible answers: (1) all
 capabilities are from the run-time and passed to the program through
-the \emph{main} method. (2) there are no capabilities; they can be
+the \emph{main} method; (2) there are no capabilities; they can be
 erased before evaluation, without changing the meaning of programs.
 
 % However, in this study we only state this observation informally and
@@ -316,7 +316,7 @@ The function \emph{inc} has the type
 $(Num\;a, Show\;a) \Rightarrow a \to a$. By just checking its type, we
 would think it has no side effects because no IO monads appear in the
 type signature. However, if Haskell adopts strict evaluation, the
-function call \emph{putStrLn} will be executed, thus breaks the
+function call \emph{putStrLn} will be executed, thus breaking the
 monad-based effect system.
 
 \subsection{Effect Safety}
@@ -401,13 +401,13 @@ inhabitable. We need to ensure that $\Gamma$ only contains inhabitable
 types. Otherwise, any type is inhabitable if $\Gamma$ contains a
 variable of the corresponding type.
 
-Given $\Gamma \vdash t: T$, $x:S \in \Gamma$ and S is inhabitable, we
-can remove x:S from $\Gamma$ and substitute x in the term t with the
-term that inhabits the type S to obtain a new term $t'$. The
-substitution lemma tells us that the new term $t'$ still has the type
-T. Continue this line of thought, we'll find out that all inhabitable
-types can be inhabited in the empty environment. Thus, a tentative
-definition is as follows:
+An intuition is that, given $\Gamma \vdash t: T$, $x:S \in \Gamma$ and
+S is inhabitable, we can remove x:S from $\Gamma$ and substitute x in
+the term t with the term that inhabits the type S to obtain a new term
+$t'$. The substitution lemma tells us that the new term $t'$ still has
+the type T. Continuing this line of thought, we'll find out that all
+inhabitable types can be inhabited in the empty environment. Thus, a
+tentative definition is as follows:
 
 \begin{definition}[Inhabitability-First-Try]
   A type T is inhabitable if there exists a term t with $\varnothing
@@ -466,22 +466,22 @@ safety as follows:
 However, this formulation doesn't give rise to a direct proof. In
 fact, this statement is too strong. Some non-inhabitable types, such
 as $E \to B \to E$, don't enable us to create a term of the type $E$,
-thus it's safe to be kept in the environment. This implies it's
+thus it's safe to keep them in the environment. This implies it's
 possible to impose a looser restriction on $\Gamma$, as long as all
 types that can appear in a pure and inhabitable environment can also
 appear in $\Gamma$.
 
 When we examine the problem more closely, we found that through the
-lens of \emph{Curry Howard Isomorphism}, effect safety actually says
-that it is impossible to prove the capability type $E$ from a group of
-``good'' premises. Thus, we can classify all types (propositions) into
-two groups: in one group $E$ cannot be proved and in the other group
-$E$ can be proved. This leads us to a formulation of \emph{healthy
-  environment}\footnote{Sandro Stucki initially suggested the idea of
-  using \emph{caprod} for the definition of \emph{pure}
-  environments. I developed it to be a formulation of \emph{healthy}
-  environments and used it in proving effect safety.} given in
-Figure~\ref{fig:stlc-pure-healthy-definition}.
+lens of the \emph{Curry-Howard isomorphism}, effect safety actually
+says that it is impossible to prove the capability type $E$ from a
+group of ``good'' premises. Thus, we can classify all types
+(propositions) into two groups: in one group $E$ cannot be proved and
+in the other group $E$ can be proved. This leads us to a formulation
+of \emph{healthy environment}\footnote{Sandro Stucki initially
+  suggested the idea of using \emph{caprod} for the definition of
+  \emph{pure} environments. I developed it to be a formulation of
+  \emph{healthy} environments and used it in the proof of effect
+  safety.} given in Figure~\ref{fig:stlc-pure-healthy-definition}.
 
 \begin{figure}[h]
 \begin{framed}
@@ -547,7 +547,7 @@ capability type $E$. As the capability type $E$ cannot appear in the
 pure environment, this is not a problem.
 
 \emph{Are caprod types non-inhabitable?} Yes, except the capability
-type $E$. As $E$ is also excluded in the pure environment, thus it's
+type $E$. As $E$ is also excluded in the pure environment, it's
 justified to remove it from the healthy environment.
 
 % Intuitively, the rule \textsc{CP-Fun} can be justified by the fact
