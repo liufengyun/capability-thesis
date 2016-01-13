@@ -165,7 +165,7 @@ thus it can be captured by the type system.
 
 Stoic functions are not necessarily pure functions. Stoic functions
 can have side effects, and if they do have side effects they are
-honest about that in their type signature. For example, following
+honest about that in their type signature. For example, the following
 function \emph{hello} is a stoic function with IO effects\footnote{For
   the sake of readability, we'll use a syntax similar to Scala. In
   particular, we'll use $\to$ for the type of stoic functions, and
@@ -284,8 +284,8 @@ $\{f: E \to B,\; c:E\},\; x:B \vdash \lambda z:B.\,x \; : \; B \to
   B$ \\
 $\{f: E \to B,\; c:E\},\; x:B \vdash f \; c \; : \; B$
 
-However, following typing relation doesn't hold if we replace $x$ with
-$f \; c$.
+However, the following typing relation doesn't hold if we replace $x$
+with $f \; c$.
 
 $\{f: E \to B,\; c:E\} \vdash \lambda z:B.\,f \; c \; : \; B \to B$.
 
@@ -384,7 +384,7 @@ To convince readers that current system is effect-safe, we need to
 exclude and only exclude non-inhabitable types from the pure
 environment and then prove that it is impossible to construct a term
 of the capability type E in this restricted environment. We arrive at
-following formulation:
+the following formulation:
 
 \begin{definition}[Effect-Safety-Informally-4]
   It's impossible to construct a term of the capability type E in a
@@ -429,7 +429,7 @@ This definition indeed gives us all inhabitable types in
 STLC-Pure. Types like $E$, $B$, $E \to B$, $E \to E$,
 $(B \to E) \to E$, etc., are all inhabitable, while types like
 $B \to E$ and $E \to B \to E$ are non-inhabitable. However, we can do
-better with following definition:
+better with the following definition:
 
 \begin{definition}[Inhabitability-Final]
   A type T is inhabitable if there exists a value v with the typing
@@ -679,7 +679,8 @@ to become a value $v$:
 $\{b:B\} \vdash v: E$
 \end{center}
 
-To summarize, we have given an intuitive proof of following statement:
+To summarize, we have given an intuitive proof of the following
+statement:
 
 \begin{center}
   $\neg \; \text{Effect-Safety-Inhabitability} \to \neg \;

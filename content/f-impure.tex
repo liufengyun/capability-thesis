@@ -140,8 +140,8 @@ of stoic functions in the type system.
 
 The rule \textsc{T-TApp} is also changed by disallowing free function
 types as type parameter in type application. Without this restriction,
-preservation of the system breaks, as demonstrated by following term
-$t$, which has the type $\forall T. T \to B \to T$:
+preservation of the system breaks, as demonstrated by the following
+term $t$, which has the type $\forall T. T \to B \to T$:
 
 \begin{center}
   $t = \lambda T. \; \lambda x:T. \; \lambda y:B. \; x$

@@ -17,7 +17,7 @@ extension of STLC-Pure with subtyping and free functions.
 The definition is all good, except that preservation breaks. The
 problem is caused by using an impure term as \emph{Top}. To see a
 concrete example, let's assume $\Gamma = \{c:E\}$. It's obvious that
-following typing relation holds:
+the following typing relation holds:
 
 \begin{center}
   $\{c:E\} \vdash (\lambda x:Top. \; \lambda y:B. \; x) \; c \; : \; B \to Top$
@@ -416,7 +416,7 @@ healthy environments:
 
 Now we need to extend the definition of \emph{capsafe} and
 \emph{caprod} for free function types. Our first attempt is to add
-following rule:
+the following rule:
 
 \infax[CP-Fun2]{ S \Rightarrow T \quad caprod }
 
@@ -665,7 +665,7 @@ $pure(\Gamma, x:B)$ & = & $pure(\Gamma), x:B$
 \end{tabular}
 \end{center}
 
-Then we can obtain following equation:
+Then we can obtain the following equation:
 
 \begin{center}
   $pure(pure(\Gamma),\; x: B) = pure(\Gamma),\; x: B$
@@ -692,7 +692,7 @@ $\Gamma \vdash t : B \to S \Rightarrow T$. That's the justification
 for the axiom \textsc{Ax-Base}. The justifications for \textsc{Ax-Top}
 and \textsc{Ax-Stoic} are similar.
 
-The axiom \textsc{Ax-Poly} can be justified as follows. Suppose
+The axiom \textsc{Ax-Poly} can be justified as follows. Suppose the
 following typing relation holds, what impure variables can be captured
 by $t_1$?
 
@@ -802,7 +802,7 @@ There is another kind of effect polymorphism inherent in
 capability-based effect systems without resorting to the axiom
 \textsc{Ax-Poly}. This kind of polymorphism is related to
 \emph{currying}, thus is called \emph{currying polymorphism}. It can
-be demonstrated by following example:
+be demonstrated by the following example:
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -826,7 +826,7 @@ $List[Int] \to List[Int]$ without resorting to the axiom
 Stoic functions that take a free function and return a value of a pure
 type are inherently effect-polymorphic. This kind of effect
 polymorphism is called \emph{stoic polymorphism}.  Stoic polymorphism
-can be illustrated by following example:
+can be illustrated by the following example:
 
 \begin{lstlisting}[language=Scala]
   def twice(f: Int => Int) = f (f 0)
