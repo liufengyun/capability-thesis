@@ -739,15 +739,15 @@ follows immediately from the lemma.
 \label{sec:effect-polymorphism}
 
 There are three kinds of effect polymorphism in capability-based
-effect systems, namely axiom-based polymorphism, curry polymorphism
-and stoic polymorphism. The first one depends on the axiom
+effect systems, namely axiomatic polymorphism, curry polymorphism and
+stoic polymorphism. The first one depends on the axiom
 \textsc{Ax-Poly}, while the other two are inherent in capability-based
 effect systems.
 
-\subsubsection{Axiom-Based Polymorphism}
+\subsubsection{Axiomatic Polymorphism}
 
-Axiom-based polymorphism is based on the axiom \textsc{Ax-Poly}. It
-can be illustrated by the following example:
+Axiomatic polymorphism is based on the axiom \textsc{Ax-Poly}. It can
+be illustrated by the following example:
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -814,7 +814,7 @@ be demonstrated by following example:
 \end{lstlisting}
 
 Note that the only change we made compared to the example in
-\emph{axiom-based polymorphism} is to add the parameter $l: List[Int]$
+\emph{axiomatic polymorphism} is to add the parameter $l: List[Int]$
 explicitly to \emph{squarePure}, instead of using currying. This
 seemingly trivial change makes a big difference in capability-based
 effect systems. Now \emph{squarePure} can be typed as
