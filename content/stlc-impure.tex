@@ -746,7 +746,7 @@ effect systems.
 
 \subsubsection{Axiomatic Polymorphism}
 
-Axiomatic polymorphism is based on the axiom \textsc{Ax-Poly}. It can
+Axiomatic polymorphism depends on the axiom \textsc{Ax-Poly}. It can
 be illustrated by the following example:
 
 \begin{lstlisting}[language=Scala]
@@ -824,9 +824,9 @@ $List[Int] \to List[Int]$ without resorting to the axiom
 \subsubsection{Stoic Polymorphism}
 
 Stoic functions that take a free function and return a value of a pure
-type are inherently effect polymorphic, thus is called \emph{stoic
-  polymorphism}.  Stoic polymorphism can be illustrated by following
-example:
+type are inherently effect-polymorphic. This kind of effect
+polymorphism is called \emph{stoic polymorphism}.  Stoic polymorphism
+can be illustrated by following example:
 
 \begin{lstlisting}[language=Scala]
   def twice(f: Int => Int) = f (f 0)
