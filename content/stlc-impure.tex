@@ -860,14 +860,11 @@ capability-based effect systems, only one effect-polymorphic $map$ is
 required.
 
 \begin{lstlisting}[language=Haskell]
-  -- Haskell
+  -- monad-based effect system
   map :: (a -> b) -> List a -> List b
   mapM :: Monad m => (a -> m b) -> List a -> m (List b)
-\end{lstlisting}
-
-\begin{lstlisting}[language=Scala]
-  // capability-based effect systems
-  def map[A,B](f: A => B)(l: List[A]) = ...
+  -- capability-based effect system
+  map :: (a => b) -> List a => List b
 \end{lstlisting}
 
 In Haskell, it's possible to implement the non-monadic version based
@@ -934,7 +931,7 @@ introducing generic effect type variables. For example, the type
 signature inferred for the effect-polymorphic function $map$ would
 look like $\forall E.(A \to B @E) \to List[A] \to List[B] @E$, which
 is a little daunting to programmers, compared to
-$(A \Rightarrow B) \to List[A] \to List[B]$ in our case.
+$(A \Rightarrow B) \to List[A] \Rightarrow List[B]$ in our case.
 
 Effect polymorphism is an advantage of capability-based effect systems
 over other kinds of effect systems. In capability-based effect
