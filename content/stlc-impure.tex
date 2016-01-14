@@ -553,8 +553,8 @@ been formally proved:
   capsafe.
 \end{corollary}
 
-Note that the last theorem follows immediately from the second one, as
-we already know from the premise that $\Gamma$ is pure.
+Note that the last corollary follows immediately from the second
+theorem, as we already know from the premise that $\Gamma$ is pure.
 
 % From the theorems above, it's obvious that any property proved for a
 % capsafe (and pure) environment also holds for a pure and inhabitable
@@ -797,10 +797,10 @@ polymorphism work in such cases? The answer is as follows:
   def map[A,B](c: IO)(f: IO -> A => B) = mapImpl(f c)
 \end{lstlisting}
 
-In the code above, we protect implementation function $mapImpl$ with
-the keyword $private$.  All callings of the $map$ function has to go
-through the two exposed interfaces. The two interfaces impose that the
-passed function $f$ must either be pure or only have IO side
+In the code above, we protect the implementation function $mapImpl$
+with the keyword $private$.  All callings of the $map$ function has to
+go through the two exposed interfaces. The two interfaces impose that
+the passed function $f$ must either be pure or only have IO side
 effects. It's straight-forward to add a new interface to allow
 exception effects without changing the implementation or affecting
 existing code.
@@ -824,10 +824,10 @@ be demonstrated by the following example:
 
 Note that the only change we made compared to the example in
 \emph{axiomatic polymorphism} is to add the parameter $l: List[Int]$
-explicitly to $squarePure$, instead of using currying. This seemingly
-trivial change makes a big difference in capability-based effect
-systems. Now $squarePure$ can be typed as $List[Int] \to List[Int]$
-without resorting to the axiom \textsc{Ax-Poly}.
+explicitly to $squarePure$, instead of resorting to currying. This
+seemingly trivial change makes a big difference in capability-based
+effect systems. Now $squarePure$ can be typed as
+$List[Int] \to List[Int]$ without using the axiom \textsc{Ax-Poly}.
 
 \subsubsection{Stoic Polymorphism}
 
@@ -847,7 +847,8 @@ $(Int \Rightarrow Int) \to Int$. By just checking the type signature
 of $twice$, we know it might have side effects, if the passed function
 $f$ has side effects. Without adding any annotation or resorting to
 any axiom, the type system automatically types the function $pure$ as
-$Int \to Int$ and $impure$ as $Int \to IO \to Int$.
+$Int \to Int$ and $impure$ as $Int \to IO \to Int$. Effect
+polymorphism works naturally.
 
 \subsubsection{Discussion}
 
@@ -857,7 +858,7 @@ Haskell, almost every general purpose higher-order function needs both
 a monadic version and a non-monadic version. For example, in Haskell
 it requires two versions of the function $map$ , but in
 capability-based effect systems, only one effect-polymorphic $map$ is
-required.
+required, as the following code shows:
 
 \begin{lstlisting}[language=Haskell]
   -- monad-based effect system
@@ -868,7 +869,7 @@ required.
 \end{lstlisting}
 
 In Haskell, it's possible to implement the non-monadic version based
-on the monadic version using the identity monad:
+on the monadic version by using the identity monad:
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
@@ -917,7 +918,7 @@ following code:
 
 Monads are not only heavier in handling effect polymorphism, but also
 more difficult to learn and use than capabilities. The concept
-\emph{capability} has an intuitive meaning as it has in everyday life,
+\emph{capability} has an intuitive meaning as it has in daily life,
 while the abstruse concept \emph{monad} comes from category theory,
 which is the most abstract field of mathematics. Therefore, we expect
 capability-based effect systems to be welcomed by a larger audience

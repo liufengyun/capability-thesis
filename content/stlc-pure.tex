@@ -433,10 +433,10 @@ types. Otherwise, any type is inhabitable if $\Gamma$ contains a
 variable of the corresponding type.
 
 An intuition is that, given $\Gamma \vdash t: T$, $x:S \in \Gamma$ and
-$S$ is inhabitable, we can remove $x:S$ from $\Gamma$ and substitute $x$
-in the term $t$ with a witness of the type S to obtain a new term
+$S$ is inhabitable, we can remove $x:S$ from $\Gamma$ and substitute
+$x$ in the term $t$ with a witness of the type S to obtain a new term
 $t'$. The substitution lemma tells us that the new term $t'$ still has
-the type $T$. Continuing this line of thought, we'll find out that all
+the type $T$. Continue this line of thought, we'll find out that all
 inhabitable types can be inhabited in the empty environment. Thus, a
 tentative definition is as follows:
 
@@ -523,8 +523,8 @@ of \emph{capsafe environment}\footnote{Sandro Stucki initially
   suggested the idea of using \emph{caprod} for the definition of
   \emph{pure} environments. I developed it to be a formulation of
   \emph{capsafe} environments and used it in the proof of effect
-  safety.} given in Figure~\ref{fig:stlc-pure-capsafe-definition}. In
-the figure, \emph{capsafe} is an abbreviation of capability-safe, and
+  safety.} given in Figure~\ref{fig:stlc-pure-capsafe-definition}. The
+coined word \emph{capsafe} is an abbreviation of capability-safe, and
 \emph{caprod} an abbreviation of capability-producing.
 
 \begin{figure}[h]
@@ -705,7 +705,7 @@ lemma, we have:
 $b:B, \; x:T, \; y:S, \; \dots \vdash [z \mapsto u]t: E$
 \end{center}
 
-Continuing this process, we can reduce the typing environment to be
+Continue this process, we can reduce the typing environment to be
 $\{b:B\}$ and the term to $t'$:
 
 \begin{center}

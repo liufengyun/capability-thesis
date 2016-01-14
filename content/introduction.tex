@@ -7,9 +7,9 @@ the ability to track effects in the type system.
 The absence of an effect system disables programmers from imposing
 effect constraints on APIs in parallel and distributed
 computations. For example, in parallel computing, the functions passed
-to the function \emph{pmap} should have no side effects, in order to
-enable parallel processing on lists; however, it is currently
-impossible to do so in Scala:
+to the function $pmap$ should have no side effects, in order to enable
+parallel processing on lists; however, it is currently impossible to
+do so in Scala:
 
 \begin{lstlisting}[language=Scala]
 def pmap(xs: List[Int], f: Int => Int): List[Int]
@@ -29,8 +29,7 @@ the problem of \emph{effect polymorphism}.
 
 \subsection{Effect Polymorphism}
 
-\emph{Effect polymorphism} can be illustrated by the
-function \emph{map}:
+\emph{Effect polymorphism} can be illustrated by the function $map$:
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -39,12 +38,11 @@ function \emph{map}:
   }
 \end{lstlisting}
 
-In an effect system, the effect of \emph{map} depends on the passed in
-function \emph{f}. If \emph{f} has IO effects, then \emph{map} also
-has IO effects. If \emph{f} is pure, then \emph{map} is pure as
-well. The way to express effect polymorphism in classical
-type-and-effect systems is to introduce a new type variable E to
-denote the generic effect:
+In an effect system, the effect of $map$ depends on the passed in
+function $f$. If $f$ has IO effects, then $map$ also has IO
+effects. If $f$ is pure, then $map$ is pure as well. The way to
+express effect polymorphism in classical type-and-effect systems is to
+introduce a new type variable $E$ to denote the generic effect:
 
 \begin{lstlisting}[language=Scala]
 def map[A, B, E](f: A => B @E)(l: List[A]): List[B] @E
@@ -102,18 +100,18 @@ def foo(xs: List[Int], c: IO) =
     pmap(xs, { x => print(x, c); x })    // Error, stoic function required
 \end{lstlisting}
 
-In the code above, the function \emph{map} can take either a stoic
-function or a free function, while the function \emph{pmap} can only
-take a stoic function. The type signature $Int \to Int$ in \emph{pmap}
-ensures that functions passed to \emph{pmap} must be pure. That's why
-there is a typing error in the function \emph{foo}, as the passed
+In the code above, the function $map$ can take either a stoic
+function or a free function, while the function $pmap$ can only
+take a stoic function. The type signature $Int \to Int$ in $pmap$
+ensures that functions passed to $pmap$ must be pure. That's why
+there is a typing error in the function $foo$, as the passed
 anonymous function is free instead of stoic.
 
 With the combination of free functions and stoic functions,
 capability-based effect systems can solve the problem of \emph{effect
   polymorphism} easily, while incurring no syntactical overhead. For
-example, the effect-polymorphic function \emph{map} can be implemented
-as follows:
+example, the effect-polymorphic function $map$ can be implemented as
+follows:
 
 \begin{lstlisting}[language=Scala]
   def map[A,B](f: A => B)(l: List[A]) = l match {
@@ -124,17 +122,16 @@ as follows:
   def squarePure(l: List[Int]) = map { x => x*x } l
 \end{lstlisting}
 
-In the code above, the function \emph{map} is exactly the same as it
-can be written in Scala now, which would be typed as
+In the code above, the function $map$ is exactly the same as it can be
+written in Scala now, which would be typed as
 $(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. The function
-\emph{squareImpure} is stoic, which would be typed as
-$IO \to List[Int] \Rightarrow List[Int]$. The function
-\emph{squarePure} is also stoic, which would be typed as
-$List[Int] \to List[Int]$. By just checking the type signature, we can
-conclude that \emph{squareImpure} can only have IO effects and
-\emph{squarePure} is pure. No annotation is required, effect
-polymorphism just works naturally. We'll see details of effect
-polymorphism in the chapter STLC-Impure (Section
+$squareImpure$ is stoic, which would be typed as
+$IO \to List[Int] \Rightarrow List[Int]$. The function $squarePure$ is
+also stoic, which would be typed as $List[Int] \to List[Int]$. By just
+checking the type signature, we can conclude that $squareImpure$ can
+only have IO effects and $squarePure$ is pure. No annotation is
+required, effect polymorphism just works naturally. We'll see details
+of effect polymorphism in the chapter STLC-Impure (Section
 \ref{sec:effect-polymorphism}).
 
 \subsection{Contributions}
