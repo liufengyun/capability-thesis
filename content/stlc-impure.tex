@@ -335,7 +335,7 @@ pure stoic functions to produce side effects.
 
 In principle, we can keep some free functions that can never be called
 in the pure environment, such as $(B \to E) \Rightarrow B$, as it's
-impossible to get an actual instance of the inhabitable type $B \to E$
+impossible to get an actual instance of the inhabited type $B \to E$
 in order to call this function. However, it's not useful to have
 functions in the environment if they can never be called. Thus, to
 simplify the system without sacrificing usability, we removed all free
@@ -379,30 +379,30 @@ function types.
 
 \subsubsection{Formulation}
 
-The definitions of \emph{inhabitable types} and \emph{inhabitable
+The definitions of \emph{inhabited type} and \emph{inhabited
   environment} are the same as in the system STLC-Pure.
 
 With the presence of free functions, the previous formulation of
 effect safety is not enough. We not only need to ensure that it's
 impossible to construct a term of the capability type $E$ in pure and
-inhabitable environments, but also need to ensure only stoic functions
-can be called in pure and inhabitable environments. The two conditions
+inhabited environments, but also need to ensure only stoic functions
+can be called in pure and inhabited environments. The two conditions
 together guarantee that there cannot be actual side effects inside a
 pure stoic function. Thus, we need two statements about effect safety.
 
-\begin{definition}[Effect-Safety-Inhabitability-1]
-  If $\Gamma$ is a pure and inhabitable environment, then there
-  doesn't exist $t$ with $\Gamma \vdash t : E$.
+\begin{definition}[Effect-Safety-Inhabited-1]
+  If $\Gamma$ is a pure and inhabited environment, then there doesn't
+  exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
-\begin{definition}[Effect-Safety-Inhabitability-2]
-  If $\Gamma$ is a pure and inhabitable environment, and
+\begin{definition}[Effect-Safety-Inhabited-2]
+  If $\Gamma$ is a pure and inhabited environment, and
   $\Gamma \vdash t_1 \; t_2 : T$, then there exists $U$, $V$ such that
   $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
 A tempting formulation of the second effect safety statement would be
-that \emph{in a pure and inhabitable environment it's impossible to
+that \emph{in a pure and inhabited environment it's impossible to
   construct a term of the free function type}. However, this
 formulation has no hope to be proved, as $S \to T$ is a subtype of
 $S \Rightarrow T$, any term that can be typed as the former can also
@@ -411,8 +411,8 @@ be typed as the latter.
 As in the system STLC-Pure, the proof of these two statements depends
 on two more general statements about \emph{capsafe environments}. If
 we can arrive at such a definition of \emph{capsafe environment} that
-a pure and inhabitable environment is also capsafe, then it suffices
-to prove following two statements about capsafe environments:
+a pure and inhabited environment is also capsafe, then it suffices to
+prove following two statements about capsafe environments:
 
 \begin{definition}[Effect-Safety-1]
   If $\Gamma$ is capsafe, there doesn't exist $t$ with
@@ -436,17 +436,17 @@ a variable $f$ of this type and another variable $g$ of the
 \emph{capsafe} type $B \to B$ in the capsafe environment, the
 constructed term $f g$ has the capability type $E$; the first
 statement of effect safety breaks. This formulation also breaks the
-connection between pure inhabitable environments and capsafe
-environments. A pure and inhabitable environment is no longer
+connection between pure inhabited environments and capsafe
+environments. A pure and inhabited environment is no longer
 capsafe. For example, the type $B \to B \Rightarrow B$ is pure and
-inhabitable, but it's not \emph{capsafe}.
+inhabited, but it's not \emph{capsafe}.
 
 On the other hand, we cannot do the opposite to take $S \Rightarrow T$
 as \emph{capsafe}, as it would allow calling free functions in capsafe
 environments; the second statement of effect safety breaks. In the
-meanwhile, the pure and inhabitable type $(B \Rightarrow E) \to E$ is
-not \emph{capsafe}, thus a pure and inhabitable environment is no
-longer a capsafe environment.
+meanwhile, the pure and inhabited type $(B \Rightarrow E) \to E$ is
+not \emph{capsafe}, thus a pure and inhabited environment is no longer
+a capsafe environment.
 
 This dilemma prompts us to reexamine the meaning of \emph{capsafe} and
 \emph{caprod}. When these facilities were first introduced in
@@ -532,24 +532,24 @@ statement of effect safety:
 Why this formulation of capsafe environment is acceptable? In short,
 it's because the statement \emph{Effect-Safety-1} and
 \emph{Effect-Safety-2'} logically imply the statement
-\emph{Effect-Safety-Inhabitability-1} and
-\emph{Effect-Safety-Inhabitability-2} respectively.
+\emph{Effect-Safety-Inhabited-1} and \emph{Effect-Safety-Inhabited-2}
+respectively.
 
-The logical implications hold because a pure and inhabitable
-environment is also a capsafe (and pure) environment. This claim has
-been formally proved:
+The logical implications hold because a pure and inhabited environment
+is also a capsafe (and pure) environment. This claim has been formally
+proved:
 
-\begin{lemma}[Inhabitable-Capsafe]
-  If the type $T$ is inhabitable, then either $T$ is capsafe or
-  $T = E$ or $T$ is a free function type.
+\begin{lemma}[Inhabited-Capsafe]
+  If the type $T$ is inhabited, then either $T$ is capsafe or $T = E$
+  or $T$ is a free function type.
 \end{lemma}
 
-\begin{theorem}[Inhabitable-Pure-Capsafe-Env]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is capsafe.
+\begin{theorem}[Inhabited-Pure-Capsafe-Env]
+  If $\Gamma$ is pure and inhabited, then $\Gamma$ is capsafe.
 \end{theorem}
 
-\begin{corollary}[Inhabitable-Pure-Capsafe-Env']
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is pure and
+\begin{corollary}[Inhabited-Pure-Capsafe-Env']
+  If $\Gamma$ is pure and inhabited, then $\Gamma$ is pure and
   capsafe.
 \end{corollary}
 
@@ -557,7 +557,7 @@ Note that the last corollary follows immediately from the second
 theorem, as we already know from the premise that $\Gamma$ is pure.
 
 % From the theorems above, it's obvious that any property proved for a
-% capsafe (and pure) environment also holds for a pure and inhabitable
+% capsafe (and pure) environment also holds for a pure and inhabited
 % environment. Therefore, it suffices to prove the statement
 % \emph{Effect-Safety-1} and \emph{Effect-Safety-2'}.
 

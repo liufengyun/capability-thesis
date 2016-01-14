@@ -135,7 +135,7 @@ renders universal types useless in the system.
 
 The typing rule \textsc{T-TApp} requires that the type parameter
 cannot be the capability type $E$. However, it's allowed to supply
-non-inhabitable types like $B \to E$ as parameter to type abstraction.
+uninhabited types like $B \to E$ as parameter to type abstraction.
 
 % This restriction implies in system F-Pure polymorphism doesn't cover
 % capability types.
@@ -202,12 +202,12 @@ previous section.
 We follow the same approach as in the system STLC-Pure in the
 formulation of effect safety.
 
-\subsubsection{Inhabitability}
+\subsubsection{Inhabited Types and Environments}
 
 In the presence of universal types, we need to adapt the definition of
-inhabitable types and inhabitable environments.
+inhabited type and inhabited environment.
 
-The definition of inhabitable environment in STLC-Pure would reject a
+The definition of inhabited environment in STLC-Pure would reject a
 well-formed environment with type variables like
 $\{T, \; S, \; f: T \to S, \; x:T\}$, which could be the environment
 for the following well-defined function:
@@ -216,9 +216,9 @@ for the following well-defined function:
   def apply[T, S](f: T -> S)(x: T) = f x
 \end{lstlisting}
 
-To handle this problem, we propose the definition of \emph{inhabitable
-  types} and \emph{inhabitable environment} as shown in
-Figure~\ref{fig:f-pure-inhabitability}.
+To handle this problem, we propose the definition of \emph{inhabited
+  type} and \emph{inhabited environment} as shown in
+Figure~\ref{fig:f-pure-inhabited}.
 
 \begin{figure}[h]
 \begin{framed}
@@ -240,59 +240,59 @@ Figure~\ref{fig:f-pure-inhabitability}.
 { \Sigma \quad primitive }
 { \Sigma ,\; x:X \quad primitive }
 
-\textbf{Inhabitable Type}
+\textbf{Inhabited Type}
 
 \infrule[IT]
 {\Sigma \; primitive \andalso \Sigma \vdash v : T}
-{ T \quad inhabitable }
+{ T \quad inhabited }
 
 \columnbreak
 
-\textbf{Inhabitable Environment}
+\textbf{Inhabited Environment}
 
 \infax[IE-Empty]
-{ \varnothing \quad inhabitable }
+{ \varnothing \quad inhabited }
 
 \infrule[IE-TVar]
-{ \Gamma \quad inhabitable }
-{ \Gamma ,\; X \quad inhabitable }
+{ \Gamma \quad inhabited }
+{ \Gamma ,\; X \quad inhabited }
 
 \infrule[IE-Type]
-{ \Gamma \; inhabitable \andalso T \; inhabitable   }
-{ \Gamma ,\; x:T \quad inhabitable }
+{ \Gamma \; inhabited \andalso T \; inhabited   }
+{ \Gamma ,\; x:T \quad inhabited }
 
 \end{multicols}
 \end{framed}
 
-\caption{System F-Pure Inhabitable Environment }
-\label{fig:f-pure-inhabitability}
+\caption{System F-Pure Inhabited Environment }
+\label{fig:f-pure-inhabited}
 \end{figure}
 
-The definition of inhabitable types depends on \emph{primitive
+The definition of inhabited type depends on \emph{primitive
   environments}. A primitive environment is an extension of the
 environment $\{x:B, y:E\}$ with any type variables and type variable
 bindings. This definition would take types like $X$, $X \to Y$ as
-inhabitable, as expected.
+inhabited, as expected.
 
-The definition of inhabitable environment not only allow bindings of
-inhabitable types, but also allow any type variables to be present in
-an inhabitable environment. This definition ensures that only
-non-inhabitable types, such as $B \to E$, $\forall X.X$ and
+The definition of inhabited environment not only allow bindings of
+inhabited types, but also allow any type variables to be present in an
+inhabited environment. This definition ensures that only uninhabited
+types, such as $B \to E$, $\forall X.X$ and
 $\forall X.\forall Y.X \to Y$ are rejected from pure environments.
 
 \subsubsection{Formulation}
 
-As in STLC, the standard formulation is given based on inhabitable
+As in STLC, the standard formulation is given based on inhabited
 environments:
 
-\begin{definition}[Effect-Safety-Inhabitability]
-  If $\Gamma$ is a pure and inhabitable environment, then there
-  doesn't exist $t$ with $\Gamma \vdash t : E$.
+\begin{definition}[Effect-Safety-Inhabited]
+  If $\Gamma$ is a pure and inhabited environment, then there doesn't
+  exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
 The proof of the statement depends on a more general statement about
 \emph{capsafe environments}. If we can arrive at such a definition of
-\emph{capsafe environment} that a pure and inhabitable environment is
+\emph{capsafe environment} that a pure and inhabited environment is
 also capsafe, then it suffices to prove the following statement about
 capsafe environments:
 
@@ -302,12 +302,12 @@ capsafe environments:
 \end{definition}
 
 What \emph{capsafe} and \emph{caprod} rules we need for universal
-types? Obviously, we need to take the non-inhabitable type
-$\forall X.X$ as \emph{caprod}, as with a variable of this type, it's
-possible to create a term of the capability type $E$. For example, if
-$x$ is of the type $\forall X.X$ and $b$ is of the type $B$, then
+types? Obviously, we need to take the uninhabited type $\forall X.X$
+as \emph{caprod}, as with a variable of this type, it's possible to
+create a term of the capability type $E$. For example, if $x$ is of
+the type $\forall X.X$ and $b$ is of the type $B$, then
 $x \; [B \to E] \; b$ has the type $E$.  We also need to take the
-non-inhabitable type $\forall X. \forall Y. X \to Y$ as
+uninhabited type $\forall X. \forall Y. X \to Y$ as
 \emph{caprod}. Otherwise, if $x$ is of the type
 $\forall X. \forall Y. X \to Y$ and $b$ is of the type $B$, then
 $x \; [B] \; [B \to E] \; b \; b$ has the type $E$. This observation
@@ -382,22 +382,22 @@ STLC-Pure highlighted.
 
 Why this formulation of capsafe environment is acceptable? In short,
 it's because the statement \emph{Effect-Safety} logically implies the
-statement \emph{Effect-Safety-Inhabitability}.
+statement \emph{Effect-Safety-Inhabited}.
 
-The logical implication holds because a pure and inhabitable
+The logical implication holds because a pure and inhabited
 environment is also a capsafe environment. This claim has been
 formally proved:
 
-\begin{lemma}[Inhabitable-Capsafe]
-  If the type $T$ is inhabitable, then either $T$ is capsafe or $T = E$.
+\begin{lemma}[Inhabited-Capsafe]
+  If the type $T$ is inhabited, then either $T$ is capsafe or $T = E$.
 \end{lemma}
 
-\begin{theorem}[Inhabitable-Pure-Capsafe-Env]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also capsafe.
+\begin{theorem}[Inhabited-Pure-Capsafe-Env]
+  If $\Gamma$ is pure and inhabited, then $\Gamma$ is also capsafe.
 \end{theorem}
 
 % From the theorem above, it's obvious that any property proved for a
-% capsafe environment also holds for a pure and inhabitable
+% capsafe environment also holds for a pure and inhabited
 % environment. Thus, it suffices to prove the statement
 % \emph{Effect-Safety}
 

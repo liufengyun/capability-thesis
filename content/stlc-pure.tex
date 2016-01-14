@@ -404,63 +404,62 @@ $\Gamma$ is pure, but we can construct the term $f \; x$ of the
 capability type $E$.
 
 The cause of the problem is that in a pure environment, there might
-exist non-inhabitable types like $B \to E$.  Existence of
-non-inhabitable types in a pure environment doesn't pose a problem to
-the system; a function taking a parameter of a non-inhabitable type
-can never be actually called, thus is always effect-safe. So we only
-need to consider environments with only variables of inhabitable
-types.
+exist uninhabited types like $B \to E$.  Existence of uninhabited
+types in a pure environment doesn't pose a problem to the system; a
+function taking a parameter of an uninhabited type can never be
+actually called, thus is always effect-safe. So we only need to
+consider environments with only variables of inhabited types.
 
 To convince readers that the current system is effect-safe, we need to
-exclude and only exclude non-inhabitable types from the pure
-environment and then prove that it is impossible to construct a term
-of the capability type $E$ in this restricted environment. We arrive
-at the following formulation:
+exclude and only exclude uninhabited types from the pure environment
+and then prove that it is impossible to construct a term of the
+capability type $E$ in this restricted environment. We arrive at the
+following formulation:
 
 \begin{definition}[Effect-Safety-Informally-4]
   It's impossible to construct a term of the capability type $E$ in a
-  pure environment with only variables of inhabitable types.
+  pure environment with only variables of inhabited types.
 \end{definition}
 
-\subsubsection{Inhabitability}
+\subsubsection{Inhabited Types and Environments}
 
-We need to define the concept \emph{inhabitability} precisely. What
-types are inhabitable? Obviously, if $\varnothing \vdash t: T$, then
-$T$ is inhabitable.  However, given a typing relation
-$\Gamma \vdash t: T$, we cannot immediately conclude that $T$ is
-inhabitable. We need to ensure that $\Gamma$ only contains inhabitable
-types. Otherwise, any type is inhabitable if $\Gamma$ contains a
-variable of the corresponding type.
+We need to define the concept \emph{inhabited types} precisely. What
+types are inhabited? Obviously, if $\varnothing \vdash t: T$, then $T$
+is inhabited.  However, given a typing relation $\Gamma \vdash t: T$,
+we cannot immediately conclude that $T$ is inhabited. We need to
+ensure that $\Gamma$ only contains inhabited types. Otherwise, any
+type is inhabited if $\Gamma$ contains a variable of the corresponding
+type.
 
 An intuition is that, given $\Gamma \vdash t: T$, $x:S \in \Gamma$ and
-$S$ is inhabitable, we can remove $x:S$ from $\Gamma$ and substitute
-$x$ in the term $t$ with a witness of the type S to obtain a new term
+$S$ is inhabited, we can remove $x:S$ from $\Gamma$ and substitute $x$
+in the term $t$ with a witness of the type S to obtain a new term
 $t'$. The substitution lemma tells us that the new term $t'$ still has
 the type $T$. Continue this line of thought, we'll find out that all
-inhabitable types can be inhabited in the empty environment. Thus, a
+inhabited types can be inhabited in the empty environment. Thus, a
 tentative definition is as follows:
 
-\begin{definition}[Inhabitability-First-Try]
-  A type $T$ is inhabitable if there exists a term $t$ with
+\begin{definition}[Inhabited-Type-First-Try]
+  A type $T$ is inhabited if there exists a term $t$ with
   $\varnothing \vdash t : T$.
 \end{definition}
 
 However, this definition is not satisfactory in our case, as in
 STLC-Pure there doesn't exist values for the base type $B$ and the
 capability type $E$, except variables, and we do want both types to be
-inhabitable. A natural approach is to extend the empty environment
-with one variable of the base type and one of the capability type:
+inhabited. A natural approach is to extend the empty environment with
+one variable of the base type and one of the capability type:
 
-\begin{definition}[Inhabitability-Second-Try]
-  A type $T$ is inhabitable if there exists a term $t$ with
+\begin{definition}[Inhabited-Type-Second-Try]
+  A type $T$ is inhabited if there exists a term $t$ with
   $x:B,\; y:E \vdash t : T$.
 \end{definition}
 
-This definition indeed gives us all inhabitable types in
+This definition indeed gives us all inhabited types in
 STLC-Pure. Types like $E$, $B$, $E \to B$, $E \to E$,
-$(B \to E) \to E$, etc., are all inhabitable, while types like
-$B \to E$ and $E \to B \to E$ are non-inhabitable. The reader might
-want to construct a witness of the type $B \to E$ as follows:
+$(B \to E) \to E$, etc., are all inhabited, while types like $B \to E$
+and $E \to B \to E$ are uninhabited. The reader might want to
+construct a witness of the type $B \to E$ as follows:
 
 \begin{center}
   $x:B, \; y:E \vdash \uplambda x{:}B {.}\, y : B \to E$
@@ -473,8 +472,8 @@ the typing of the function body $y$.
 The second formulation looks good, however, we can do better with the
 following definition:
 
-\begin{definition}[Inhabitability-Final]
-  A type $T$ is inhabitable if there exists a value v with the typing
+\begin{definition}[Inhabited-Type-Final]
+  A type $T$ is inhabited if there exists a value v with the typing
   $x:B, \; y:E \vdash v : T$.
 \end{definition}
 
@@ -486,31 +485,31 @@ system\footnote{We didn't prove normalization of STLC-Pure, but the
   proved progress in the empty environment, and the proof can be
   adapted to prove progress under $\{x:B, y:E\}$.}. And the
 \emph{preservation} theorem tells us the type remains unchanged during
-evaluation. This final definition makes proofs related to
-inhabitability simpler. It's useful to give a definition of
-inhabitable environments as well:
+evaluation. This final definition makes proofs related to inhabited
+types simpler. It's useful to give a definition of inhabited
+environments as well:
 
-\begin{definition}[Inhabitable-Environment]
-  An environment $\Gamma$ is inhabitable if it only contains variables
-  of inhabitable types.
+\begin{definition}[Inhabited-Environment]
+  An environment $\Gamma$ is inhabited if it only contains variables
+  of inhabited types.
 \end{definition}
 
 \subsubsection{Formalization}
 
-With the formal definition of inhabitability, we can formalize effect
-safety as follows:
+With the formal definition of inhabited environment, we can formalize
+effect safety as follows:
 
-\begin{definition}[Effect-Safety-Inhabitability]
-  If $\Gamma$ is a pure and inhabitable environment, then there
-  doesn't exist $t$ with $\Gamma \vdash t : E$.
+\begin{definition}[Effect-Safety-Inhabited]
+  If $\Gamma$ is a pure and inhabited environment, then there doesn't
+  exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
 However, this formulation doesn't give rise to a direct proof. In
-fact, this statement is too strong. Some non-inhabitable types, such
-as $E \to B \to E$, don't enable us to create a term of the type $E$,
+fact, this statement is too strong. Some uninhabited types, such as
+$E \to B \to E$, don't enable us to create a term of the type $E$,
 thus it's safe to keep them in the environment. This implies it's
 possible to impose a looser restriction on $\Gamma$, as long as all
-types that can appear in a pure and inhabitable environment can also
+types that can appear in a pure and inhabited environment can also
 appear in $\Gamma$.
 
 When we examine the problem more closely, we found that through the
@@ -581,18 +580,18 @@ $B \to E$, $(E \to B) \to E$ are considered as \emph{caprod}. Only
 \emph{capsafe} types can appear in a \emph{capsafe} environment. To
 inspect the formalization in detail, we can ask several questions.
 
-\emph{Are capsafe types inhabitable?} The answer is not
-necessarily. The type $E \to B \to E$ is capsafe but
-non-inhabitable. Allowing this type in the capsafe environment doesn't
-enable us to construct a term of the capability type $E$.
+\emph{Are capsafe types inhabited?} The answer is not necessarily. The
+type $E \to B \to E$ is capsafe but uninhabited. Allowing this type in
+the capsafe environment doesn't enable us to construct a term of the
+capability type $E$.
 
-\emph{Are inhabitable types capsafe?} The answer is yes, except the
+\emph{Are inhabited types capsafe?} The answer is yes, except the
 capability type $E$. As the capability type $E$ cannot appear in the
 pure environment, this is not a problem.
 
-\emph{Are caprod types non-inhabitable?} Yes, except the capability
-type $E$. As $E$ is also excluded in the pure environment, it's
-justified to remove it from the capsafe environment.
+\emph{Are caprod types uninhabited?} Yes, except the capability type
+$E$. As $E$ is also excluded in the pure environment, it's justified
+to remove it from the capsafe environment.
 
 % Intuitively, the rule \textsc{CP-Fun} can be justified by the fact
 % that in a capsafe environment it is impossible to construct a function
@@ -603,7 +602,7 @@ justified to remove it from the capsafe environment.
 % proving E.
 
 Why this formulation of capsafe environment is acceptable? In short,
-it is because the statement \emph{Effect-Safety-Inhabitability} is
+it is because the statement \emph{Effect-Safety-Inhabited} is
 logically implied by the more general statement \emph{Effect-Safety}:
 
 \begin{definition}[Effect-Safety]
@@ -611,20 +610,19 @@ logically implied by the more general statement \emph{Effect-Safety}:
   $\Gamma \vdash t : E$.
 \end{definition}
 
-The logical implication holds because a pure and inhabitable
-environment is also a capsafe environment. This claim has been
-formally proved:
+The logical implication holds because a pure and inhabited environment
+is also a capsafe environment. This claim has been formally proved:
 
-\begin{lemma}[Inhabitable-Capsafe]
-  If the type $T$ is inhabitable, then either $T$ is capsafe or $T = E$.
+\begin{lemma}[Inhabited-Capsafe]
+  If the type $T$ is inhabited, then either $T$ is capsafe or $T = E$.
 \end{lemma}
 
-\begin{theorem}[Inhabitable-Pure-Capsafe-Env]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is capsafe.
+\begin{theorem}[Inhabited-Pure-Capsafe-Env]
+  If $\Gamma$ is pure and inhabited, then $\Gamma$ is capsafe.
 \end{theorem}
 
 % From the theorem above, it's obvious that any property proved for a
-% capsafe environment also holds for a pure and inhabitable
+% capsafe environment also holds for a pure and inhabited
 % environment. Therefore, it suffices to prove the statement
 % \emph{Effect-Safety}.
 
@@ -656,12 +654,12 @@ the lemma \emph{Capsafe-Env-Capsafe}.
 
 There exists an intuitive proof of effect safety without resorting to
 capsafe environments. The main insight is that the statement
-\emph{Effect-Safety-Inhabitability} is logically implied by the
+\emph{Effect-Safety-Inhabited} is logically implied by the
 statement \emph{Effect-Safety-Intuitive}:
 
-\begin{definition}[Effect-Safety-Inhabitability]
-  If $\Gamma$ is a pure and inhabitable environment, then there
-  doesn't exist $t$ with $\Gamma \vdash t : E$.
+\begin{definition}[Effect-Safety-Inhabited]
+  If $\Gamma$ is a pure and inhabited environment, then there doesn't
+  exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
 \begin{definition}[Effect-Safety-Intuitive]
@@ -673,15 +671,15 @@ the value $v$ can either be a variable or a function, in neither case
 can it be typed as the capability type $E$.
 
 Why does the logical implication hold? In short, if
-\emph{Effect-Safety-Inhabitability} doesn't hold, then
+\emph{Effect-Safety-Inhabited} doesn't hold, then
 \emph{Effect-Safety-Intuitive} doesn't hold either. Thus, the latter
 logically implies the former.  In the following, we present an
-informal proof, the core idea that if $\Gamma$ is pure and
-inhabitable, and $\Gamma \vdash t : E$, then we can ``collapse''
-$\Gamma$ to $\{b : B\}$ through substitution of the witnesses of the
-pure and inhabitable types in $\Gamma$.
+informal proof, the core idea that if $\Gamma$ is pure and inhabited,
+and $\Gamma \vdash t : E$, then we can ``collapse'' $\Gamma$ to
+$\{b : B\}$ through substitution of the witnesses of the pure and
+inhabited types in $\Gamma$.
 
-For a pure and inhabitable environment
+For a pure and inhabited environment
 $\Gamma = \{x:T, \; y:S, \; \dots, \; z:U\}$, if there exists $t$ with
 $\Gamma \vdash t : E$, then the typing relation still holds by
 extending the environment with $b:B$:
@@ -690,13 +688,13 @@ extending the environment with $b:B$:
 $b:B, \; x:T, \; y:S, \; \dots, \; z:U \vdash t: E$
 \end{center}
 
-The type $U$ is pure and inhabitable, as $\Gamma$ is pure and
-inhabitable. According to the definition of \emph{inhabitability},
-there exists a value $u$ with $b:B, \; e:E \vdash u: U$. As $u$ is a
-value, it can be either a variable or a function. If $u$ is a
-variable, it can only be $b$, as $U$ is a pure type and the variable
-$e$ binds to the impure capbility type $E$. If $u$ is a function, we
-have $b:B \vdash u: U$, as in the typing of stoic functions the rule
+The type $U$ is pure and inhabited, as $\Gamma$ is pure and
+inhabited. According to the definition of \emph{inhabited type}, there
+exists a value $u$ with $b:B, \; e:E \vdash u: U$. As $u$ is a value,
+it can be either a variable or a function. If $u$ is a variable, it
+can only be $b$, as $U$ is a pure type and the variable $e$ binds to
+the impure capbility type $E$. If $u$ is a function, we have
+$b:B \vdash u: U$, as in the typing of stoic functions the rule
 \textsc{T-Abs} will remove the binding $e:E$ from the environment. In
 both cases, we have $b:B \vdash u: U$. Now using the substitution
 lemma, we have:
@@ -727,19 +725,18 @@ To summarize, we have given an intuitive proof of the following
 statement:
 
 \begin{center}
-  $\neg \; \text{Effect-Safety-Inhabitability} \to \neg \;
+  $\neg \; \text{Effect-Safety-Inhabited} \to \neg \;
   \text{Effect-Safety-Intuitive}$
 \end{center}
 
 By the logical law \emph{contraposition}, we have:
 
 \begin{center}
-  $ \text{Effect-Safety-Intuitive} \to
-  \text{Effect-Safety-Inhabitability} $
+  $ \text{Effect-Safety-Intuitive} \to \text{Effect-Safety-Inhabited}$
 \end{center}
 
 As \emph{Effect-Safety-Intuitive} trivially holds,
-\emph{Effect-Safety-Inhabitability} follows by \emph{modus ponens}.
+\emph{Effect-Safety-Inhabited} follows by \emph{modus ponens}.
 
 Though conceptually simpler, the mechanized proof necessitates the
 proof of the normalization theorem, which is more involved than the
