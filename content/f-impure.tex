@@ -1,13 +1,13 @@
 \section{System F-Impure}
 
-In this chapter, we present the system \emph{F-Impure}, which is an
-extension of the system F-Pure with free functions. It can also be
-seen as an extension of the system STLC-Impure with universal types,
-but without subtyping. Extending the system with subtyping would lead
-us to bounded quantification, which we are still working on. Given the
+In this chapter, we present the system F-Impure, which is an extension
+of the system F-Pure with free functions. It can also be seen as an
+extension of the system STLC-Impure with universal types, but without
+subtyping. Extending the system with subtyping would lead us to
+bounded quantification, which we are still working on. Given the
 importance of parametric polymorphism and the fact that subtyping is
-not a necessary add-on of functional programming, the system
-\emph{F-Impure} deserves a separate presentation here.
+not a necessary add-on of functional programming, the system F-Impure
+deserves a separate presentation here.
 
 We'll first introduce the formalization, then discuss soundness and
 effect safety. In the discussion, we'll focus on its difference from
@@ -23,25 +23,25 @@ the system STLC-Impure and F-Pure.
 \textbf{Syntax}
 
 \begin{tabu} to \linewidth {l l l X[r]}
-  t   & ::= &                                      & terms:               \\
-      &     &  x                                   & variable             \\
-      &     & $\lambda$ x:T.t                      & abstraction          \\
-      &     & t t                                  & application          \\
-      &     & $\lambda$ X.t                        & type abstraction     \\
-      &     & t [T]                                & type application     \\
+  $t$ & ::= &                                      & terms:               \\
+      &     & $x$                                  & variable             \\
+      &     & $\uplambda x{:}T. \, t$              & abstraction          \\
+      &     & $t t$                                & application          \\
+      &     & $\uplambda X. \, t$                  & type abstraction     \\
+      &     & $t [T]$                              & type application     \\
 \\
-  v   & ::= &                    & values:              \\
-      &     & $\lambda$ x:T.t    & abstraction value    \\
-      &     & x                  & variable value       \\
-      &     & $\lambda X.t$      & type abstraction value  \\
+  $v$ & ::= &                    & values:              \\
+      &     & $\uplambda x{:}T. \, t$ & abstraction value    \\
+      &     & $x$                     & variable value       \\
+      &     & $\uplambda X. \, t$     & type abstraction value  \\
 \\
-  T   & ::= &                       & types:               \\
-      &     & X                     & type variable        \\
-      &     & B                     & basic type           \\
-      &     & E                     & capability type      \\
-      &     & T $\to$ T             & type of stoic funs   \\
-      &     & \colorbox{shade}{T $\Rightarrow$ T}     & type of free funs    \\
-      &     & $\forall$ X.T         & universal type       \\
+  $T$ & ::= &                       & types:               \\
+      &     & $X$                   & type variable        \\
+      &     & $B$                   & basic type           \\
+      &     & $E$                   & capability type      \\
+      &     & $T \to T$             & type of stoic funs   \\
+      &     & \colorbox{shade}{$T \Rightarrow T$}     & type of free funs    \\
+      &     & $\forall X.T$         & universal type       \\
 \end{tabu}
 
 \hfill\\
@@ -57,14 +57,14 @@ the system STLC-Impure and F-Pure.
 { v_1 \; t_2 \longrightarrow v_1 \; t'_2 }
 
 \infax[E-AppAbs]
-{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+{ (\uplambda x{:}T. \, t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
 
 \infrule[E-TApp]
 { t_1 \longrightarrow t'_1 }
 { t_1 \; [T_2] \longrightarrow t'_1 \; [T_2] }
 
 \infax[E-TappTabs]
-{ (\lambda X.t_1) [T_2] \longrightarrow [X \mapsto T_2]t_1 }
+{ (\uplambda X. \, t_1) [T_2] \longrightarrow [X \mapsto T_2]t_1 }
 
 \columnbreak
 
@@ -74,25 +74,25 @@ the system STLC-Impure and F-Pure.
 { x: T \in \Gamma }
 { \Gamma \vdash x : T }
 
-\infrule[T-Abs2]
+\infrule[T-Abs1]
 { pure(\Gamma),\; x: S \vdash t_2 : T }
-{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+{ \Gamma \vdash \uplambda x{:}S. \, t_2 : S \to T }
 
 \infrule[T-Abs2]
 {  \colorbox{shade}{$\Gamma,\; x: S \vdash t_2 : T$} }
-{  \colorbox{shade}{$\Gamma \vdash \lambda x:S.t_2 : S \Rightarrow T$} }
+{  \colorbox{shade}{$\Gamma \vdash \uplambda x{:}S. \, t_2 : S \Rightarrow T$} }
 
 \infrule[T-Degen]
 { \colorbox{shade}{$\Gamma \vdash t : S \to T$} }
 { \colorbox{shade}{$\Gamma \vdash t : S \Rightarrow T$} }
 
 \infrule[T-App]
-{ \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
+{ \Gamma \vdash t_1 : S \Rightarrow T \andalso \Gamma \vdash t_2 : S }
 { \Gamma \vdash t_1 \; t_2 : T }
 
 \infrule[T-TAbs]
 { pure(\Gamma),\; X \vdash t_2 : T }
-{ \Gamma \vdash \lambda X.t_2 : \forall X. T }
+{ \Gamma \vdash \uplambda X. \, t_2 : \forall X. T }
 
 \infrule[T-TApp]
 { \Gamma \vdash t_1 : \forall X.T \andalso T_2 \neq E
@@ -105,12 +105,12 @@ the system STLC-Impure and F-Pure.
 
 \begin{center}
 \begin{tabular}{l c l}
-pure($\varnothing$)             & = &   $\varnothing$ \\
-pure($\Gamma$, x: E)            & = &  pure($\Gamma$) \\
+$pure(\varnothing)$             & = &   $\varnothing$ \\
+$pure(\Gamma, \; x: E)$            & = &   $pure(\Gamma)$ \\
 \rowcolor{gray!40}
-pure($\Gamma$, x: S $\Rightarrow$ T)  & = &  pure($\Gamma$) \\
-pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
-pure($\Gamma$, X)  & = &  pure($\Gamma$), X  \\
+$pure(\Gamma, \; x: S \Rightarrow T)$  & = &  $pure(\Gamma)$ \\
+$pure(\Gamma, \; x: T)$  & = &  $pure(\Gamma), \; x: T$     \\
+$pure(\Gamma, \; X)$  & = &  $pure(\Gamma), \; X$  \\
 \end{tabular}
 \end{center}
 
@@ -133,10 +133,10 @@ added a typing rule for free functions. We have to add a typing rule
 function types and free function types, as there is no subtyping in
 current system.
 
-As in STLC-Impure, we adapted the definition of \emph{pure} to exclude
-free function types from pure environments. If stoic functions have
-access to free functions, we'll loose the ability to track the effects
-of stoic functions in the type system.
+As in STLC-Impure, we adapted the definition of $pure$ to exclude free
+function types from pure environments. If stoic functions have access
+to free functions, we'll loose the ability to track the effects of
+stoic functions in the type system.
 
 The rule \textsc{T-TApp} is also changed by disallowing free function
 types as type parameter in type application. Without this restriction,
@@ -144,17 +144,17 @@ preservation of the system breaks, as demonstrated by the following
 term $t$, which has the type $\forall T. T \to B \to T$:
 
 \begin{center}
-  $t = \lambda T. \; \lambda x:T. \; \lambda y:B. \; x$
+  $t = \uplambda T. \, \uplambda x{:}T. \, \uplambda y{:}B. \, x$
 \end{center}
 
 If we allow $U \Rightarrow V$ as parameter to type application, the
-term $t [U \Rightarrow V]$ would have the type
+term $t \; [U \Rightarrow V]$ would have the type
 $(U \Rightarrow V) \to B \to (U \Rightarrow V)$.  However, after one
 evaluation step, the term
-$\lambda x:U \Rightarrow V. \; \lambda y:B. \; x$ can at best be typed
-as $(U \Rightarrow V) \to B \Rightarrow (U \Rightarrow V)$, because
-the inner-most lambda has to be of the free function type in order to
-capture the variable $x$; thus preservation breaks.
+$\uplambda x{:}U \Rightarrow V. \, \uplambda y{:}B. \, x$ can at best
+be typed as $(U \Rightarrow V) \to B \Rightarrow (U \Rightarrow V)$,
+because the inner-most lambda has to be of the free function type in
+order to capture the variable $x$; thus preservation breaks.
 
 A different design choice we could make is to introduce free type
 abstractions in the system. Such an extension will not be very useful
@@ -198,17 +198,16 @@ need two statements of effect safety:
 
 \begin{definition}[Effect-Safety-Inhabitability-2]
   If $\Gamma$ is a pure and inhabitable environment, and
-  $\Gamma \vdash t_1 \; t_2 : T$, then there exists U, V such that
+  $\Gamma \vdash t_1 \; t_2 : T$, then there exists $U$, $V$ such that
   $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-
 As in the system STLC-Impure, the proof of these two statements
-depends on two more general statements about \emph{healthy
+depends on two more general statements about \emph{capsafe
   environments}. Given that we've seen how universal types and free
-function types are extended in the formulation of \emph{healthy
+function types are extended in the formulation of \emph{capsafe
   environment}, we can easily combine them to arrive at the
-formulation shown in Figure~\ref{fig:f-impure-healthy-definition},
+formulation shown in Figure~\ref{fig:f-impure-capsafe-definition},
 with the changes from F-Pure highlighted.
 
 \begin{figure}[h]
@@ -218,34 +217,34 @@ with the changes from F-Pure highlighted.
 \setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
-\textbf{Capsafe}
+\textbf{Capsafe Type}
 
 \infax[CS-Base]
-{ B \quad \text{capsafe} }
+{ B \quad capsafe }
 
 \infrule[CS-Fun1]
 { S \quad caprod }
-{ S \to T \quad \text{capsafe} }
+{ S \to T \quad capsafe }
 
 \infrule[CS-Fun2]
-{ T \quad \text{capsafe} }
-{ S \to T \quad \text{capsafe} }
+{ T \quad capsafe }
+{ S \to T \quad capsafe }
 
 \infrule[CS-Fun3]
 { \colorbox{shade}{$S \quad caprod$} }
-{ \colorbox{shade}{$S \Rightarrow T \quad \text{capsafe}$} }
+{ \colorbox{shade}{$S \Rightarrow T \quad capsafe$} }
 
 \infrule[CS-Fun4]
-{ \colorbox{shade}{$T \quad \text{capsafe}$} }
-{ \colorbox{shade}{$S \Rightarrow T \quad \text{capsafe}$} }
+{ \colorbox{shade}{$T \quad capsafe$} }
+{ \colorbox{shade}{$S \Rightarrow T \quad capsafe$} }
 
 \infrule[CS-All]
-{ [X \mapsto B]T \; \text{capsafe} \andalso [X \mapsto E]T \; \text{capsafe} }
-{ \forall X.T \quad \text{capsafe} }
+{ [X \mapsto B]T \; capsafe \andalso [X \mapsto E]T \; capsafe }
+{ \forall X.T \quad capsafe }
 
 \columnbreak
 
-\textbf{Caprod}
+\textbf{Caprod Type}
 
 \infax[CP-Eff]
 { E \quad caprod }
@@ -255,76 +254,73 @@ with the changes from F-Pure highlighted.
 { S \to T \quad caprod }
 
 \infrule[CP-Fun2]
-{ \colorbox{shade}{$S \; \text{capsafe} \andalso T \; caprod$} }
+{ \colorbox{shade}{$S \; capsafe \andalso T \; caprod$} }
 { \colorbox{shade}{$S \Rightarrow T \quad caprod$} }
 
-\infrule[CP-All]
-{ [X \mapsto B]T \; caprod \quad or \quad [X \mapsto E]T \; caprod }
+\infrule[CP-All1]
+{ [X \mapsto B]T \; caprod }
 { \forall X.T \quad caprod }
 
-\textbf{Healthy}
+\infrule[CP-All2]
+{ [X \mapsto E]T \; caprod }
+{ \forall X.T \quad caprod }
 
-\infax[H-Empty]
-{ \varnothing \quad caprod }
+\textbf{Capsafe Environment}
 
-\infrule[H-Var]
-{ G \; healthy \andalso T \; \text{capsafe} }
-{ G, \; x:T \quad healthy }
+\infax[CE-Empty]
+{ \varnothing \quad capsafe }
 
-\infrule[H-TVar]
-{ G \quad healthy }
-{ G, \; X \quad healthy }
+\infrule[CE-Var]
+{ \Gamma \; capsafe \andalso T \; capsafe }
+{ \Gamma, \; x:T \quad capsafe }
 
-\hfill\\
+\infrule[CE-TVar]
+{ \Gamma \quad capsafe }
+{ \Gamma, \; X \quad capsafe }
 
 \end{multicols}
 \end{framed}
 
-\caption{System F-Impure Healthy Environment}
-\label{fig:f-impure-healthy-definition}
+\caption{System F-Impure Capsafe Environment}
+\label{fig:f-impure-capsafe-definition}
 \end{figure}
 
-Why this formulation of healthy environment is acceptable? In short,
+Why this formulation of capsafe environment is acceptable? In short,
 it's because the statement \emph{Effect-Safety-Inhabitability-1} and
 \emph{Effect-Safety-Inhabitability-2} are logically implied by the
 statement \emph{Effect-Safety-1} and \emph{Effect-Safety-2}
 respectively.
 
 \begin{definition}[Effect-Safety-1]
-  If $\Gamma$ is healthy, there doesn't exist $t$ with
+  If $\Gamma$ is capsafe, there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{definition}
 
 \begin{definition}[Effect-Safety-2]
-  If $\Gamma$ is pure and healthy, and $\Gamma \vdash t_1 \; t_2 : T$,
-  then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+  If $\Gamma$ is pure and capsafe, and $\Gamma \vdash t_1 \; t_2 : T$,
+  then there exists $U$, $V$ such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
 The logical implications hold because a pure and inhabitable
-environment is also a healthy (and pure) environment. This claim has
+environment is also a capsafe (and pure) environment. This claim has
 been formally proved:
 
 \begin{lemma}[Inhabitable-Capsafe]
-  If the type T is inhabitable, then either T is capsafe or $T = E$ or
-  T is a free function type.
+  If the type $T$ is inhabitable, then either $T$ is capsafe or
+  $T = E$ or $T$ is a free function type.
 \end{lemma}
 
-\begin{theorem}[Inhabitable-Pure-Healthy]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
+\begin{theorem}[Inhabitable-Pure-Capsafe-Env]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also capsafe.
 \end{theorem}
 
-\begin{theorem}[Inhabitable-Pure-Healthy']
+\begin{corollary}[Inhabitable-Pure-Capsafe-Env']
   If $\Gamma$ is pure and inhabitable, then $\Gamma$ is pure and
-  healthy.
-\end{theorem}
+  capsafe.
+\end{corollary}
 
 Note that the last theorem follows immediately from the second one, as
 we already know from the premise that $\Gamma$ is pure.
-
-% From the theorem above, it's obvious that any property proved for a
-% healthy environment also holds for a pure and inhabitable
-% environment. Thus, it suffices to prove the following statements about
-% healthy environments.
 
 \subsubsection{Proof}
 
@@ -337,9 +333,9 @@ axioms, as shown in Figure~\ref{fig:f-impure-axioms}, with the newly
 added axioms highlighted. The justification for the axiom
 \textsc{Ax-All} and \textsc{Ax-Var} is the same as the justification
 for the axiom \textsc{Ax-Base} in STLC-Impure. In short, because the
-outer function is stoic and the first parameter is pure, the inner
-function cannot capture variables of capabilities or free functions,
-thus it's fair enough to type the inner function as stoic.
+outer function is stoic and the type of the first parameter is pure,
+the inner function cannot capture variables of capabilities or free
+functions, thus it's fair enough to type the inner function as stoic.
 
 \begin{figure}[h]
 \begin{framed}
@@ -394,22 +390,22 @@ The justification for the axiom \textsc{Ax-TAbs} is similar. If a term
 $t$ can be typed as $\forall X.T_1 \Rightarrow T_2$ under $\Gamma$,
 according to the typing rule \textsc{T-All}, the whole term can be
 typed under $pure(\Gamma)$. Then the inner function can be typed under
-$pure(\Gamma), X$, which is equal to $pure(\Gamma, X)$. Thus, it's
-fair enough to type the inner function as stoic.
+$pure(\Gamma), \; X$, which is equal to $pure(\Gamma, \; X)$. Thus,
+it's fair enough to type the inner function as stoic.
 
 The justification for the axiom \textsc{Ax-Poly} is the same as given
 in STLC-Impure, thus we omit here.
 
 Assuming these axioms, it's straight-forward to prove a lemma
-\emph{Healthy-Pure-Stoic}, and the second statement of effect safety
+\emph{Capsafe-Pure-Stoic}, and the second statement of effect safety
 follows immediately from the lemma.
 
-\begin{lemma}[Healthy-Pure-Stoic]
-  If $\Gamma$ is pure and healthy,  and $\Gamma \vdash t : S
+\begin{lemma}[Capsafe-Pure-Stoic]
+  If $\Gamma$ is pure and capsafe,  and $\Gamma \vdash t : S
   \Rightarrow T$, then $\Gamma \vdash t : S \to T$.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety-2]
-  If $\Gamma$ is pure and healthy, and $\Gamma \vdash t_1 \; t_2 : T$,
-  then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+  If $\Gamma$ is pure and capsafe, and $\Gamma \vdash t_1 \; t_2 : T$,
+  then there exists $U$, $V$ such that $\Gamma \vdash t_1 : U \to V$.
 \end{theorem}
