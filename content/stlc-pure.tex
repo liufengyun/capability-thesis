@@ -335,8 +335,8 @@ evaluation.
 Interestingly, this strict evaluation requirement contrasts
 capability-based effect systems with monad-based effect systems. In
 Haskell, if strict evaluation is adopted, it will be impossible to
-track effects in the type system, as demonstrated by following code
-snippet:
+track effects in the type system, as demonstrated by the following
+code snippet:
 
 \begin{lstlisting}[language=Haskell]
   inc n = (\x -> n + 1) (putStrLn (show n))
