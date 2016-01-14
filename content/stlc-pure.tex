@@ -148,6 +148,26 @@ environment. As an over-approximation, this version is certainly
 effect-safe. However, it rejects more types than necessary, thus
 reduces expressiveness of the system.
 
+We introduce two useful definitions with the help of the function
+$pure$.
+
+\begin{definition}[Pure-Environment]
+  An environment $\Gamma$ is pure if $pure \; \Gamma = \Gamma$.
+\end{definition}
+
+\begin{definition}[Pure-Type]
+  A type is pure if the type can exist in a pure environment.
+\end{definition}
+
+From the definition, it's obvious that the type $B$ is pure, while $E$
+is impure. However, a pure function type doesn't imply the
+corresponding function is pure. For example, $E \to B$ is a pure type,
+but functions that inhabit the type may have side effects, thus is
+impure. The meta-theory of the system ensures that if the capability
+type $E$ doesn't appear in the type signature of a function, then the
+function must be pure. For example, all functions that can be typed as
+$B \to B$ are guaranteed to be pure.
+
 \subsubsection{Stoic Functions and Free Functions}
 
 The variable-capturing discipline makes the functions in STLC-Pure
