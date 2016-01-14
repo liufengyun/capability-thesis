@@ -43,16 +43,16 @@ below.
 \textbf{Syntax}
 
 \begin{tabu} to \linewidth {l l l X[r]}
-  t   & ::= &                     & terms:               \\
+  $t$ & ::= &                     & terms:               \\
       &     & $x$                 & variable             \\
       &     & $\uplambda x{:}T.\, t$ & abstraction          \\
       &     & $t t$               & application          \\
 \\
-  v   & ::= &                    & values:              \\
+  $v$ & ::= &                        & values:              \\
       &     & $\uplambda x{:}T.\, t$ & abstraction value    \\
-      &     & \colorbox{shade}{x}& variable value       \\
+      &     & \colorbox{shade}{x}    & variable value       \\
 \\
-  T   & ::= &                    & types:               \\
+  $T$ & ::= &                      & types:               \\
       &     & $B$                  & basic type           \\
       &     & \colorbox{shade}{$E$}& capability type      \\
       &     & $T \to T$            & type of functions    \\
