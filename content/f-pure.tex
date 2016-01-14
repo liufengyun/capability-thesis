@@ -1,10 +1,10 @@
 \section{System F-Pure}
 
-In this chapter, we present the system \emph{F-Pure}, which is an
-extension of the system STLC-Pure with universal types. In this
-system, not only functions need to observe a variable-capturing
-discipline, type abstractions also need to observe the same
-variable-capturing discipline.
+In this chapter, we present the system F-Pure, which is an extension
+of the system STLC-Pure with universal types. In this system, not only
+functions need to observe a variable-capturing discipline, type
+abstractions also need to observe the same variable-capturing
+discipline.
 
 We'll first introduce the formalization, then discuss soundness and
 effect safety. In the discussion, we'll focus on its difference from
@@ -20,24 +20,24 @@ the system STLC-Pure.
 \textbf{Syntax}
 
 \begin{tabu} to \linewidth {l l l X[r]}
-  t   & ::= &                                      & terms:               \\
-      &     &  x                                   & variable             \\
-      &     & $\lambda$ x:T.t                      & abstraction          \\
-      &     & t t                                  & application          \\
-      &     & \colorbox{shade}{$\lambda$ X.t}      & type abstraction     \\
-      &     & \colorbox{shade}{t [T]}              & type application     \\
+  $t$ & ::= &                                      & terms:               \\
+      &     & $x$                                  & variable             \\
+      &     & $\uplambda x{:}T.\, t$               & abstraction          \\
+      &     & $t t$                                & application          \\
+      &     & \colorbox{shade}{$\uplambda X.\, t$} & type abstraction     \\
+      &     & \colorbox{shade}{$t [T]$}            & type application     \\
 \\
-  v   & ::= &                    & values:              \\
-      &     & $\lambda$ x:T.t    & abstraction value    \\
-      &     & x                  & variable value       \\
-      &     & \colorbox{shade}{$\lambda X.t$}    & type abstraction value  \\
+  $v$ & ::= &                    & values:              \\
+      &     & $\uplambda x{:}T.\, t$ & abstraction value    \\
+      &     & $x$                & variable value       \\
+      &     & \colorbox{shade}{$\uplambda X.\, t$}    & type abstraction value  \\
 \\
-  T   & ::= &                       & types:               \\
-      &     & \colorbox{shade}{X}   & type variable        \\
-      &     & B                     & basic type           \\
-      &     & E                     & capability type      \\
-      &     & T $\to$ T             & type of functions    \\
-      &     & \colorbox{shade}{$\forall$ X.T} & universal type       \\
+  $T$ & ::= &                         & types:               \\
+      &     & \colorbox{shade}{$X$}   & type variable        \\
+      &     & $B$                     & basic type           \\
+      &     & $E$                     & capability type      \\
+      &     & $T \to T$              & type of functions    \\
+      &     & \colorbox{shade}{$\forall X. T$} & universal type       \\
 \end{tabu}
 
 \hfill\\
@@ -53,14 +53,14 @@ the system STLC-Pure.
 { v_1 \; t_2 \longrightarrow v_1 \; t'_2 }
 
 \infax[E-AppAbs]
-{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+{ (\uplambda x{:}T.\, t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
 
 \infrule[E-TApp]
 { \colorbox{shade}{$t_1 \longrightarrow t'_1$} }
 { \colorbox{shade}{$t_1 \; [T_2] \longrightarrow t'_1 \; [T_2]$} }
 
 \infax[E-TappTabs]
-{ \colorbox{shade}{$(\lambda X.t_1) [T_2] \longrightarrow [X \mapsto T_2]t_1$} }
+{ \colorbox{shade}{$(\uplambda X.\, t_1) [T_2] \longrightarrow [X \mapsto T_2]t_1$} }
 
 \columnbreak
 
@@ -72,7 +72,7 @@ the system STLC-Pure.
 
 \infrule[T-Abs]
 { pure(\Gamma),\; x: S \vdash t_2 : T }
-{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+{ \Gamma \vdash \uplambda x{:}S.\, t_2 : S \to T }
 
 \infrule[T-App]
 { \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
@@ -80,7 +80,7 @@ the system STLC-Pure.
 
 \infrule[T-TAbs]
 { \colorbox{shade}{$pure(\Gamma),\; X \vdash t_2 : T$} }
-{ \colorbox{shade}{$\Gamma \vdash \lambda X.t_2 : \forall X. T$} }
+{ \colorbox{shade}{$\Gamma \vdash \uplambda X.\, t_2 : \forall X. T$} }
 
 \infrule[T-TApp]
 { \colorbox{shade}{$\Gamma \vdash t_1 : \forall X.T \andalso T_2 \neq E$} }
@@ -94,11 +94,11 @@ the system STLC-Pure.
 
 \begin{center}
 \begin{tabular}{l c l}
-pure($\varnothing$)             & = &   $\varnothing$ \\
-pure($\Gamma$, x: E)            & = &  pure($\Gamma$) \\
-pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
+$pure(\varnothing)$           & = &  $\varnothing$ \\
+$pure(\Gamma, \; x: E)$       & = &  $pure(\Gamma)$ \\
+$pure(\Gamma, \; x: T)$       & = &  $pure(\Gamma), \; x: T$     \\
 \rowcolor{gray!40}
-pure($\Gamma$, X)  & = &  pure($\Gamma$), X  \\
+$pure(\Gamma, \; X)$          & = &  $pure(\Gamma), \; X$  \\
 \end{tabular}
 \end{center}
 
@@ -124,7 +124,7 @@ abstraction must observe the variable-capturing discipline.
 
 \infrule[T-TAbs]
 { pure(\Gamma),\; X \vdash t_2 : T }
-{ \Gamma \vdash \lambda X.t_2 : \forall X. T }
+{ \Gamma \vdash \uplambda X.\, t_2 : \forall X. T }
 
 We made this design choice in order to allow universal types to be
 present in pure environments. Otherwise, if type abstractions can
@@ -134,7 +134,7 @@ makes it incorrect to have universal types in pure environments, thus
 renders universal types useless in the system.
 
 The typing rule \textsc{T-TApp} requires that the type parameter
-cannot be the capability type E. However, it's allowed to supply
+cannot be the capability type $E$. However, it's allowed to supply
 non-inhabitable types like $B \to E$ as parameter to type abstraction.
 
 % This restriction implies in system F-Pure polymorphism doesn't cover
@@ -146,22 +146,22 @@ non-inhabitable types like $B \to E$ as parameter to type abstraction.
 
 Without the restriction, preservation of the system breaks, as can be
 seen from the following term $t$, which has the type
-$\forall T. T \to B \to T$:
+$\forall X. X \to B \to X$:
 
 \begin{center}
-  $t = \lambda T. \; \lambda x:T. \; \lambda y:B. \; x$
+  $t = \uplambda X. \, \uplambda x{:}X. \, \uplambda y{:}B. \, x$
 \end{center}
 
-If we allow $E$ as parameter to type application, the term $t [E]$
+If we allow $E$ as parameter to type application, the term $t \; [E]$
 would have the type $E \to B \to E$. However, after one evaluation
-step, the term $\lambda x:E. \; \lambda y:B. \; x$ cannot be typed
-anymore, as the capability variable $x$ cannot be captured in the
-inner-most lambda; thus preservation breaks.
+step, the term $\uplambda x{:}E. \, \uplambda y{:}B. \, x$ cannot be
+typed anymore, as the capability variable $x$ cannot be captured in
+the inner-most lambda; thus preservation breaks.
 
-The definition of the function \emph{pure} is changed slightly by
-allowing type variables to be in the pure environment. This is
-natural, as we know in the typing rule \textsc{T-TApp} that a type
-variable cannot be of the capability type.
+The definition of the function $pure$ is changed slightly by allowing
+type variables to be in the pure environment. This is natural, as we
+know in the typing rule \textsc{T-TApp} that a type variable cannot be
+the capability type $E$.
 
 \subsection{Soundness}
 
@@ -182,7 +182,7 @@ preservation, we need to make small changes to the standard
 substitution lemmas in System F.
 
 \begin{lemma}[Subsitution-Term]
-  If $\Gamma,\; x:S \vdash t : T$, s is a value and
+  If $\Gamma,\; x:S \vdash t : T$, $s$ is a value and
   $\Gamma \vdash s : S$, then $\Gamma \vdash [x \mapsto s]t : T$.
 \end{lemma}
 
@@ -194,7 +194,7 @@ substitution lemmas in System F.
 We restrict $s$ to be a value in the lemma \emph{Substitution-Term}
 for the same reason as in the system STLC-Pure. In the lemma
 \emph{Substitution-Type}, we restrict that $P$ is not the capability
-type E. Otherwise, the lemma cannot be proved as explained in the
+type $E$. Otherwise, the lemma cannot be proved as explained in the
 previous section.
 
 \subsection{Effect Safety}
@@ -209,8 +209,8 @@ inhabitable types and inhabitable environments.
 
 The definition of inhabitable environment in STLC-Pure would reject a
 well-formed environment with type variables like
-$\{T, S, f: T \to S, x:T\}$, which could be the environment for
-the following well-defined function:
+$\{T, \; S, \; f: T \to S, \; x:T\}$, which could be the environment
+for the following well-defined function:
 
 \begin{lstlisting}[language=Scala]
   def apply[T, S](f: T -> S)(x: T) = f x
@@ -291,58 +291,28 @@ environments:
 \end{definition}
 
 The proof of the statement depends on a more general statement about
-\emph{healthy environments}. If we can arrive at such a definition of
-\emph{healthy environment} that a pure and inhabitable environment is
-also healthy, then it suffices to prove the following statement about
-healthy environments:
+\emph{capsafe environments}. If we can arrive at such a definition of
+\emph{capsafe environment} that a pure and inhabitable environment is
+also capsafe, then it suffices to prove the following statement about
+capsafe environments:
 
 \begin{definition}[Effect-Safety]
-  If $\Gamma$ is healthy, there doesn't exist $t$ with
+  If $\Gamma$ is capsafe, there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{definition}
 
 What \emph{capsafe} and \emph{caprod} rules we need for universal
 types? Obviously, we need to take the non-inhabitable type
 $\forall X.X$ as \emph{caprod}, as with a variable of this type, it's
-possible to create a term of the capability type E. For example, if
+possible to create a term of the capability type $E$. For example, if
 $x$ is of the type $\forall X.X$ and $b$ is of the type $B$, then
 $x \; [B \to E] \; b$ has the type $E$.  We also need to take the
 non-inhabitable type $\forall X. \forall Y. X \to Y$ as
 \emph{caprod}. Otherwise, if $x$ is of the type
 $\forall X. \forall Y. X \to Y$ and $b$ is of the type $B$, then
 $x \; [B] \; [B \to E] \; b \; b$ has the type $E$. This observation
-leads us to following rules for universal types.
-
-\infrule[CS-All]
-{ [X \mapsto B]T \; \text{capsafe} \andalso [X \mapsto E]T \; \text{capsafe} }
-{ \forall X.T \quad \text{capsafe} }
-
-\infrule[CP-All]
-{ [X \mapsto B]T \; caprod \quad or \quad [X \mapsto E]T \; caprod }
-{ \forall X.T \quad caprod }
-
-% We need to ensure that thew new rule CP-All only mark non-inhabitable
-% types as $caprod$. As before, we only provide informal argument
-% here. The justification for the rule \text{CP-All} is that, if a
-% universal type is inhabitable, then it must be inhabitable by
-% replacing the type parameter with any type (except E). Thus if a
-% specialized universal type is caprod (which we know is non-inhabitable
-% as argued before), then the universal type is also
-% non-inhabitable. Therefore, the \textsc{CP-All} rule only marks
-% non-inhabitable types as caprod.
-
-% Note that in the explanation above, we say that the capability type E
-% is an exception. For example, the type $\forall T.T \to B \to T$ is
-% inhabited by the term
-% $\lambda T. \; \lambda x:T. \; \lambda y:B. \; x$. However, the type
-% $E \to B \to E$ is non-inhabitable. This is not a problem since
-% $E \to B \to E$ is \emph{capsafe}. In fact, in the initial
-% formulation, we used $B \to E$ instead of $E$ in \textsc{CS-All} and
-% \textsc{CP-All}. Later, we found out that we can simplify the
-% formulation without changing the proof of effect safety.
-
-The full definition of \emph{healthy environment} is presented in
-Figure~\ref{fig:f-pure-healthy-definition}, with differences from
+leads us to the definition of \emph{capsafe environment} presented in
+Figure~\ref{fig:f-pure-capsafe-definition}, with differences from
 STLC-Pure highlighted.
 
 \begin{figure}[h]
@@ -352,26 +322,26 @@ STLC-Pure highlighted.
 \setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
-\textbf{Capsafe}
+\textbf{Capsafe Type}
 
 \infax[CS-Base]
-{ B \quad \text{capsafe} }
+{ B \quad capsafe }
 
 \infrule[CS-Fun1]
 { S \quad caprod }
-{ S \to T \quad \text{capsafe} }
+{ S \to T \quad capsafe }
 
 \infrule[CS-Fun2]
-{ T \quad \text{capsafe} }
-{ S \to T \quad \text{capsafe} }
+{ T \quad capsafe }
+{ S \to T \quad capsafe }
 
 \infrule[CS-All]
-{ \colorbox{shade}{$[X \mapsto B]T \; \text{capsafe} \andalso [X \mapsto E]T \; \text{capsafe}$} }
-{ \colorbox{shade}{$\forall X.T \quad \text{capsafe}$} }
+{ \colorbox{shade}{$[X \mapsto B]T \; capsafe \andalso [X \mapsto E]T \; capsafe$} }
+{ \colorbox{shade}{$\forall X.T \quad capsafe$} }
 
 \columnbreak
 
-\textbf{Caprod}
+\textbf{Caprod Type}
 
 \infax[CP-Eff]
 { E \quad caprod }
@@ -380,50 +350,54 @@ STLC-Pure highlighted.
 { S \; \text{capsafe} \andalso T \; caprod }
 { S \to T \quad caprod }
 
-\infrule[CP-All]
-{ \colorbox{shade}{$[X \mapsto B]T \; caprod \quad or \quad [X \mapsto E]T \; caprod$} }
+\infrule[CP-All1]
+{ \colorbox{shade}{$[X \mapsto B]T \; caprod$} }
 { \colorbox{shade}{$\forall X.T \quad caprod$} }
 
-\textbf{Healthy}
+\infrule[CP-All2]
+{ \colorbox{shade}{$[X \mapsto E]T \; caprod$} }
+{ \colorbox{shade}{$\forall X.T \quad caprod$} }
 
-\infax[H-Empty]
-{ \varnothing \quad caprod }
+\textbf{Capsafe Environment}
 
-\infrule[H-Var]
-{ G \; healthy \andalso T \; \text{capsafe} }
-{ G, \; x:T \quad healthy }
+\infax[CE-Empty]
+{ \varnothing \quad capsafe }
 
-\infrule[H-TVar]
-{ \colorbox{shade}{$G \quad healthy$} }
-{ \colorbox{shade}{$G, \; X \quad healthy$} }
+\infrule[CE-Var]
+{ \Gamma \; capsafe \andalso T \; capsafe }
+{ \Gamma, \; x:T \quad capsafe }
+
+\infrule[CE-TVar]
+{ \colorbox{shade}{$\Gamma \quad capsafe$} }
+{ \colorbox{shade}{$\Gamma, \; X \quad capsafe$} }
 
 \hfill\\
 
 \end{multicols}
 \end{framed}
 
-\caption{System F-Pure Healthy Environment}
-\label{fig:f-pure-healthy-definition}
+\caption{System F-Pure Capsafe Environment}
+\label{fig:f-pure-capsafe-definition}
 \end{figure}
 
-Why this formulation of healthy environment is acceptable? In short,
+Why this formulation of capsafe environment is acceptable? In short,
 it's because the statement \emph{Effect-Safety} logically implies the
 statement \emph{Effect-Safety-Inhabitability}.
 
 The logical implication holds because a pure and inhabitable
-environment is also a healthy environment. This claim has been
+environment is also a capsafe environment. This claim has been
 formally proved:
 
-\begin{theorem}[Inhabitable-Capsafe]
-  If the type T is inhabitable, then either T is capsafe or $T = E$.
-\end{theorem}
+\begin{lemma}[Inhabitable-Capsafe]
+  If the type $T$ is inhabitable, then either $T$ is capsafe or $T = E$.
+\end{lemma}
 
-\begin{theorem}[Inhabitable-Pure-Healthy]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also healthy.
+\begin{theorem}[Inhabitable-Pure-Capsafe-Env]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is also capsafe.
 \end{theorem}
 
 % From the theorem above, it's obvious that any property proved for a
-% healthy environment also holds for a pure and inhabitable
+% capsafe environment also holds for a pure and inhabitable
 % environment. Thus, it suffices to prove the statement
 % \emph{Effect-Safety}
 
@@ -446,8 +420,8 @@ relevant lemmas about types.
 \end{definition}
 
 With the help of the definition above, it's possible to prove
-following lemmas based on double induction on the degree of types and
-the type T.
+following lemmas based on a nested induction on the degree of types
+and the type T.
 
 \begin{lemma}[Capsafe-Not-Caprod]
  If type T is capsafe, then T is not caprod.
@@ -457,17 +431,13 @@ the type T.
  For any type T, T is either capsafe or caprod.
 \end{lemma}
 
-% \begin{lemma}[Healthy-Pure]
-%   If the environment $\Gamma$ is healthy, then $pure \; \Gamma = \Gamma$.
-% \end{lemma}
-
 \begin{lemma}[Capsafe-All-Subst]
   If $\forall X.T$ is capsafe, then for any type U, $[X \mapsto U]T$
   is capsafe.
 \end{lemma}
 
-To prove the lemma \emph{Healthy-Capsafe}, we need a similar
-definition on terms, and then do a double induction on the degree of
+To prove the lemma \emph{Capsafe-Env-Capsafe}, we need a similar
+definition on terms, and then do a nested induction on the degree of
 terms and the typing relation.
 
 \begin{definition}[Degree of Term]
@@ -475,9 +445,9 @@ terms and the typing relation.
   \begin{equation*}
     degree(t) =
     \begin{cases}
-      degree(t_1) & \text{if } t = \lambda x:T.t_1,\\
+      degree(t_1) & \text{if } t = \uplambda x{:}T. \, t_1,\\
       max(degree(t_1), degree(t_2)) & \text{if } t = t_1 \; t_2,\\
-      degree(t_1) + 1 & \text{if } t = \lambda X.t_1,\\
+      degree(t_1) + 1 & \text{if } t = \uplambda X. \, t_1,\\
       degree(t_1) & \text{if } t = t_1 \; [T],\\
       0 & others
     \end{cases}
@@ -485,13 +455,13 @@ terms and the typing relation.
 \end{definition}
 
 Effect safety follows immediately from the lemma
-\emph{Healthy-Capsafe}.
+\emph{Capsafe-Env-Capsafe}.
 
-\begin{lemma}[Healthy-Capsafe]
-  If $\Gamma$ is healthy and $\Gamma \vdash t : T$, then T is capsafe.
+\begin{lemma}[Capsafe-Env-Capsafe]
+  If $\Gamma$ is capsafe and $\Gamma \vdash t : T$, then T is capsafe.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety]
-  If $\Gamma$ is healthy, then there doesn't exist $t$ with
+  If $\Gamma$ is capsafe, then there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{theorem}
