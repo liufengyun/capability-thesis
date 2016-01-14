@@ -95,9 +95,9 @@ below.
 
 \begin{center}
 \begin{tabular}{l c l}
-pure($\varnothing$)      & = &  $\varnothing$ \\
-pure($\Gamma, \; x: E$)  & = &  pure($\Gamma$) \\
-pure($\Gamma, \; x: T$)  & = &  pure($\Gamma$), $x: T$     \\
+$pure(\varnothing)$      & = &  $\varnothing$ \\
+$pure(\Gamma, \; x: E)$  & = &  $pure(\Gamma)$ \\
+$pure(\Gamma, \; x: T)$  & = &  $pure(\Gamma), \; x: T$     \\
 \end{tabular}
 \end{center}
 
@@ -513,7 +513,7 @@ the figure, \emph{capsafe} is an abbreviation of capability-safe, and
 \setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
-\textbf{Capsafe Types}
+\textbf{Capsafe Type}
 
 \infax[CS-Base]
 { B \quad \text{capsafe} }
@@ -528,7 +528,7 @@ the figure, \emph{capsafe} is an abbreviation of capability-safe, and
 
 \columnbreak
 
-\textbf{Caprod Types}
+\textbf{Caprod Type}
 
 \infax[CP-Eff]
 { E \quad \text{caprod} }
@@ -537,7 +537,7 @@ the figure, \emph{capsafe} is an abbreviation of capability-safe, and
 { S \; \text{capsafe} \andalso T \; \text{caprod} }
 { S \to T \quad \text{caprod} }
 
-\textbf{Capsafe Environments}
+\textbf{Capsafe Environment}
 
 \infax[CE-Empty]
 { \varnothing \quad \text{capsafe} }
