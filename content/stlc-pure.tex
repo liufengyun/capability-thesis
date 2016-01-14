@@ -666,29 +666,29 @@ $\Gamma \vdash t : E$, then the typing relation still holds by
 extending the environment with $b:B$:
 
 \begin{center}
-$\{b:B, \; x:T, \; y:S, \; \dots, \; z:U\} \vdash t: E$
+$b:B, \; x:T, \; y:S, \; \dots, \; z:U \vdash t: E$
 \end{center}
 
 The type $U$ is pure and inhabitable, as $\Gamma$ is pure and
 inhabitable. According to the definition of \emph{inhabitability},
-there exists a value $u$ with $\{b:B, \; e:E\} \vdash u: U$. As $u$ is
-a value, it can be either a variable or a function. If $u$ is a
+there exists a value $u$ with $b:B, \; e:E \vdash u: U$. As $u$ is a
+value, it can be either a variable or a function. If $u$ is a
 variable, it can only be $b$, as $U$ is a pure type and the variable
 $e$ binds to the impure capbility type $E$. If $u$ is a function, we
-have $\{b:B\} \vdash u: U$, as in the typing of stoic functions the
-rule \textsc{T-Abs} will remove the binding $e:E$ from the
-environment. In both cases, we have $\{b:B\} \vdash u: U$. Now using
-the substitution lemma, we have:
+have $b:B \vdash u: U$, as in the typing of stoic functions the rule
+\textsc{T-Abs} will remove the binding $e:E$ from the environment. In
+both cases, we have $b:B \vdash u: U$. Now using the substitution
+lemma, we have:
 
 \begin{center}
-$\{b:B, \; x:T, \; y:S, \; \dots\} \vdash [z \mapsto u]t: E$
+$b:B, \; x:T, \; y:S, \; \dots \vdash [z \mapsto u]t: E$
 \end{center}
 
 Continuing this process, we can reduce the typing environment to be
 $\{b:B\}$ and the term to $t'$:
 
 \begin{center}
-$\{b:B\} \vdash t': E$
+$b:B \vdash t': E$
 \end{center}
 
 Now combining \emph{progress} and \emph{normalization} of
@@ -699,7 +699,7 @@ STLC-Pure\footnote{We only proved that progress holds in an empty
 evaluation steps to become a value $v$:
 
 \begin{center}
-$\{b:B\} \vdash v: E$
+$b:B \vdash v: E$
 \end{center}
 
 To summarize, we have given an intuitive proof of the following
