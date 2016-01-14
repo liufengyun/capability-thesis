@@ -103,7 +103,7 @@ $pure(\Gamma, \; x: T)$               & = &  $pure(\Gamma), \; x: T$     \\
 {  \colorbox{shade}{$\Gamma \vdash \uplambda x{:}S.\, t_2 : S \Rightarrow T$} }
 
 \infrule[T-App]
-{ \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
+{ \Gamma \vdash t_1 : S \Rightarrow T \andalso \Gamma \vdash t_2 : S }
 { \Gamma \vdash t_1 \; t_2 : T }
 
 \infrule[T-Sub]
@@ -282,7 +282,7 @@ $pure(\Gamma, \; x: T)$                & = &  $pure(\Gamma), \; x: T$     \\
 {  \colorbox{shade}{$\Gamma \vdash \uplambda x{:}S.\, t_2 : S \Rightarrow T$} }
 
 \infrule[T-App]
-{ \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
+{ \Gamma \vdash t_1 : S \Rightarrow T \andalso \Gamma \vdash t_2 : S }
 { \Gamma \vdash t_1 \; t_2 : T }
 
 \infrule[T-Sub]
