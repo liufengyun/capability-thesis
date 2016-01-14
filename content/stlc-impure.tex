@@ -1,8 +1,8 @@
 \section{System STLC-Impure}
 
 This chapter describes an extension of the system STLC-Pure with free
-functions. As there's a subtyping relation between stoic functions and
-free functions, it's natural to integrate subtyping in the system.
+functions. As stoic functions can be used as free functions, it's
+natural to integrate subtyping in the system.
 
 We'll first introduce the formalization, then discuss soundness and
 effect safety. In the discussion, we'll focus on its difference from
@@ -15,19 +15,19 @@ Figure~\ref{fig:stlc-impure-definition-first}. It's a straight-forward
 extension of STLC-Pure with subtyping and free functions.
 
 The definition is all good, except that preservation breaks. The
-problem is caused by using an impure term as \emph{Top}. To see a
-concrete example, let's assume $\Gamma = \{c:E\}$. It's obvious that
-the following typing relation holds:
+problem is caused by typing an impure term as $Top$. To see a concrete
+example, let's assume $\Gamma = \{c:E\}$. It's obvious that the
+following typing relation holds:
 
 \begin{center}
-  $\{c:E\} \vdash (\lambda x:Top. \; \lambda y:B. \; x) \; c \; : \; B \to Top$
+  $c:E \vdash (\uplambda x{:}Top. \, \uplambda y{:}B. \, x) \; c \; : \; B \to Top$
 \end{center}
 
 However, after one evaluation step\footnote{Note that variables are
   values, thus we can take a step here. We can also construct a
   counter-example by wrapping $c$ in a free function like
-  $\lambda x:B. c$.}, we get the term $\lambda y:B. \; c$, which can
-at best be typed as $B \Rightarrow Top$. Thus preservation
+  $\uplambda x{:}B.\, c$.}, we get the term $\uplambda y{:}B. \, c$,
+which can at best be typed as $B \Rightarrow Top$. Thus preservation
 breaks. This problem leads us to two different formulations.
 
 \begin{figure}
@@ -40,21 +40,21 @@ breaks. This problem leads us to two different formulations.
 \textbf{Syntax}
 
 \begin{tabu} to \linewidth {l l l X[r]}
-  t   & ::= &                    & terms:               \\
-      &     &  x                 & variable             \\
-      &     & $\lambda$ x:T.t    & abstraction          \\
-      &     & t t                & application          \\
+  $t$ & ::= &                      & terms:               \\
+      &     & $x$                  & variable             \\
+      &     & $\uplambda x{:}T.\, t$    & abstraction          \\
+      &     & $t t$                & application          \\
 \\
-  v   & ::= &                    & values:              \\
-      &     & $\lambda$ x:T.t    & abstraction value    \\
-      &     & x                  & variable value       \\
+  $v$ & ::= &                    & values:              \\
+      &     & $\uplambda x{:}T.\, t$    & abstraction value    \\
+      &     & $x$                  & variable value       \\
 \\
-  T   & ::= &                    & types:               \\
-      &     & \colorbox{shade}{Top}  & top type             \\
-      &     & B                  & basic type           \\
-      &     & E                  & capability type      \\
-      &     & T $\to$ T          & type of stoic funs       \\
-      &     & \colorbox{shade}{T $\Rightarrow$ T} & type of free funs   \\
+  $T$ & ::= &                    & types:               \\
+      &     & \colorbox{shade}{$Top$}  & top type             \\
+      &     & $B$                & basic type           \\
+      &     & $E$                & capability type      \\
+      &     & $T \to T$          & type of stoic funs       \\
+      &     & \colorbox{shade}{$T \Rightarrow T$} & type of free funs   \\
 \end{tabu}
 
 \hfill\\
@@ -70,7 +70,7 @@ breaks. This problem leads us to two different formulations.
 { v_1 \; t_2 \longrightarrow v_1 \; t'_2 }
 
 \infax[E-AppAbs]
-{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+{ (\uplambda x{:}T.\, t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
 
 \textbf{Pure Environment}
 
@@ -78,11 +78,11 @@ breaks. This problem leads us to two different formulations.
 
 \begin{center}
 \begin{tabular}{l c l}
-pure($\varnothing$)                   & = &   $\varnothing$ \\
-pure($\Gamma$, x: E)                  & = &  pure($\Gamma$) \\
+$pure(\varnothing)$                   & = &   $\varnothing$ \\
+$pure(\Gamma, \; x: E)$               & = &  $pure(\Gamma)$ \\
 \rowcolor{gray!40}
-pure($\Gamma$, x: S $\Rightarrow$ T)  & = &  pure($\Gamma$) \\
-pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
+$pure(\Gamma, \; x:S \Rightarrow T)$  & = &  $pure(\Gamma)$ \\
+$pure(\Gamma, \; x: T)$               & = &  $pure(\Gamma), \; x: T$     \\
 \end{tabular}
 \end{center}
 
@@ -96,11 +96,11 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 
 \infrule[T-Abs1]
 { pure(\Gamma),\; x: S \vdash t_2 : T }
-{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+{ \Gamma \vdash \uplambda x{:}S.\, t_2 : S \to T }
 
 \infrule[T-Abs2]
 {  \colorbox{shade}{$\Gamma,\; x: S \vdash t_2 : T$} }
-{  \colorbox{shade}{$\Gamma \vdash \lambda x:S.t_2 : S \Rightarrow T$} }
+{  \colorbox{shade}{$\Gamma \vdash \uplambda x{:}S.\, t_2 : S \Rightarrow T$} }
 
 \infrule[T-App]
 { \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
@@ -140,16 +140,17 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 \label{fig:stlc-impure-definition-first}
 \end{figure}
 
-The first one is to introduce two different Top types, one is pure and
-the other is impure\footnote{This idea is suggested by Sandro
-  Stucki.}. The capability type E and free function type
-$S \Rightarrow T$ are not subtypes of the pure Top. The subtyping
-hierarchy is shown in
+The first one is to introduce two different $Top$ types, $Top-Pure$
+and $Top-Impure$, the former is pure and the latter is
+impure\footnote{This idea is suggested by Sandro Stucki.}. The
+capability type $E$ and free function type $S \Rightarrow T$ are not
+subtypes of $Top-Pure$. The subtyping hierarchy is shown in
 Figure~\ref{fig:stlc-impure-subtyping-tree}. This formulation works
 well, and we've proved soundness and effect safety for the
 formulation. However, we lose the simplicity of the type system. And
-it's counter-intuitive to forbid Top in pure environments, as we
-cannot create side effects with a variable of the type Top.
+it's counter-intuitive to forbid variables of the type $Top-Impure$ in
+pure environments, as we cannot create side effects with a variable of
+the type $Top-Impure$.
 
 \begin{figure}
 \centering
@@ -157,44 +158,44 @@ cannot create side effects with a variable of the type Top.
 \begin{tikzpicture}[sibling distance=5em,
   every node/.style = {align=center},
   edge from parent/.style={draw,latex-}]
-  \node {Top-Impure}
-  child { node {E} }
-  child { node (free) {S $\Rightarrow$ T} }
-  child { node {Top-Pure}
-    child { node (stoic) {S $\to$ T} }
-    child { node {B} } };
+  \node {$Top-Impure$}
+  child { node {$E$} }
+  child { node (free) {$S \Rightarrow T$} }
+  child { node {$Top-Pure$}
+    child { node (stoic) {$S \to T$} }
+    child { node {$B$} } };
   \path [draw, -latex] (stoic) -- (free);
 \end{tikzpicture}
 
-\caption{Subtyping: Top-Pure and Top-Impure}
+\caption{Subtyping: $Top-Pure$ and $Top-Impure$}
 \label{fig:stlc-impure-subtyping-tree}
 \end{figure}
 
 The second possibility is to keep the elegance of the type system and
-change the evaluation rules. All terms of the type Top are equivalent,
-because we can do nothing with a term of the type Top. This
-observation inspires us to introduce a \emph{top} value and replace
-the standard \textsc{E-AppAbs} rule with two evaluation rules as
-follows:
+change the evaluation rules. All terms of the type $Top$ are
+equivalent, because we can do nothing with a term of the type
+$Top$. This observation inspires us to introduce a value $top$ and
+replace the standard \textsc{E-AppAbs} rule with two evaluation rules
+as follows:
 
 \begin{multicols}{2}
 
 \infrule[E-AppAbs1]
 { T \neq Top }
-{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+{ (\uplambda x{:}T.\, t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
 
 \infrule[E-AppAbs2]
 { T = Top }
-{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto top]t_1 }
+{ (\lambda x{:}T.\, t_1) v_2 \longrightarrow [x \mapsto top]t_1 }
 
 \end{multicols}
 
 The two rules have the effect that if a function takes a parameter of
-the type Top, when called it will drop the passed parameter and
-replace it with the value \emph{top}. There is no need to consider the
-case that the parameter type $T$ is like $B \to Top$ or
+the type $Top$, when called it will drop the passed parameter and
+replace it with the value $top$. There is no need to consider the case
+that the parameter type $T$ is like $B \to Top$ or
 $(Top \to B) \Rightarrow B$, as function types cannot mask impure
-terms as pure like Top does. We follow this approach in the
+terms as pure like $Top$ does. We follow this approach in the
 formulation and the full definition is presented in
 Figure~\ref{fig:stlc-impure-definition}.
 
@@ -208,23 +209,23 @@ Figure~\ref{fig:stlc-impure-definition}.
 \textbf{Syntax}
 
 \begin{tabu} to \linewidth {l l l X[r]}
-  t   & ::= &                    & terms:               \\
-      &     & \colorbox{shade}{top} & top value            \\
-      &     & x                  & variable             \\
-      &     & $\lambda$ x:T.t    & abstraction          \\
-      &     & t t                & application          \\
+  $t$ & ::= &                    & terms:               \\
+      &     & \colorbox{shade}{$top$} & top value            \\
+      &     & $x$                & variable             \\
+      &     & $\uplambda x{:}T.\, t$    & abstraction          \\
+      &     & $t t$              & application          \\
 \\
-  v   & ::= &                    & values:              \\
-      &     & $\lambda$ x:T.t    & abstraction value    \\
-      &     & x                  & variable value       \\
-      &     & \colorbox{shade}{top}  & top value            \\
+  $v$ & ::= &                           & values:              \\
+      &     & $\uplambda x{:}T.\, t$    & abstraction value    \\
+      &     & x                         & variable value       \\
+      &     & \colorbox{shade}{$top$}   & top value            \\
 \\
-  T   & ::= &                    & types:               \\
-      &     & \colorbox{shade}{Top}  & top type             \\
-      &     & B                  & basic type           \\
-      &     & E                  & capability type      \\
-      &     & T $\to$ T          & type of stoic funs       \\
-      &     & \colorbox{shade}{T $\Rightarrow$ T} & type of free funs   \\
+  $T$ & ::= &                    & types:               \\
+      &     & \colorbox{shade}{$Top$}  & top type             \\
+      &     & $B$                  & basic type           \\
+      &     & $E$                  & capability type      \\
+      &     & $T \to T$          & type of stoic funs       \\
+      &     & \colorbox{shade}{$T \Rightarrow T$} & type of free funs   \\
 \end{tabu}
 
 % \hfill\\
@@ -242,11 +243,11 @@ Figure~\ref{fig:stlc-impure-definition}.
 
 \infrule[E-AppAbs1]
 { \colorbox{shade}{$T \neq Top$} }
-{ \colorbox{shade}{$(\lambda x:T.t_1) \; v_2 \longrightarrow [x \mapsto v_2]t_1$} }
+{ \colorbox{shade}{$(\uplambda x{:}T.\, t_1) \; v_2 \longrightarrow [x \mapsto v_2]t_1$} }
 
 \infrule[E-AppAbs2]
 { \colorbox{shade}{$T = Top$} }
-{ \colorbox{shade}{$(\lambda x:T.t_1) \; v_2 \longrightarrow [x \mapsto top]t_1$} }
+{ \colorbox{shade}{$(\uplambda x{:}T.\, t_1) \; v_2 \longrightarrow [x \mapsto top]t_1$} }
 
 \textbf{Pure Environment}
 
@@ -254,11 +255,11 @@ Figure~\ref{fig:stlc-impure-definition}.
 
 \begin{center}
 \begin{tabular}{l c l}
-pure($\varnothing$)                   & = &   $\varnothing$ \\
-pure($\Gamma$, x: E)                  & = &  pure($\Gamma$) \\
+$pure(\varnothing)$                   & = &   $\varnothing$ \\
+$pure(\Gamma, \; x: E)$               & = &   $pure(\Gamma)$ \\
 \rowcolor{gray!40}
-pure($\Gamma$, x: S $\Rightarrow$ T)  & = &  pure($\Gamma$) \\
-pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
+$pure(\Gamma, \; x: S \Rightarrow T)$  & = &  $pure(\Gamma)$ \\
+$pure(\Gamma, \; x: T)$                & = &  $pure(\Gamma), \; x: T$     \\
 \end{tabular}
 \end{center}
 
@@ -274,11 +275,11 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 
 \infrule[T-Abs1]
 { pure(\Gamma),\; x: S \vdash t_2 : T }
-{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+{ \Gamma \vdash \uplambda x{:}S.\, t_2 : S \to T }
 
 \infrule[T-Abs2]
 {  \colorbox{shade}{$\Gamma,\; x: S \vdash t_2 : T$} }
-{  \colorbox{shade}{$\Gamma \vdash \lambda x:S.t_2 : S \Rightarrow T$} }
+{  \colorbox{shade}{$\Gamma \vdash \uplambda x{:}S.\, t_2 : S \Rightarrow T$} }
 
 \infrule[T-App]
 { \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
@@ -319,11 +320,18 @@ pure($\Gamma$, x: T)                  & = &  pure($\Gamma$), x: T     \\
 \end{figure}
 
 Note that in current system, we need to change the definition of the
-function \emph{pure} to exclude free function types from the pure
+function $pure$ to exclude free function types from the pure
 environment. This restriction is important, because there's no way to
 know what side effects there might be inside free functions. If stoic
 functions have access to free functions, we'll loose the ability to
 track the effects of stoic functions in the type system.
+
+However, mixed-arrow types are allowed in pure environments, as long
+as the first arrow is $\to$. For example, the type
+$E \to B \Rightarrow B$ is allowed in the pure environment. As will be
+shown in the effect safety section, we have formally proved that
+having such mixed-arrow types in the pure environment doesn't enable
+pure stoic functions to produce side effects.
 
 In principle, we can keep some free functions that can never be called
 in the pure environment, such as $(B \to E) \Rightarrow B$, as it's
@@ -351,7 +359,7 @@ As you can imagine, now we need two different substitution lemmas in
 the proof of preservation, corresponding to the two reduction rules.
 
 \begin{lemma}[Subsitution-Not-Top]
-  If $\Gamma,\; x:S \vdash t : T$, $S \neq Top$, s is a value and
+  If $\Gamma,\; x:S \vdash t : T$, $S \neq Top$, $s$ is a value and
   $\Gamma \vdash s : S$, then $\Gamma \vdash [x \mapsto s]t : T$.
 \end{lemma}
 
@@ -376,7 +384,7 @@ The definitions of \emph{inhabitable types} and \emph{inhabitable
 
 With the presence of free functions, the previous formulation of
 effect safety is not enough. We not only need to ensure that it's
-impossible to construct a term of the capability type in pure and
+impossible to construct a term of the capability type $E$ in pure and
 inhabitable environments, but also need to ensure only stoic functions
 can be called in pure and inhabitable environments. The two conditions
 together guarantee that there cannot be actual side effects inside a
@@ -389,7 +397,7 @@ pure stoic function. Thus, we need two statements about effect safety.
 
 \begin{definition}[Effect-Safety-Inhabitability-2]
   If $\Gamma$ is a pure and inhabitable environment, and
-  $\Gamma \vdash t_1 \; t_2 : T$, then there exists U, V such that
+  $\Gamma \vdash t_1 \; t_2 : T$, then there exists $U$, $V$ such that
   $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
@@ -401,18 +409,18 @@ $S \Rightarrow T$, any term that can be typed as the former can also
 be typed as the latter.
 
 As in the system STLC-Pure, the proof of these two statements depends
-on two more general statements about \emph{healthy environments}. If
-we can arrive at such a definition of \emph{healthy environment} that
-a pure and inhabitable environment is also healthy, then it suffices
-to prove following two statements about healthy environments:
+on two more general statements about \emph{capsafe environments}. If
+we can arrive at such a definition of \emph{capsafe environment} that
+a pure and inhabitable environment is also capsafe, then it suffices
+to prove following two statements about capsafe environments:
 
 \begin{definition}[Effect-Safety-1]
-  If $\Gamma$ is healthy, there doesn't exist $t$ with
+  If $\Gamma$ is capsafe, there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{definition}
 
 \begin{definition}[Effect-Safety-2]
-  If $\Gamma$ is healthy and $\Gamma \vdash t_1 \; t_2 : T$, then
+  If $\Gamma$ is capsafe and $\Gamma \vdash t_1 \; t_2 : T$, then
   there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
@@ -425,30 +433,30 @@ the following rule:
 With this rule, the type $(B \Rightarrow B) \to E$ would be considered
 \emph{capsafe}, according to the rule \textsc{CS-Fun1}. However, with
 a variable $f$ of this type and another variable $g$ of the
-\emph{capsafe} type $B \to B$ in the healthy environment, the
-constructed term \emph{f g} has the capability type E; the first
+\emph{capsafe} type $B \to B$ in the capsafe environment, the
+constructed term $f g$ has the capability type $E$; the first
 statement of effect safety breaks. This formulation also breaks the
-connection between pure inhabitable environments and healthy
+connection between pure inhabitable environments and capsafe
 environments. A pure and inhabitable environment is no longer
-healthy. For example, the type $B \to B \Rightarrow B$ is pure and
+capsafe. For example, the type $B \to B \Rightarrow B$ is pure and
 inhabitable, but it's not \emph{capsafe}.
 
 On the other hand, we cannot do the opposite to take $S \Rightarrow T$
-as \emph{capsafe}, as it would allow calling free functions in healthy
+as \emph{capsafe}, as it would allow calling free functions in capsafe
 environments; the second statement of effect safety breaks. In the
 meanwhile, the pure and inhabitable type $(B \Rightarrow E) \to E$ is
 not \emph{capsafe}, thus a pure and inhabitable environment is no
-longer a healthy environment.
+longer a capsafe environment.
 
 This dilemma prompts us to reexamine the meaning of \emph{capsafe} and
 \emph{caprod}. When these facilities were first introduced in
 STLC-Pure, they were formulated in terms of the provability of the
-capability type E. From the perspective of the provability of E,
+capability type $E$. From the perspective of the provability of E,
 $S \to T$ and $S \Rightarrow T$ don't make much difference. Thus, free
 function types should be formulated the same way as stoic function
 types. We tried this approach, and it worked\footnote{Sandro Stucki
   suggested to take this approach.}. The full formulation is presented
-in Figure~\ref{fig:stlc-impure-healthy-definition}.
+in Figure~\ref{fig:stlc-impure-capsafe-definition}.
 
 \begin{figure}[h]
 \begin{framed}
@@ -457,99 +465,99 @@ in Figure~\ref{fig:stlc-impure-healthy-definition}.
 \setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
-\textbf{Capsafe}
+\textbf{Capsafe Type}
 
 \infax[CS-Base]
-{ B \quad \text{capsafe} }
+{ B \quad capsafe }
 
 \infrule[CS-Fun1]
 { S \quad caprod }
-{ S \to T \quad \text{capsafe} }
+{ S \to T \quad capsafe }
 
 \infrule[CS-Fun2]
-{ T \quad \text{capsafe} }
-{ S \to T \quad \text{capsafe} }
+{ T \quad capsafe }
+{ S \to T \quad capsafe }
 
 \infrule[CS-Fun3]
 { \colorbox{shade}{$S \quad caprod$} }
-{ \colorbox{shade}{$S \Rightarrow T \quad \text{capsafe}$} }
+{ \colorbox{shade}{$S \Rightarrow T \quad capsafe$} }
 
 \infrule[CS-Fun4]
-{ \colorbox{shade}{$T \quad \text{capsafe}$} }
-{ \colorbox{shade}{$S \Rightarrow T \quad \text{capsafe}$} }
+{ \colorbox{shade}{$T \quad capsafe$} }
+{ \colorbox{shade}{$S \Rightarrow T \quad capsafe$} }
 
 \columnbreak
 
-\textbf{Caprod}
+\textbf{Caprod Type}
 
 \infax[CP-Eff]
 { E \quad caprod }
 
 \infrule[CP-Fun1]
-{ S \; \text{capsafe} \andalso T \; caprod }
+{ S \; capsafe \andalso T \; caprod }
 { S \to T \quad caprod }
 
 \infrule[CP-Fun2]
-{ \colorbox{shade}{$S \; \text{capsafe} \andalso T \; caprod$} }
+{ \colorbox{shade}{$S \; capsafe \andalso T \; caprod$} }
 { \colorbox{shade}{$S \Rightarrow T \quad caprod$} }
 
-\textbf{Healthy}
+\textbf{Capsafe Environment}
 
-\infax[H-Empty]
-{ \varnothing \quad caprod }
+\infax[CE-Empty]
+{ \varnothing \quad capsafe }
 
-\infrule[H-Var]
-{ G \; healthy \andalso T \; \text{capsafe} }
-{ G, \; x:T \quad healthy }
+\infrule[CE-Var]
+{ \Gamma \; capsafe \andalso T \; \text{capsafe} }
+{ \Gamma, \; x:T \quad capsafe }
 
 \hfill\\
 
 \end{multicols}
 \end{framed}
 
-\caption{System STLC-Impure Healthy Environment}
-\label{fig:stlc-impure-healthy-definition}
+\caption{System STLC-Impure Capsafe Environment}
+\label{fig:stlc-impure-capsafe-definition}
 \end{figure}
 
-Now a healthy environment is no longer pure. For example, the type
+Now a capsafe environment is no longer pure. For example, the type
 $B \Rightarrow B$ is \emph{capsafe}, but it's not pure. As a
 consequence, we need to slightly update the definition of the second
 statement of effect safety:
 
 \begin{definition}[Effect-Safety-2']
-  If $\Gamma$ is pure and healthy, and $\Gamma \vdash t_1 \; t_2 : T$,
-  then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+  If $\Gamma$ is pure and capsafe, and $\Gamma \vdash t_1 \; t_2 : T$,
+  then there exists $U$, $V$ such that $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-Why this formulation of healthy environment is acceptable? In short,
+Why this formulation of capsafe environment is acceptable? In short,
 it's because the statement \emph{Effect-Safety-1} and
 \emph{Effect-Safety-2'} logically imply the statement
 \emph{Effect-Safety-Inhabitability-1} and
 \emph{Effect-Safety-Inhabitability-2} respectively.
 
 The logical implications hold because a pure and inhabitable
-environment is also a healthy (and pure) environment. This claim has
+environment is also a capsafe (and pure) environment. This claim has
 been formally proved:
 
 \begin{lemma}[Inhabitable-Capsafe]
-  If the type T is inhabitable, then either T is capsafe or $T = E$ or
-  T is a free function type.
+  If the type $T$ is inhabitable, then either $T$ is capsafe or
+  $T = E$ or $T$ is a free function type.
 \end{lemma}
 
-\begin{theorem}[Inhabitable-Pure-Healthy]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is healthy.
+\begin{theorem}[Inhabitable-Pure-Capsafe-Env]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is capsafe.
 \end{theorem}
 
-\begin{theorem}[Inhabitable-Pure-Healthy']
+\begin{corollary}[Inhabitable-Pure-Capsafe-Env']
   If $\Gamma$ is pure and inhabitable, then $\Gamma$ is pure and
-  healthy.
-\end{theorem}
+  capsafe.
+\end{corollary}
 
 Note that the last theorem follows immediately from the second one, as
 we already know from the premise that $\Gamma$ is pure.
 
 % From the theorems above, it's obvious that any property proved for a
-% healthy (and pure) environment also holds for a pure and inhabitable
+% capsafe (and pure) environment also holds for a pure and inhabitable
 % environment. Therefore, it suffices to prove the statement
 % \emph{Effect-Safety-1} and \emph{Effect-Safety-2'}.
 
@@ -559,7 +567,7 @@ The proof of the first statement of effect safety is almost the same
 as in STLC-Pure. The only change worth mention is that, in the
 presence of subtyping, an additional lemma \emph{Capsafe-Sub} is
 required.  The first effect safety statement follows immediately from
-the lemma \emph{Healthy-Capsafe}.
+the lemma \emph{Capsafe-Env-Capsafe}.
 
 \begin{lemma}[Capsafe-Not-Caprod]
  If type T is capsafe, then T is not caprod.
@@ -573,22 +581,22 @@ the lemma \emph{Healthy-Capsafe}.
  If S is capsafe and $S <: T$, then T is capsafe.
 \end{lemma}
 
-\begin{lemma}[Healthy-Capsafe]
-  If $\Gamma$ is healthy and $\Gamma \vdash t : T$, then T is capsafe.
+\begin{lemma}[Capsafe-Env-Capsafe]
+  If $\Gamma$ is capsafe and $\Gamma \vdash t : T$, then T is capsafe.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety-1]
-  If $\Gamma$ is healthy, then there doesn't exist term $t$ with
+  If $\Gamma$ is capsafe, then there doesn't exist term $t$ with
   $\Gamma \vdash t : E$.
 \end{theorem}
 
 However, it's impossible to prove the second statement of effect
 safety, which states that if we can construct an application
-$t_1 \; t_2$ in a pure and healthy environment, then $t_1$ can be
-typed as $S \to T$ for some S and T. To see an example why it cannot
-be proved, let's assume
+$t_1 \; t_2$ in a pure and capsafe environment, then $t_1$ can be
+typed as $S \to T$ for some $S$ and $T$. To see an example why it
+cannot be proved, let's assume
 $\Gamma = \{f: B \to B \Rightarrow B, \; x: B\}$. It's obvious
-$\Gamma$ is healthy and pure. However, $f \; x$ in the term
+$\Gamma$ is capsafe and pure. However, $f \; x$ in the term
 $(f \; x) \;x$ has the type $B \Rightarrow B$. It's impossible to
 prove that $f \; x$ has the type $B \to B$. If $f$ is not a variable,
 but a fully defined function, then we can prove that $f$ also has the
@@ -596,7 +604,7 @@ type $B \to B \to B$. This is because the inner function of the type
 $B \Rightarrow B$ cannot capture any capabilities or free functions.
 Otherwise, the outer function cannot be typed as stoic.
 
-This observation leads us to assume four well-founded axioms listed in
+This observation leads us to assume four axioms listed in
 Figure~\ref{fig:stlc-impure-axioms}. These axioms can only be proved
 if $\Gamma$ is empty\footnote{Except the axiom \textsc{Ax-Poly}, which
   cannot be proved even if $\Gamma$ is empty.}. Otherwise, if $t$ is a
@@ -640,22 +648,22 @@ variable, we can do nothing.
 \end{figure}
 
 The justification for the axiom \textsc{Ax-Base} is as
-follows. Suppose $t = \lambda x:B. \; \lambda y:S. \; t_1$ and
+follows. Suppose $t = \uplambda x{:}B. \, \uplambda y{:}S. \, t_1$ and
 $\Gamma \vdash t : B \to S \Rightarrow T$. The typing rule for $t$
 should be the typing rule for stoic functions:
 
 \infrule[Step-1]
-{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \Rightarrow T }
-{ \Gamma \vdash \lambda x:B. \lambda y:S. \; t_1 : B \to S \Rightarrow T }
+{ pure(\Gamma),\; x: B \vdash \uplambda y{:}S. \, t_1 : S  \Rightarrow T }
+{ \Gamma \vdash \uplambda x{:}B. \, \uplambda y{:}S. \, t_1 : B \to S \Rightarrow T }
 
-Then what's the rule used in the typing of $\lambda y:S. \; t_1$? If
+Then what's the rule used in the typing of $\uplambda y{:}S. \, t_1$? If
 it's first typed as $S \to T$ and then subsumed as $S \Rightarrow T$,
-we are done. Otherwise, $\lambda y:S. \; t_1$ is typed using the rule
+we are done. Otherwise, $\uplambda y{:}S. \, t_1$ is typed using the rule
 of free functions:
 
 \infrule[Step-2]
 { pure(\Gamma),\; x: B,\; y:S \vdash t_1 : T }
-{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \Rightarrow T }
+{ pure(\Gamma),\; x: B \vdash \uplambda y{:}S. \, t_1 : S \Rightarrow T }
 
 According to the definition of \emph{pure}, we know that following two
 equations hold:
@@ -663,7 +671,7 @@ equations hold:
 \begin{center}
 \begin{tabular}{l c l}
 $pure(pure(\Gamma))$ & = & $pure(\Gamma)$ \\
-$pure(\Gamma, x:B)$ & = & $pure(\Gamma), x:B$
+$pure(\Gamma, \; x:B)$ & = & $pure(\Gamma), \; x:B$
 \end{tabular}
 \end{center}
 
@@ -674,19 +682,19 @@ Then we can obtain the following equation:
 \end{center}
 
 If we substitute the equation in Step-2, we get exactly the
-precondition for typing stoic functions. Thus $\lambda y:S.t_2$ can be
-typed as stoic function:
+precondition for typing stoic functions. Thus
+$\uplambda y{:}S. \, t_2$ can be typed as stoic function:
 
 \infrule[Step-2']
 { pure(pure(\Gamma),\; x: B),\; y:S \vdash t_1 : T }
-{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \to T }
+{ pure(\Gamma),\; x: B \vdash \uplambda y{:}S. \, t_1 : S \to T }
 
-Given that $\lambda y:S. \; t_1$ can be typed as $S \to T$, Step-1 can
+Given that $\uplambda y{:}S. \, t_1$ can be typed as $S \to T$, Step-1 can
 be updated as follows:
 
 \infrule[Step-1']
-{ pure(\Gamma),\; x: B \vdash \lambda y:S. \; t_1 : S \to T }
-{ \Gamma \vdash \lambda x:B. \lambda y:S. \; t_1 : B \to S \to T }
+{ pure(\Gamma),\; x: B \vdash \uplambda y{:}S. \, t_1 : S \to T }
+{ \Gamma \vdash \uplambda x{:}B. \, \uplambda y{:}S. \, t_1 : B \to S \to T }
 
 Put all the steps together, we obtained
 $\Gamma \vdash t : B \to S \to T$ from the fact
@@ -696,11 +704,11 @@ and \textsc{Ax-Stoic} are similar.
 
 The axiom \textsc{Ax-Poly} can be justified as follows. Suppose the
 following typing relation holds, what impure variables can be captured
-by $t_1$?
+by $t$?
 
 \begin{center}
-  $\Gamma \vdash \lambda f:U \Rightarrow V. \; \lambda y:S. \; t_1 : (U
-  \Rightarrow V) \to S \Rightarrow T$.
+  $\Gamma \vdash \uplambda f{:}U \Rightarrow V. \, \uplambda y{:}S. \,
+  t : (U \Rightarrow V) \to S \Rightarrow T$.
 \end{center}
 
 As the function is stoic, the only impure variable can be captured is
@@ -714,27 +722,27 @@ of the application is $S \to T$. That's the justification for the
 axiom \textsc{Ax-Poly}.
 
 Assuming the axioms above, it's straight-forward to prove a lemma
-\emph{Healthy-Pure-Stoic}, and the second statement of effect safety
+\emph{Capsafe-Pure-Stoic}, and the second statement of effect safety
 follows immediately from the lemma.
 
-\begin{lemma}[Healthy-Pure-Stoic]
-  If $\Gamma$ is pure and healthy,  and $\Gamma \vdash t : S
+\begin{lemma}[Capsafe-Pure-Stoic]
+  If $\Gamma$ is pure and capsafe,  and $\Gamma \vdash t : S
   \Rightarrow T$, then $\Gamma \vdash t : S \to T$.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety-2']
-  If $\Gamma$ is pure and healthy, and $\Gamma \vdash t_1 \; t_2 : T$,
-  then there exists U, V such that $\Gamma \vdash t_1 : U \to V$.
+  If $\Gamma$ is pure and capsafe, and $\Gamma \vdash t_1 \; t_2 : T$,
+  then there exists $U$, $V$ such that $\Gamma \vdash t_1 : U \to V$.
 \end{theorem}
 
 % Note that unlike the proof of the first effect safety statement, the
 % proof of the second statement of effect safety assumes that $\Gamma$
-% is pure. This is due to the fact that \emph{healthy} no longer implies
-% \emph{pure}. Conceptually speaking, a healthy environment should
+% is pure. This is due to the fact that \emph{capsafe} no longer implies
+% \emph{pure}. Conceptually speaking, a capsafe environment should
 % always be a subset of pure environment. To clear the worry of readers,
-% we can define $healthy' \; E := healthy \; E \wedge pure \; E = E$.
+% we can define $capsafe' \; E := capsafe \; E \wedge pure \; E = E$.
 % The first statement of effect safety is proved only assuming the
-% weaker \emph{healthy}, it certainly holds for $healthy'$ as well.
+% weaker \emph{capsafe}, it certainly holds for $capsafe'$ as well.
 
 \subsection{Effect Polymorphism}
 
@@ -760,23 +768,22 @@ be illustrated by the following example:
   def squarePure = map { x => x*x }
 \end{lstlisting}
 
-In the above, the function \emph{map} has the type
+In the code above, the function $map$ has the type
 $(A \Rightarrow B) \to List[A] \Rightarrow List[B]$. Without the axiom
-\textsc{Ax-Poly}, the function \emph{squareImpure} can be typed as
+\textsc{Ax-Poly}, the function $squareImpure$ would be typed as
 $IO \to List[Int] \Rightarrow List[Int]$, while the function
-\emph{squarePure} can be typed as $List[Int] \Rightarrow List[Int]$.
-Effect polymorphism doesn't work, as \emph{squarePure} can actually be
-typed as a stoic function.
+$squarePure$ would be typed as $List[Int] \Rightarrow List[Int]$.
+Effect polymorphism doesn't work in this case, as $squarePure$ can
+actually be typed as a stoic function.
 
-In the presence of the axiom \textsc{Ax-Poly}, \emph{squarePure} can
-be typed as $List[Int] \to List[Int]$, as the function passed to
-\emph{map} has the stoic function type $Int \to Int$. Now both
-\emph{squarePure} and \emph{squareImpure} are typed as stoic
-functions, all effects are captured in the type system even in the
-presence of (local) free functions.
+In the presence of the axiom \textsc{Ax-Poly}, $squarePure$ can be
+typed as $List[Int] \to List[Int]$, as the function passed to $map$
+has the stoic function type $Int \to Int$. Now both $squarePure$ and
+$squareImpure$ are typed as stoic functions, all effects are captured
+in the type system even in the presence of (local) free functions.
 
 The reader might be wondering, what if we want to stipulate that the
-passed function \emph{f} can only have IO effects? How does effect
+passed function $f$ can only have IO effects? How does effect
 polymorphism work in such cases? The answer is as follows:
 
 \begin{lstlisting}[language=Scala]
@@ -790,13 +797,13 @@ polymorphism work in such cases? The answer is as follows:
   def map[A,B](c: IO)(f: IO -> A => B) = mapImpl(f c)
 \end{lstlisting}
 
-In the code above, we protect implementation function \emph{mapImpl}
-with the keyword \emph{private}.  All callings of the \emph{map}
-function has to go through the two exposed interfaces. The two
-interfaces impose that the passed function \emph{f} must either be
-pure or only have IO side effects. It's straight-forward to add a new
-interface to allow exception effects without changing the
-implementation.
+In the code above, we protect implementation function $mapImpl$ with
+the keyword $private$.  All callings of the $map$ function has to go
+through the two exposed interfaces. The two interfaces impose that the
+passed function $f$ must either be pure or only have IO side
+effects. It's straight-forward to add a new interface to allow
+exception effects without changing the implementation or affecting
+existing code.
 
 \subsubsection{Currying Polymorphism}
 
@@ -817,11 +824,10 @@ be demonstrated by the following example:
 
 Note that the only change we made compared to the example in
 \emph{axiomatic polymorphism} is to add the parameter $l: List[Int]$
-explicitly to \emph{squarePure}, instead of using currying. This
-seemingly trivial change makes a big difference in capability-based
-effect systems. Now \emph{squarePure} can be typed as
-$List[Int] \to List[Int]$ without resorting to the axiom
-\textsc{Ax-Poly}.
+explicitly to $squarePure$, instead of using currying. This seemingly
+trivial change makes a big difference in capability-based effect
+systems. Now $squarePure$ can be typed as $List[Int] \to List[Int]$
+without resorting to the axiom \textsc{Ax-Poly}.
 
 \subsubsection{Stoic Polymorphism}
 
@@ -836,18 +842,47 @@ can be illustrated by the following example:
   def impure(x: Int)(c: IO) = twice { n => println(n)(c); n + x }
 \end{lstlisting}
 
-In the code above, the function \emph{twice} is typed as
+In the code above, the function $twice$ is typed as
 $(Int \Rightarrow Int) \to Int$. By just checking the type signature
-of \emph{twice}, we know it might have side effects, if the passed
-function \emph{f} has side effects. Without adding any annotation or
-resorting to any axiom, the type system automatically types
-\emph{pure} as $Int \to Int$ and \emph{impure} as
-$Int \to IO \to Int$.
+of $twice$, we know it might have side effects, if the passed function
+$f$ has side effects. Without adding any annotation or resorting to
+any axiom, the type system automatically types the function $pure$ as
+$Int \to Int$ and $impure$ as $Int \to IO \to Int$.
 
 \subsubsection{Discussion}
 
-In Haskell, there is always the need to maintain two copies of
-higher-order functions, as demonstrated by following code:
+As reported in section 1.6 of the thesis\cite{lippmeier2009type},
+Haskell has fractured into monadic and non-monadic sub-languages. In
+Haskell, almost every general purpose higher-order function needs both
+a monadic version and a non-monadic version. For example, in Haskell
+it requires two versions of the function $map$ , but in
+capability-based effect systems, only one effect-polymorphic $map$ is
+required.
+
+\begin{lstlisting}[language=Haskell]
+  -- Haskell
+  map :: (a -> b) -> List a -> List b
+  mapM :: Monad m => (a -> m b) -> List a -> m (List b)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Scala]
+  // capability-based effect systems
+  def map[A,B](f: A => B)(l: List[A]) = ...
+\end{lstlisting}
+
+In Haskell, it's possible to implement the non-monadic version based
+on the monadic version using the identity monad:
+
+\begin{lstlisting}[language=Haskell]
+  map :: (a -> b) -> List a -> List b
+  map f xx = runIdentity (mapM (x. return (f x)) xx)
+\end{lstlisting}
+
+However, in practice programmers usually first come up with the
+non-monadic version, and later realize the need for a monadic
+version. Turning the non-monadic code into the monadic version
+requires almost a rewrite of the function, as demonstrated by the
+following code:
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
@@ -856,31 +891,53 @@ higher-order functions, as demonstrated by following code:
         Nil -> Nil
         Cons x xs -> Cons (f x) (map f xs)
 
-  mapIO :: (a -> IO b) -> List a -> IO (List b)
-  mapIO f xs
+  mapM :: Monad m => (a -> m b) -> List a -> m (List b)
+  mapM f xs
     = case xs of
       Nil -> return Nil
       Cons x xs -> do x' <- f x
-        xs' <- mapIO f xs
+        xs' <- mapM f xs
         return (Cons x' xs')
 \end{lstlisting}
 
-The non-monadic version and the monadic version of code are the same
-in essence. It's a pity to have no choice but duplicate the code.
+In capability-based effect systems, if programmers first come up with
+the pure version, turning it to the effect-polymorphic version only
+requires changing $\to$ to $\Rightarrow$, as demonstrated by the
+following code:
+
+\begin{lstlisting}[language=Scala]
+  // pure version
+  def map[A,B](f: A -> B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(xs)
+  }
+  // effect-polymorphic version
+  def map[A,B](f: A => B)(l: List[A]) = l match {
+    case Nil => Nil
+    case x::xs => f(x)::map(f)(xs)
+  }
+\end{lstlisting}
+
+Monads are not only heavier in handling effect polymorphism, but also
+more difficult to learn and use than capabilities. The concept
+\emph{capability} has an intuitive meaning as it has in everyday life,
+while the abstruse concept \emph{monad} comes from category theory,
+which is the most abstract field of mathematics. Therefore, we expect
+capability-based effect systems to be welcomed by a larger audience
+than monad-based effect systems.
 
 Type-and-effect systems based on type-and-effect
 inference\cite{talpin1992polymorphic, talpin1994type} can greatly
-reduce syntactical overhead, but it still complicates the type
-signature of effect-polymorphic functions by introducing generic
-effect type variables. For example, the type signature inferred for
-the effect-polymorphic function \emph{map} would look like
-$\forall E.(A \to B @E) \to List[A] \to List[B] @E$, which is a little
-daunting to programmers, compared to
+reduce the syntactical overhead in effect systems, but it still
+complicates the type signature of effect-polymorphic functions by
+introducing generic effect type variables. For example, the type
+signature inferred for the effect-polymorphic function $map$ would
+look like $\forall E.(A \to B @E) \to List[A] \to List[B] @E$, which
+is a little daunting to programmers, compared to
 $(A \Rightarrow B) \to List[A] \to List[B]$ in our case.
 
 Effect polymorphism is an advantage of capability-based effect systems
 over other kinds of effect systems. In capability-based effect
 systems, effect polymorphism can be easily achieved without
-introducing generic effect type variables in the type signature, or
-depending on additional annotations, or in the worst case duplicating
-code.
+introducing generic effect type variables in the type signature or
+depending on additional annotations.
