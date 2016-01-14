@@ -1,14 +1,5 @@
 \section{Introduction}
 
-% The objective of this study is to explore the theoretical foundations
-% as well as conceptual possibilities of capability-based effect
-% systems.
-
-% In this chapter, we'll discuss the motivation, the core ideas and
-% contributions of this study.
-
-% \subsection{Motivation}
-
 The main motivation of this study is to turn Scala into an
 effect-disciplined programming language. Currently, Scala doesn't have
 the ability to track effects in the type system.
@@ -17,8 +8,8 @@ The absence of an effect system disables programmers from imposing
 effect constraints on APIs in parallel and distributed
 computations. For example, in parallel computing, the functions passed
 to the function \emph{pmap} should have no side effects, in order to
-enable parallel processing on lists without changing semantics of the
-program; however, it is currently impossible to do so in Scala:
+enable parallel processing on lists; however, it is currently
+impossible to do so in Scala:
 
 \begin{lstlisting}[language=Scala]
 def pmap(xs: List[Int], f: Int => Int): List[Int]
@@ -28,7 +19,7 @@ An effect system can differentiate pure code from impure code in a
 program, thus enabling optimization of pure code. For example,
 independent pure expressions can be executed in parallel; pure code
 that is dead can be safely eliminated; common pure expressions can be
-reduce to one computation; pure operations on data structures can be
+reduced to one computation; pure operations on data structures can be
 fused\cite{coutts2007stream}. The absence of an effect system makes
 these optimizations impossible.
 
@@ -84,7 +75,7 @@ this problem.
 \subsection{Capability-Based Effect Systems}
 
 The central idea of \emph{capability-based} effect system is that a
-capability is required in order to perform side effects. If
+capability is required in order to produce side effects. If
 capabilities are passed as function parameters, by tracking
 capabilities in the type system we can track effects in the program.
 
@@ -151,13 +142,13 @@ polymorphism in the chapter STLC-Impure (Section
 The main contributions of this study are as follows:
 
 \begin{itemize}
-\item We formulated and proved soundness and effect safety of four
+\item We formulate and prove soundness and effect safety of four
   capability-based effect systems, which can serve as the foundation
   for implementing capability-based effect system in functional
   programming languages. The formalization is done in Coq based on the
   locally-nameless representation\cite{chargueraud-11-ln} and hosted
   on Github\footnote{\url{https://github.com/liufengyun/stoic}}.
-\item We proposed an approach to solve the problem of \emph{effect
+\item We propose an approach to solve the problem of \emph{effect
     polymorphism} with no syntactical overhead, thanks to free
   functions and stoic functions (Section
   \ref{sec:effect-polymorphism}).
@@ -167,15 +158,15 @@ The main contributions of this study are as follows:
 
 In following chapters, we'll introduce four systems of increasing
 complexity, namely STLC-Pure, STLC-Impure, F-Pure and F-Impure. The
-latter three is a gradual enrichment of STLC-Pure with free functions,
-subtyping and universal types.
+latter three are a gradual enrichment of STLC-Pure with free
+functions, subtyping and universal types.
 
 \begin{itemize}
 \item STLC-Pure is a variant of \emph{simply typed lambda calculus}
   with only stoic functions.
 \item STLC-Impure is an extension of STLC-Pure with free functions and subtyping.
 \item F-Pure is an extension of STLC-Pure with universal types.
-\item F-Impure is an extension of F-Pure with free functions.
+\item F-Impure is an extension of F-Pure with free functions (without subtyping).
 \end{itemize}
 
 We discuss \emph{effect polymorphism} in the chapter STLC-Impure
