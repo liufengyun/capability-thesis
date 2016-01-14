@@ -27,7 +27,7 @@ The syntax is almost the same as standard STLC, except the addition of
 the capability type \emph{E} and the taking of variables as
 values. The evaluation rules are exactly the same, with standard
 call-by-value small-step semantics. The typing rule \textsc{T-Abs} is
-slightly changed by performing an operation \emph{pure} on the
+slightly changed by performing an operation $pure$ on the
 environment. The peculiarities in the formalization are explained
 below.
 
@@ -38,22 +38,24 @@ below.
 \setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
+% \MTicinmath
+
 \textbf{Syntax}
 
 \begin{tabu} to \linewidth {l l l X[r]}
-  t   & ::= &                    & terms:               \\
-      &     &  x                 & variable             \\
-      &     & $\lambda$ x:T.t    & abstraction          \\
-      &     & t t                & application          \\
+  t   & ::= &                     & terms:               \\
+      &     & $x$                 & variable             \\
+      &     & $\uplambda x{:}T.\, t$ & abstraction          \\
+      &     & $t t$               & application          \\
 \\
   v   & ::= &                    & values:              \\
-      &     & $\lambda$ x:T.t    & abstraction value    \\
+      &     & $\uplambda x{:}T.\, t$ & abstraction value    \\
       &     & \colorbox{shade}{x}& variable value       \\
 \\
   T   & ::= &                    & types:               \\
-      &     & B                  & basic type           \\
-      &     & \colorbox{shade}{E}& capability type      \\
-      &     & T $\to$ T          & type of functions    \\
+      &     & $B$                  & basic type           \\
+      &     & \colorbox{shade}{$E$}& capability type      \\
+      &     & $T \to T$            & type of functions    \\
 \end{tabu}
 
 \hfill\\
@@ -69,7 +71,7 @@ below.
 { v_1 \; t_2 \longrightarrow v_1 \; t'_2 }
 
 \infax[E-AppAbs]
-{ (\lambda x:T.t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+{ (\uplambda x{:}T.\, t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
 
 \columnbreak
 
@@ -81,7 +83,7 @@ below.
 
 \infrule[T-Abs]
 { \colorbox{shade}{$pure(\Gamma),\; x: S \vdash t_2 : T$} }
-{ \colorbox{shade}{$\Gamma \vdash \lambda x:S.t_2 : S \to T$} }
+{ \colorbox{shade}{$\Gamma \vdash \uplambda x{:}S.\, t_2 : S \to T$} }
 
 \infrule[T-App]
 { \Gamma \vdash t_1 : S \to T \andalso \Gamma \vdash t_2 : S }
@@ -93,9 +95,9 @@ below.
 
 \begin{center}
 \begin{tabular}{l c l}
-pure($\varnothing$)             & = &   $\varnothing$ \\
-pure($\Gamma$, x: E)            & = &  pure($\Gamma$) \\
-pure($\Gamma$, x: T)  & = &  pure($\Gamma$), x: T     \\
+pure($\varnothing$)      & = &  $\varnothing$ \\
+pure($\Gamma, \; x: E$)  & = &  pure($\Gamma$) \\
+pure($\Gamma, \; x: T$)  & = &  pure($\Gamma$), $x: T$     \\
 \end{tabular}
 \end{center}
 
@@ -113,24 +115,24 @@ typing rule:
 
 \infrule[T-Abs]
 { pure(\Gamma), \; x: S \vdash t_2 : T }
-{ \Gamma \vdash \lambda x:S.t_2 : S \to T }
+{ \Gamma \vdash \uplambda x{:}S.t_2 : S \to T }
 
 This typing rule imposes a \emph{variable-capturing discipline} on
 lambda abstractions. This discipline stipulates that only variables
 whose type is not a capability type can be captured in a lambda
 abstraction.
 
-The discipline is implemented with the helper function \emph{pure},
-which removes all variable bindings of the capability type \emph{E}
-from the typing environment. It's easy to verify that the function
-\emph{pure} satisfies following properties:
+The discipline is implemented with the helper function $pure$, which
+removes all variable bindings of the capability type $E$ from the
+typing environment. It's easy to verify that the function $pure$
+satisfies following properties:
 
 \begin{lemma}[Pure-Distributivity]
-  pure (E, F) = pure E, pure F
+  pure ($\Gamma$, $\Delta$) = pure $\Gamma$, pure $\Delta$
 \end{lemma}
 
 \begin{lemma}[Pure-Idempotency]
-  pure (pure E) = pure E
+  pure (pure $\Gamma$) = pure $\Gamma$
 \end{lemma}
 
 Initially, we've tried a variable-capturing discipline where no free
@@ -140,10 +142,11 @@ expressive, as we lose the ability to create closures in the system,
 which is usually considered to be an essential feature of functional
 programming.
 
-We also tried to exclude variables of the type $E$ or $T \to E$ (for
-any T) from the pure environment. As an over-approximation, this
-version is certainly effect-safe. However, it rejects more types than
-necessary, thus reduces expressiveness of the system.
+In addition to the capability type $E$, we also tried to exclude
+variables of the type $T \to E$ (for any T) from the pure
+environment. As an over-approximation, this version is certainly
+effect-safe. However, it rejects more types than necessary, thus
+reduces expressiveness of the system.
 
 \subsubsection{Stoic Functions and Free Functions}
 
@@ -153,7 +156,9 @@ capture any variables in scope, while in STLC-Pure functions can only
 capture variables whose type is not the capability type E. To
 differentiate them (which is important as in later systems both
 exist), we call the more effect-disciplined functions \emph{stoic
-  functions} (or stoics) and the other \emph{free functions}.
+  functions} (or stoics) and the other \emph{free functions}. We use
+$\to$ to denote the type of stoic functions and $\Rightarrow$ to
+denote the type of free functions.
 
 Stoic functions are essential in capability-based effect systems. If
 functions are allowed to capture capability variables in scope, it
@@ -166,18 +171,18 @@ thus it can be captured by the type system.
 Stoic functions are not necessarily pure functions. Stoic functions
 can have side effects, and if they do have side effects they are
 honest about that in their type signature. For example, the following
-function \emph{hello} is a stoic function with IO effects\footnote{For
-  the sake of readability, we'll use a syntax similar to Scala. In
-  particular, we'll use $\to$ for the type of stoic functions, and
-  $\Rightarrow$ for free functions.}.
+function $hello$ is a stoic function with IO effects\footnote{For the
+  sake of readability, we'll use a syntax similar to Scala in this
+  report. In particular, we'll use $\to$ for the type of stoic
+  functions, and $\Rightarrow$ for free functions.}.
 
 \begin{lstlisting}[language=Scala]
   def hello(c:IO) = println("hello, world!", c)
 \end{lstlisting}
 
-In the following code snippet, the function \emph{f} must be pure, as
-it doesn't take any capability as parameter. The type system
-guarantees that the function indeed cannot make any side effects.
+In the following code snippet, the function $f$ must be pure, as it
+doesn't take any capability as parameter. The type system guarantees
+that the function indeed cannot produce any side effects.
 
 \begin{lstlisting}[language=Scala]
   def twice(f: Int -> Int)(x: Int) = f (f x)
@@ -190,8 +195,8 @@ guarantees that the function indeed cannot make any side effects.
 \subsubsection{Where do Effects Come From}
 
 There is no formalization of effects in current effect system. We
-assume the existence of primitive functions like \emph{println} and
-\emph{readln}, which take capabilities to make side effects.
+assume the existence of primitive functions like $println$ and
+$readln$, which take capabilities to produce side effects.
 
 \begin{lstlisting}[language=Scala]
   def println: String -> IO -> ()
@@ -206,8 +211,8 @@ assume the existence of primitive functions like \emph{println} and
 It is impossible to create capabilities in current system. Where do
 capabilities come from?  There are two possible answers: (1) all
 capabilities are from the run-time and passed to the program through
-the \emph{main} method; (2) there are no capabilities; they can be
-erased before evaluation, without changing the meaning of programs.
+the $main$ method; (2) there are no capabilities; they can be erased
+before evaluation, without changing the meaning of programs.
 
 % However, in this study we only state this observation informally and
 % leave the formal proof to future studies.
@@ -216,11 +221,11 @@ erased before evaluation, without changing the meaning of programs.
 
 As discussed above, there is no way to create a value of capabilities
 explicitly. Thus, a function taking a parameter of the capability type
-E can never be executed in the \emph{call-by-value} semantics, unless
-variables are values. The same is true for the base type B.
+$E$ can never be executed in the \emph{call-by-value} semantics,
+unless variables are values. The same is true for the base type $B$.
 
 Treating variables as values ensures that substitution of a term with
-a value of the base type B or the capability type E can actually
+a value of the base type $B$ or the capability type $E$ can actually
 happen in the system, thus makes the preservation proof more
 convincing.
 
@@ -233,8 +238,8 @@ convincing.
 
 There is no support for a function with more than one kind of effects
 in current system. For example, in the following code snippet, $c1$
-cannot be used in the function body, as it's removed by \emph{pure} in
-the typing of the function body.
+cannot be used in the function body, as it's removed by $pure$ in the
+typing of the function body.
 
 \begin{lstlisting}[language=Scala]
   def error(e:Error)(c1:IO)(c2:Throw) = {
@@ -280,27 +285,31 @@ However, this substitution lemma doesn't hold in current system. For a
 counter-example, let's assume that $\Gamma = \{f: E \to B,\; c:E\}$,
 then it's obviously that following two typing relations hold:
 
-$\{f: E \to B,\; c:E\},\; x:B \vdash \lambda z:B.\,x \; : \; B \to
-  B$ \\
-$\{f: E \to B,\; c:E\},\; x:B \vdash f \; c \; : \; B$
+$f: E \to B,\; c:E,\; x:B \vdash \uplambda z{:}B.\,x \; : \; B \to B$ \\
+$f: E \to B,\; c:E \vdash f \; c \; : \; B$
 
 However, the following typing relation doesn't hold if we replace $x$
 with $f \; c$.
 
-$\{f: E \to B,\; c:E\} \vdash \lambda z:B.\,f \; c \; : \; B \to B$.
+$f: E \to B,\; c:E \vdash \uplambda z{:}B.\,f \; c \; : \; B \to B$.
 
-In fact, the substituted term $\lambda z:B.\,f \; c$ cannot be typed,
-as according to the typing rule \textsc{T-Abs}, it cannot capture the
-capability variable $c$ in the environment. To overcome this problem,
-we stipulate that the term $s$ must be a value. Remember that in
-current system, both lambda abstractions and variables are values,
-thus substitution of variables of the capability type E and the base
-type B can happen. The new formulation is as follows:
+In fact, the substituted term $\uplambda z{:}B.\,f \; c$ cannot be
+typed, as according to the typing rule \textsc{T-Abs}, it cannot
+capture the capability variable $c$ in the environment. To overcome
+this problem, we stipulate that the term $s$ must be a value. Remember
+that in current system, both lambda abstractions and variables are
+values, thus substitution of variables of the capability type E and
+the base type B can happen. The new formulation is as follows:
 
 \begin{lemma}[Subsitution-New]
   If $\Gamma,\; x:S \vdash t : T$, s is a value and
   $\Gamma \vdash s : S$, then $\Gamma \vdash [x \mapsto s]t : T$.
 \end{lemma}
+
+The restriction that $s$ must be a value implies that in a function
+call, arguments much first be evaluated to a value before the function
+is applied. Therefore, capabilities can only work with strict
+evaluation.
 
 Interestingly, this strict evaluation requirement contrasts
 capability-based effect systems with monad-based effect systems. In
@@ -312,12 +321,12 @@ snippet:
   inc n = (\x -> n + 1) (putStrLn (show n))
 \end{lstlisting}
 
-The function \emph{inc} has the type
+The function $inc$ has the type
 $(Num\;a, Show\;a) \Rightarrow a \to a$. By just checking its type, we
 would think it has no side effects because no IO monads appear in the
 type signature. However, if Haskell adopts strict evaluation, the
-function call \emph{putStrLn} will be executed, thus breaking the
-monad-based effect system.
+function call $putStrLn \; (show \; n)$ will be executed, thus
+breaking the monad-based effect system.
 
 \subsection{Effect Safety}
 
@@ -348,29 +357,30 @@ capability parameters:
 
 This formulation looks more satisfactory, but it's a little
 cumbersome. If we inspect the typing rule \textsc{T-Abs} closely, we
-can find that if \emph{S} is not a capability type,
-$pure(\Gamma),\; x: S$ is equal to $pure(\Gamma,\; x: S)$.
+can find that if $S$ is not a capability type, $pure(\Gamma),\; x: S$
+is equal to $pure(\Gamma,\; x: S)$.
 
 \infrule[T-Abs]
 { pure(\Gamma),\; x: S \vdash t_2 : T }
-{ \Gamma \vdash \lambda x:S.\;t_2 : S \to T }
+{ \Gamma \vdash \uplambda x{:}S.\;t_2 : S \to T }
 
-Thus, instead of saying the function $\lambda x:S.t_2$ cannot have
-side effects inside, we say the term $t_2$ cannot have side effects in
-a pure environment. As we know, capabilities are required to make side
-effects. Thus, the term $t_2$ cannot have side effects if we cannot
-construct a term of the capability type E in a pure environment. This
-observation leads us to the following statement of effect safety:
+Thus, instead of saying the function $\uplambda x{:}S.\, t_2$ cannot
+have side effects inside, we say the term $t_2$ cannot have side
+effects in a pure environment. As we know, capabilities are required
+to produce side effects. Thus, the term $t_2$ cannot have side effects
+if we cannot construct a term of the capability type $E$ in a pure
+environment. This observation leads us to the following statement of
+effect safety:
 
 \begin{definition}[Effect-Safety-Informally-3]
-  It's impossible to construct a term of the capability type E in a
+  It's impossible to construct a term of the capability type $E$ in a
   pure environment.
 \end{definition}
 
 However, this formulation cannot be proved.  For a counter-example,
 let's assume $\Gamma = \{f: B \to E, \; x: B\}$. It's obvious that
 $\Gamma$ is pure, but we can construct the term $f \; x$ of the
-capability type E.
+capability type $E$.
 
 The cause of the problem is that in a pure environment, there might
 exist non-inhabitable types like $B \to E$.  Existence of
@@ -383,57 +393,68 @@ types.
 To convince readers that current system is effect-safe, we need to
 exclude and only exclude non-inhabitable types from the pure
 environment and then prove that it is impossible to construct a term
-of the capability type E in this restricted environment. We arrive at
+of the capability type $E$ in this restricted environment. We arrive at
 the following formulation:
 
 \begin{definition}[Effect-Safety-Informally-4]
-  It's impossible to construct a term of the capability type E in a
+  It's impossible to construct a term of the capability type $E$ in a
   pure environment with only variables of inhabitable types.
 \end{definition}
 
 \subsubsection{Inhabitability}
 
 We need to define the concept \emph{inhabitability} precisely. What
-types are inhabitable? Obviously, if $\varnothing \vdash t: T$, then T
-is inhabitable.  However, given a typing relation
-$\Gamma \vdash t: T$, we cannot immediately conclude that T is
+types are inhabitable? Obviously, if $\varnothing \vdash t: T$, then
+$T$ is inhabitable.  However, given a typing relation
+$\Gamma \vdash t: T$, we cannot immediately conclude that $T$ is
 inhabitable. We need to ensure that $\Gamma$ only contains inhabitable
 types. Otherwise, any type is inhabitable if $\Gamma$ contains a
 variable of the corresponding type.
 
 An intuition is that, given $\Gamma \vdash t: T$, $x:S \in \Gamma$ and
-S is inhabitable, we can remove x:S from $\Gamma$ and substitute x in
-the term t with the term that inhabits the type S to obtain a new term
+$S$ is inhabitable, we can remove $x:S$ from $\Gamma$ and substitute $x$
+in the term $t$ with a witness of the type S to obtain a new term
 $t'$. The substitution lemma tells us that the new term $t'$ still has
-the type T. Continuing this line of thought, we'll find out that all
+the type $T$. Continuing this line of thought, we'll find out that all
 inhabitable types can be inhabited in the empty environment. Thus, a
 tentative definition is as follows:
 
 \begin{definition}[Inhabitability-First-Try]
-  A type T is inhabitable if there exists a term t with $\varnothing
-  \vdash t : T$.
+  A type $T$ is inhabitable if there exists a term $t$ with
+  $\varnothing \vdash t : T$.
 \end{definition}
 
 However, this definition is not satisfactory in our case, as in
-STLC-Pure there doesn't exist values for the base type B and the
-capability type E, except variables, and we do want both types to be
+STLC-Pure there doesn't exist values for the base type $B$ and the
+capability type $E$, except variables, and we do want both types to be
 inhabitable. A natural approach is to extend the empty environment
 with one variable of the base type and one of the capability type:
 
 \begin{definition}[Inhabitability-Second-Try]
-  A type T is inhabitable if there exists a term t with
+  A type $T$ is inhabitable if there exists a term $t$ with
   $x:B,\; y:E \vdash t : T$.
 \end{definition}
 
 This definition indeed gives us all inhabitable types in
 STLC-Pure. Types like $E$, $B$, $E \to B$, $E \to E$,
 $(B \to E) \to E$, etc., are all inhabitable, while types like
-$B \to E$ and $E \to B \to E$ are non-inhabitable. However, we can do
-better with the following definition:
+$B \to E$ and $E \to B \to E$ are non-inhabitable. The reader might
+want to construct a witness of the type $B \to E$ as follows:
+
+\begin{center}
+  $x:B, \; y:E \vdash \uplambda x{:}B {.}\, y : B \to E$
+\end{center}
+
+The typing relation doesn't hold, because the typing rule
+\textsc{T-Abs} would remove the binding $y:E$ from the environment in
+the typing of the function body $y$.
+
+The second formulation looks good, however, we can do better with the
+following definition:
 
 \begin{definition}[Inhabitability-Final]
-  A type T is inhabitable if there exists a value v with the typing
-  $x:B,\; y:E \vdash v : T$.
+  A type $T$ is inhabitable if there exists a value v with the typing
+  $x:B, \; y:E \vdash v : T$.
 \end{definition}
 
 What if the term $t$ in the second definition is an application? In
@@ -477,11 +498,13 @@ says that it is impossible to prove the capability type $E$ from a
 group of ``good'' premises. Thus, we can classify all types
 (propositions) into two groups: in one group $E$ cannot be proved and
 in the other group $E$ can be proved. This leads us to a formulation
-of \emph{healthy environment}\footnote{Sandro Stucki initially
+of \emph{capsafe environment}\footnote{Sandro Stucki initially
   suggested the idea of using \emph{caprod} for the definition of
   \emph{pure} environments. I developed it to be a formulation of
-  \emph{healthy} environments and used it in the proof of effect
-  safety.} given in Figure~\ref{fig:stlc-pure-healthy-definition}.
+  \emph{capsafe} environments and used it in the proof of effect
+  safety.} given in Figure~\ref{fig:stlc-pure-capsafe-definition}. In
+the figure, \emph{capsafe} is an abbreviation of capability-safe, and
+\emph{caprod} an abbreviation of capability-producing.
 
 \begin{figure}[h]
 \begin{framed}
@@ -490,13 +513,13 @@ of \emph{healthy environment}\footnote{Sandro Stucki initially
 \setlength{\columnseprule}{0.4pt}
 \begin{multicols}{2}
 
-\textbf{Capsafe}
+\textbf{Capsafe Types}
 
 \infax[CS-Base]
 { B \quad \text{capsafe} }
 
 \infrule[CS-Fun1]
-{ S \quad caprod }
+{ S \quad \text{caprod} }
 { S \to T \quad \text{capsafe} }
 
 \infrule[CS-Fun2]
@@ -505,42 +528,42 @@ of \emph{healthy environment}\footnote{Sandro Stucki initially
 
 \columnbreak
 
-\textbf{Caprod}
+\textbf{Caprod Types}
 
 \infax[CP-Eff]
-{ E \quad caprod }
+{ E \quad \text{caprod} }
 
 \infrule[CP-Fun]
-{ S \; \text{capsafe} \andalso T \; caprod }
-{ S \to T \quad caprod }
+{ S \; \text{capsafe} \andalso T \; \text{caprod} }
+{ S \to T \quad \text{caprod} }
 
-\textbf{Healthy}
+\textbf{Capsafe Environments}
 
-\infax[H-Empty]
-{ \varnothing \quad caprod }
+\infax[CE-Empty]
+{ \varnothing \quad \text{capsafe} }
 
-\infrule[H-Var]
-{ G \; healthy \andalso T \; \text{capsafe} }
-{ G, \; x:T \quad healthy }
+\infrule[CE-Var]
+{ \Gamma \; \text{capsafe} \andalso T \; \text{capsafe} }
+{ \Gamma, \; x:T \quad \text{capsafe} }
 
 
 \end{multicols}
 \end{framed}
 
-\caption{System STLC-Pure Healthy Environment}
-\label{fig:stlc-pure-healthy-definition}
+\caption{System STLC-Pure Capsafe Environment}
+\label{fig:stlc-pure-capsafe-definition}
 \end{figure}
 
 In the definition, types like $B \to B$, $E \to E$, $E \to B$ and
 $(B \to E) \to B$ are considered as \emph{capsafe}, while types like
 $B \to E$, $(E \to B) \to E$ are considered as \emph{caprod}. Only
-\emph{capsafe} types can appear in a \emph{healthy} environment. To
+\emph{capsafe} types can appear in a \emph{capsafe} environment. To
 inspect the formalization in detail, we can ask several questions.
 
-\emph{Are capsafe types inhabitable?} The answer is no. The type
-$E \to B \to E$ is non-inhabitable. Allowing this type in the healthy
-environment doesn't enable us to construct a term of the capability
-type E.
+\emph{Are capsafe types inhabitable?} The answer is not
+necessarily. The type $E \to B \to E$ is capsafe but
+non-inhabitable. Allowing this type in the capsafe environment doesn't
+enable us to construct a term of the capability type $E$.
 
 \emph{Are inhabitable types capsafe?} The answer is yes, except the
 capability type $E$. As the capability type $E$ cannot appear in the
@@ -548,39 +571,39 @@ pure environment, this is not a problem.
 
 \emph{Are caprod types non-inhabitable?} Yes, except the capability
 type $E$. As $E$ is also excluded in the pure environment, it's
-justified to remove it from the healthy environment.
+justified to remove it from the capsafe environment.
 
 % Intuitively, the rule \textsc{CP-Fun} can be justified by the fact
-% that in a healthy environment it is impossible to construct a function
+% that in a capsafe environment it is impossible to construct a function
 % which takes a \emph{capsafe} parameter and returns a value of
 % \emph{caprod} type. Or from a logical point of view, given a proof
 % from which E cannot be proved, we cannot transform it to be a proof
 % capable of proving E, together with a group of premises incapable of
 % proving E.
 
-Why this formulation of healthy environment is acceptable? In short,
+Why this formulation of capsafe environment is acceptable? In short,
 it is because the statement \emph{Effect-Safety-Inhabitability} is
 logically implied by the more general statement \emph{Effect-Safety}:
 
 \begin{definition}[Effect-Safety]
-  If $\Gamma$ is healthy, then there doesn't exist $t$ with
+  If $\Gamma$ is capsafe, then there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{definition}
 
 The logical implication holds because a pure and inhabitable
-environment is also a healthy environment. This claim has been
+environment is also a capsafe environment. This claim has been
 formally proved:
 
 \begin{lemma}[Inhabitable-Capsafe]
-  If the type T is inhabitable, then either T is capsafe or $T = E$.
+  If the type $T$ is inhabitable, then either $T$ is capsafe or $T = E$.
 \end{lemma}
 
-\begin{theorem}[Inhabitable-Pure-Healthy]
-  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is healthy.
+\begin{theorem}[Inhabitable-Pure-Capsafe-Env]
+  If $\Gamma$ is pure and inhabitable, then $\Gamma$ is capsafe.
 \end{theorem}
 
 % From the theorem above, it's obvious that any property proved for a
-% healthy environment also holds for a pure and inhabitable
+% capsafe environment also holds for a pure and inhabitable
 % environment. Therefore, it suffices to prove the statement
 % \emph{Effect-Safety}.
 
@@ -588,36 +611,30 @@ formally proved:
 
 The proof of effect safety depends on following lemmas, most of them
 are straight-forward to prove. Effect safety follows immediately from
-the lemma \emph{Healthy-Capsafe}.
+the lemma \emph{Capsafe-Env-Capsafe}.
 
 
 \begin{lemma}[Capsafe-Not-Caprod]
- If type T is capsafe, then T is not caprod.
+ If type $T$ is capsafe, then $T$ is not caprod.
 \end{lemma}
 
 \begin{lemma}[Capsafe-Or-Caprod]
- For any T, T is either capsafe or caprod.
+ For any $T$, $T$ is either capsafe or caprod.
 \end{lemma}
 
-% \begin{lemma}[Healthy-Pure]
-%   If environment $\Gamma$ is healthy, then $pure \; \Gamma = \Gamma$.
-% \end{lemma}
-
-% Following generalized lemma is essential in the proof of effect safety:
-
-\begin{lemma}[Healthy-Capsafe]
-  If $\Gamma$ is healthy and $\Gamma \vdash t : T$, then T is capsafe.
+\begin{lemma}[Capsafe-Env-Capsafe]
+  If $\Gamma$ is capsafe and $\Gamma \vdash t : T$, then $T$ is capsafe.
 \end{lemma}
 
 \begin{theorem}[Effect-Safety]
-  If $\Gamma$ is healthy, then there doesn't exist $t$ with
+  If $\Gamma$ is capsafe, then there doesn't exist $t$ with
   $\Gamma \vdash t : E$.
 \end{theorem}
 
 \subsubsection{An Intuitive Proof}
 
 There exists an intuitive proof of effect safety without resorting to
-healthy environments. The main insight is that the statement
+capsafe environments. The main insight is that the statement
 \emph{Effect-Safety-Inhabitability} is logically implied by the
 statement \emph{Effect-Safety-Intuitive}:
 
@@ -632,26 +649,30 @@ statement \emph{Effect-Safety-Intuitive}:
 
 The statement \emph{Effect-Safety-Intuitive} trivially holds, because
 the value $v$ can either be a variable or a function, in neither case
-can it be typed as the capability type E.
+can it be typed as the capability type $E$.
 
 Why does the logical implication hold? In short, if
 \emph{Effect-Safety-Inhabitability} doesn't hold, then
 \emph{Effect-Safety-Intuitive} doesn't hold either. Thus, the latter
-logically implies the former.
+logically implies the former.  In the following, we present an
+informal proof, the core idea that if $\Gamma$ is pure and
+inhabitable, and $\Gamma \vdash t : E$, then we can ``collapse''
+$\Gamma$ to $\{b : B\}$ through substitution of the witnesses of the
+pure and inhabitable types in $\Gamma$.
 
 For a pure and inhabitable environment
-$\Gamma = \{x:T, y:S, \dots, z:U\}$, if there exists t with
+$\Gamma = \{x:T, \; y:S, \; \dots, \; z:U\}$, if there exists $t$ with
 $\Gamma \vdash t : E$, then the typing relation still holds by
 extending the environment with $b:B$:
 
 \begin{center}
-$\{b:B, x:T, y:S, \dots, z:U\} \vdash t: E$
+$\{b:B, \; x:T, \; y:S, \; \dots, \; z:U\} \vdash t: E$
 \end{center}
 
 The type $U$ is pure and inhabitable, as $\Gamma$ is pure and
 inhabitable. According to the definition of \emph{inhabitability},
-there exists a value $u$ with $\{b:B, e:E\} \vdash u: U$. As $u$ is a
-value, it can be either a variable or a function. If $u$ is a
+there exists a value $u$ with $\{b:B, \; e:E\} \vdash u: U$. As $u$ is
+a value, it can be either a variable or a function. If $u$ is a
 variable, it can only be $b$, as $U$ is a pure type and the variable
 $e$ binds to the impure capbility type $E$. If $u$ is a function, we
 have $\{b:B\} \vdash u: U$, as in the typing of stoic functions the
@@ -660,7 +681,7 @@ environment. In both cases, we have $\{b:B\} \vdash u: U$. Now using
 the substitution lemma, we have:
 
 \begin{center}
-$\{b:B, x:T, y:S, \dots\} \vdash [z \mapsto u]t: E$
+$\{b:B, \; x:T, \; y:S, \; \dots\} \vdash [z \mapsto u]t: E$
 \end{center}
 
 Continuing this process, we can reduce the typing environment to be
@@ -670,12 +691,12 @@ $\{b:B\}$ and the term to $t'$:
 $\{b:B\} \vdash t': E$
 \end{center}
 
-Now combining \emph{progress}\footnote{We only proved that progress
-  holds in an empty environment, it's easy to prove it also holds
-  under $\{b:B\}$.} and \emph{normalization}\footnote{We didn't prove
-  this theorem, but the proof should be similar to the proof in
-  standard STLC.}  of STLC-Pure, $t'$ can take finite evaluation steps
-to become a value $v$:
+Now combining \emph{progress} and \emph{normalization} of
+STLC-Pure\footnote{We only proved that progress holds in an empty
+  environment, it's easy to prove it also holds under $\{b:B\}$. We
+  didn't prove normalization of STLC-Pure, but the proof should be
+  similar to the proof in standard STLC.}, $t'$ can take finite
+evaluation steps to become a value $v$:
 
 \begin{center}
 $\{b:B\} \vdash v: E$
@@ -701,8 +722,8 @@ As \emph{Effect-Safety-Intuitive} trivially holds,
 
 Though conceptually simpler, the mechanized proof necessitates the
 proof of the normalization theorem, which is more involved than the
-proof based on healthy environments. On the other hand, the approach
-based on healthy environments works even if normalization doesn't
+proof based on capsafe environments. On the other hand, the approach
+based on capsafe environments works even if normalization doesn't
 hold. Therefore, we don't take the intuitive approach in the formal
 development.
 
