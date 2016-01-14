@@ -214,7 +214,7 @@ that the function indeed cannot produce any side effects.
 
 \subsubsection{Where do Effects Come From}
 
-There is no formalization of effects in current effect system. We
+There is no formalization of effects in the current effect system. We
 assume the existence of primitive functions like $println$ and
 $readln$, which take capabilities to produce side effects.
 
@@ -228,8 +228,8 @@ $readln$, which take capabilities to produce side effects.
 
 \subsubsection{Where do Capabilities Come From}
 
-It is impossible to create capabilities in current system. Where do
-capabilities come from?  There are two possible answers: (1) all
+It is impossible to create capabilities in the current system. Where
+do capabilities come from?  There are two possible answers: (1) all
 capabilities are from the run-time and passed to the program through
 the $main$ method; (2) there are no capabilities; they can be erased
 before evaluation, without changing the meaning of programs.
@@ -257,9 +257,9 @@ convincing.
 \subsubsection{What If a Function Has More than One Side Effect}
 
 There is no support for a function with more than one kind of effects
-in current system. For example, in the following code snippet, $c1$
-cannot be used in the function body, as it's removed by $pure$ in the
-typing of the function body.
+in the current system. For example, in the following code snippet,
+$c1$ cannot be used in the function body, as it's removed by $pure$ in
+the typing of the function body.
 
 \begin{lstlisting}[language=Scala]
   def error(e:Error)(c1:IO)(c2:Throw) = {
@@ -301,9 +301,10 @@ If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
 \vdash [x \mapsto s]t : T$.
 \end{lemma}
 
-However, this substitution lemma doesn't hold in current system. For a
-counter-example, let's assume that $\Gamma = \{f: E \to B,\; c:E\}$,
-then it's obviously that following two typing relations hold:
+However, this substitution lemma doesn't hold in the current
+system. For a counter-example, let's assume that
+$\Gamma = \{f: E \to B,\; c:E\}$, then it's obviously that following
+two typing relations hold:
 
 $f: E \to B,\; c:E,\; x:B \vdash \uplambda z{:}B.\,x \; : \; B \to B$ \\
 $f: E \to B,\; c:E \vdash f \; c \; : \; B$
@@ -317,7 +318,7 @@ In fact, the substituted term $\uplambda z{:}B.\,f \; c$ cannot be
 typed, as according to the typing rule \textsc{T-Abs}, it cannot
 capture the capability variable $c$ in the environment. To overcome
 this problem, we stipulate that the term $s$ must be a value. Remember
-that in current system, both lambda abstractions and variables are
+that in the current system, both lambda abstractions and variables are
 values, thus substitution of variables of the capability type E and
 the base type B can happen. The new formulation is as follows:
 
@@ -410,11 +411,11 @@ can never be actually called, thus is always effect-safe. So we only
 need to consider environments with only variables of inhabitable
 types.
 
-To convince readers that current system is effect-safe, we need to
+To convince readers that the current system is effect-safe, we need to
 exclude and only exclude non-inhabitable types from the pure
 environment and then prove that it is impossible to construct a term
-of the capability type $E$ in this restricted environment. We arrive at
-the following formulation:
+of the capability type $E$ in this restricted environment. We arrive
+at the following formulation:
 
 \begin{definition}[Effect-Safety-Informally-4]
   It's impossible to construct a term of the capability type $E$ in a

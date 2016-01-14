@@ -319,8 +319,8 @@ $pure(\Gamma, \; x: T)$                & = &  $pure(\Gamma), \; x: T$     \\
 \label{fig:stlc-impure-definition}
 \end{figure}
 
-Note that in current system, we need to change the definition of the
-function $pure$ to exclude free function types from the pure
+Note that in the current system, we need to change the definition of
+the function $pure$ to exclude free function types from the pure
 environment. This restriction is important, because there's no way to
 know what side effects there might be inside free functions. If stoic
 functions have access to free functions, we'll loose the ability to
