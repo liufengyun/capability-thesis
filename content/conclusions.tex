@@ -1,6 +1,6 @@
 \section{Conclusion}
 
-We have formalized four capability-based effect systems and proved
+We formalized four capability-based effect systems and proved
 soundness and effect safety for each system. The four systems can
 serve as the theoretical foundation for implementing capability-based
 effect systems in functional languages.
@@ -53,16 +53,16 @@ dichotomy between \emph{effect-polymorphic function type} and
 the system effect polymorphism doesn't work for nested functions. To
 overcome this problem, they unified the two function types in a
 framework called \emph{relative effect annotation} based on dependent
-types. In this system, the function \emph{map} can be marked as
+types. In the framework, the function $map$ can be marked as
 effect-polymorphic without introducing a generic effect variable:
 
 \begin{lstlisting}[language=Scala]
 def map[A, B](f: A => B)(l: List[A]): List[B] @pure(f)
 \end{lstlisting}
 
-The annotation $@pure(f)$ says that the effect of \emph{map} depends
-on the function \emph{f}. Nested functions are handled specially in
-the system to avoid duplicate annotations.
+The annotation $@pure(f)$ says that the effect of $map$ depends on the
+function $f$. Nested functions are handled specially in the system to
+avoid duplicate annotations.
 
 % Despite the syntactical improvements, it still incurs some notational
 % burden on programmers.
@@ -100,11 +100,14 @@ Effect masking can be a useful feature in real-world programming,
 especially when dealing with exception effects. It's worthy to explore
 effect masking in existing systems.
 
-One approach to make parametric polymorphism work for capability types
-and free function types is to integrate \emph{bounded quantification}
-with capabilities. This is the what we are working on now. We've
-managed to prove soundness of the system, and the proof of effect
-safety is in progress.
+Though the effect polymorphism inherent in capability-based effect
+systems reduces the need for parametric polymorphism over capability
+types, parametric polymorphism over free function types is useful in
+practical programming.  One approach to make parametric polymorphism
+work for capability types and free function types is to integrate
+\emph{bounded quantification} with capabilities. This is the what we
+are working on now. We've managed to prove soundness of the system,
+and the proof of effect safety is in progress.
 
 % Another direction of work is to extend the proposed systems with some
 % implicit calculus, in order to avoid explicitly passing capabilities
