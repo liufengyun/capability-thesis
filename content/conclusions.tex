@@ -92,9 +92,10 @@ closures and have to be passed around in the program.
 
 \subsection{Future Work}
 
-Objects and mutation are predominant features of industrial
-languages. To provide a more practical model for industrial languages,
-it's useful to extend existing systems with record types and mutation.
+Recursive types, objects, mutation and general recursion are
+predominant features of industrial languages. To provide a more
+practical model for industrial languages, it's useful to extend
+existing systems with these features.
 
 Effect masking can be a useful feature in real-world programming,
 especially when dealing with exception effects. It's worthy to explore
@@ -102,12 +103,12 @@ effect masking in existing systems.
 
 Though the effect polymorphism inherent in capability-based effect
 systems reduces the need for parametric polymorphism over capability
-types, parametric polymorphism over free function types is useful in
-practical programming.  One approach to make parametric polymorphism
-work for capability types and free function types is to integrate
-\emph{bounded quantification} with capabilities. This is the what we
-are working on now. We've managed to prove soundness of the system,
-and the proof of effect safety is in progress.
+types, parametric polymorphism over free function types is still
+useful in practical programming.  One approach to make parametric
+polymorphism work for capability types and free function types is to
+integrate \emph{bounded quantification} with capabilities. This is the
+what we are working on now. We've managed to prove soundness of the
+system, and the proof of effect safety is in progress.
 
 % Another direction of work is to extend the proposed systems with some
 % implicit calculus, in order to avoid explicitly passing capabilities
