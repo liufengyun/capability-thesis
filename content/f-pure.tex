@@ -159,9 +159,14 @@ typed anymore, as the capability variable $x$ cannot be captured in
 the inner-most lambda; thus preservation breaks.
 
 The definition of the function $pure$ is changed slightly by allowing
-type variables to be in the pure environment. This is natural, as we
-know in the typing rule \textsc{T-TApp} that a type variable cannot be
-the capability type $E$.
+type variables to be in the pure environment. Type variables
+themselves are harmless to effect safety, their presence in the pure
+environment ensures the well-formedness of the environment.
+
+Note that a hidden change to the function $pure$ is that the binding
+$x:X$, where $X$ is a type variable, may appear in pure environments.
+This is natural, as we know in the typing rule \textsc{T-TApp} that
+the type variable $X$ cannot be the capability type $E$.
 
 \subsection{Soundness}
 

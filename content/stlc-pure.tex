@@ -173,7 +173,7 @@ $B \to B$ are guaranteed to be pure.
 The variable-capturing discipline makes the functions in STLC-Pure
 different from functions in standard STLC. In STLC, functions can
 capture any variables in scope, while in STLC-Pure functions can only
-capture variables whose type is not the capability type E. To
+capture variables whose type is not the capability type $E$. To
 differentiate them (which is important as in later systems both
 exist), we call the more effect-disciplined functions \emph{stoic
   functions} (or stoics) and the other \emph{free functions}. We use
@@ -319,8 +319,8 @@ typed, as according to the typing rule \textsc{T-Abs}, it cannot
 capture the capability variable $c$ in the environment. To overcome
 this problem, we stipulate that the term $s$ must be a value. Remember
 that in the current system, both lambda abstractions and variables are
-values, thus substitution of variables of the capability type E and
-the base type B can happen. The new formulation is as follows:
+values, thus substitution of variables of the capability type $E$ and
+the base type $B$ can happen. The new formulation is as follows:
 
 \begin{lemma}[Subsitution-New]
   If $\Gamma,\; x:S \vdash t : T$, s is a value and
@@ -580,14 +580,14 @@ $B \to E$, $(E \to B) \to E$ are considered as \emph{caprod}. Only
 \emph{capsafe} types can appear in a \emph{capsafe} environment. To
 inspect the formalization in detail, we can ask several questions.
 
-\emph{Are capsafe types inhabited?} The answer is not necessarily. The
-type $E \to B \to E$ is capsafe but uninhabited. Allowing this type in
-the capsafe environment doesn't enable us to construct a term of the
+\emph{Are capsafe types inhabited?} Not necessarily. The type
+$E \to B \to E$ is capsafe but uninhabited. Allowing this type in the
+capsafe environment doesn't enable us to construct a term of the
 capability type $E$.
 
-\emph{Are inhabited types capsafe?} The answer is yes, except the
-capability type $E$. As the capability type $E$ cannot appear in the
-pure environment, this is not a problem.
+\emph{Are inhabited types capsafe?} Yes, except the capability type
+$E$. As the capability type $E$ cannot appear in the pure environment,
+this is not a problem.
 
 \emph{Are caprod types uninhabited?} Yes, except the capability type
 $E$. As $E$ is also excluded in the pure environment, it's justified
@@ -674,10 +674,10 @@ Why does the logical implication hold? In short, if
 \emph{Effect-Safety-Inhabited} doesn't hold, then
 \emph{Effect-Safety-Intuitive} doesn't hold either. Thus, the latter
 logically implies the former.  In the following, we present an
-informal proof, the core idea that if $\Gamma$ is pure and inhabited,
-and $\Gamma \vdash t : E$, then we can ``collapse'' $\Gamma$ to
-$\{b : B\}$ through substitution of the witnesses of the pure and
-inhabited types in $\Gamma$.
+informal proof, the core idea is that if $\Gamma$ is pure and
+inhabited, and $\Gamma \vdash t : E$, then we can ``collapse''
+$\Gamma$ to $\{b : B\}$ through substitution of the witnesses of the
+pure and inhabited types in $\Gamma$.
 
 For a pure and inhabited environment
 $\Gamma = \{x:T, \; y:S, \; \dots, \; z:U\}$, if there exists $t$ with
@@ -692,12 +692,11 @@ The type $U$ is pure and inhabited, as $\Gamma$ is pure and
 inhabited. According to the definition of \emph{inhabited type}, there
 exists a value $u$ with $b:B, \; e:E \vdash u: U$. As $u$ is a value,
 it can be either a variable or a function. If $u$ is a variable, it
-can only be $b$, as $U$ is a pure type and the variable $e$ binds to
-the impure capbility type $E$. If $u$ is a function, we have
-$b:B \vdash u: U$, as in the typing of stoic functions the rule
-\textsc{T-Abs} will remove the binding $e:E$ from the environment. In
-both cases, we have $b:B \vdash u: U$. Now using the substitution
-lemma, we have:
+can only be $b$, as $U$ is a pure type, thus it cannot be the
+capability type $E$. If $u$ is a function, we have $b:B \vdash u: U$,
+as in the typing of stoic functions the rule \textsc{T-Abs} will
+remove the binding $e:E$ from the environment. In both cases, we have
+$b:B \vdash u: U$. Now using the substitution lemma, we have:
 
 \begin{center}
 $b:B, \; x:T, \; y:S, \; \dots \vdash [z \mapsto u]t: E$
