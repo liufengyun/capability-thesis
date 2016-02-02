@@ -161,8 +161,8 @@ def hello(c:IO) = println("hello, world!", c)
 Following stoic function is certainly *pure*:
 
 ``` Scala
-// (Int -> Int) -> Int -> Int
-def twice(f: Int -> Int)(x: Int) = f (f x)
+// (Int -> Int) -> Int
+def twice(f: Int -> Int) = f 5
 ```
 
 Free Functions are Important
