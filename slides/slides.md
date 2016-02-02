@@ -913,19 +913,18 @@ Mutability Effects
 Idea: stoic functions cannot capture mutable variables.
 
 ```Scala
-var a = 3, b = a + 4
+var a = 3; val b = 4
 
 // Int => Int
 def impure(n: Int) = n + a
-
 // Int -> Int
 def pure(n: Int) = n + b
-
 // Int -> Int
 def masking(n: Int) = var x = 5; x = b + 3; x + n
-
 // Int -> Int => Int
 def closure(n: Int) => var r = n; x => { r = r + 1; x }
+// Int -> Int
+def problem(n: Int) = (closure n) n
 ```
 
 \textcolor{red}{The axioms no longer hold, but still safe --
