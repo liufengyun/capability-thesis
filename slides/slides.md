@@ -81,7 +81,7 @@ map f xx = runIdentity (mapM (\x. return (f x)) xx)
 Problem of Effect Polymorphism
 --------------------
 
-How to express *effect-polymrophic* functions with minimal syntactical
+How to express *effect-polymorphic* functions with minimal syntactical
 overhead?
 
 The Glory of Capability-Base Effect Systems
@@ -270,7 +270,7 @@ If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
 Preservation
 ----------------------
 
-\begin{lemma}[Subsitution-Classic]
+\begin{lemma}[Substitution-Classic]
 If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
 \vdash [x \mapsto s]t : T$.
 \end{lemma}
@@ -297,19 +297,19 @@ However, after $[x \mapsto f \; c]$, it can't be typed:
 The typing rule \textsc{T-Abs} forbids capturing of the capability
 variable `c`.
 
-New Subsitution Lemma
+New Substitution Lemma
 ----------------------
 
-Instead of the classic subsitution lemma:
+Instead of the classic substitution lemma:
 
-\begin{lemma}[Subsitution-Classic]
+\begin{lemma}[Substitution-Classic]
 If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
 \vdash [x \mapsto s]t : T$.
 \end{lemma}
 
-We need to stipulate only *values* can be subsituted:
+We need to stipulate only *values* can be substituted:
 
-\begin{lemma}[Subsitution-New]
+\begin{lemma}[Substitution-New]
   If $\Gamma,\; x:S \vdash t : T$, s is a value and
   $\Gamma \vdash s : S$, then $\Gamma \vdash [x \mapsto s]t : T$.
 \end{lemma}
@@ -318,7 +318,7 @@ We need to stipulate only *values* can be subsituted:
 Strict Evaluation
 ----------------------
 
-The new subsitution lemma implies:
+The new substitution lemma implies:
 
 - Capabilities only work with *strict evaluation*!
 
@@ -472,7 +472,7 @@ After one evaluation step:
 
 -  $c:E \vdash \uplambda y{:}B. \, c  \; : \; B \Rightarrow Top$
 
-\textcolor{red}{Preversation breaks!}
+\textcolor{red}{Preservation breaks!}
 
 . . .
 
@@ -910,7 +910,7 @@ Classes adopt similar ideas:
 Mutability Effects
 -----------------------
 
-Stoic functions cannot capture mutable variables:
+Idea: stoic functions cannot capture mutable variables.
 
 ```Scala
 var a = 3, b = a + 4
@@ -928,7 +928,25 @@ def masking(n: Int) = var x = 5; x = b + 3; x + n
 def closure(n: Int) => var r = n; x => { r = r + 1; x }
 ```
 
-\textcolor{red}{The axioms no longer hold, but still safe -- mutability local to pure functions.}
+\textcolor{red}{The axioms no longer hold, but still safe --
+mutability local to pure functions.}
+
+Exception Effects
+-----------------------
+
+- `try` introduce implicit capabilities related to types in `catch`
+- `throw` requires an implicit capability related to the type of exception
+
+```Scala
+try { /* implicit c: Throw[IOException] */ }
+catch { ex: IOException =>  }
+
+// throw takes an implicit capability with type Throw[T],
+// T is instantiated by the type of ex
+throw ex
+```
+
+However, whether *checked exceptions* is a good idea or not is disputable.
 
 The Value "null"
 -----------------------
