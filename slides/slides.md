@@ -407,6 +407,8 @@ capability type $E$.
 
 \vspace*{\baselineskip}
 
+. . .
+
 The problem is caused by *ill* types in pure environments:
 
 - $B \to E$
@@ -452,8 +454,7 @@ System STLC-Impure
 The straight-forward extension:
 
 - STLC-Pure + Free functions + Subtyping (with $Top$)
-- $Pure$ excludes types $S \Rightarrow T$ in additional to the type
-  $E$
+- $Pure$ excludes types $S \Rightarrow T$ in addition to the type $E$
 
 . . .
 
@@ -659,14 +660,13 @@ The straight-forward extension:
 
 - STLC-Pure + Free functions + Universal Types (without subtyping)
 
-- $Pure$ excludes types $S \Rightarrow T$ in additional to the type
-  $E$
+- $Pure$ excludes types $S \Rightarrow T$ in addition to the type $E$
 
 - Type abstraction can only be typed in *pure* environments
 
 . . .
 
-\textcolor{red}{It doesn't work, unless we assume:}
+\textcolor{red}{It doesn't work, unless we restrict type application:}
 
 \vspace*{\baselineskip}
 
@@ -791,10 +791,10 @@ Summary
 - Capabilities can only work with *strict evaluation*
 - Universal types can't abstract over types of capabilities or free functions
 
-Thank You
+Questions?
 ------------------
 \begin{center}
-\LARGE{Questions?}
+\Huge{\textit{Thank You}}
 \end{center}
 
 \backupbegin
