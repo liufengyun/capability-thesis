@@ -34,7 +34,7 @@ def map[A,B](f: A => B)(l: List[A]) = l match {
 
 . . .
 
-The effects of `map` depends on `f`, it's *effect-polymorphic*!
+The effects of `map` depends on `f`, it's *effect-polymorphic*.
 
 
 Effect Polymorphism : State of the Art (1)
@@ -407,7 +407,7 @@ Inhabited Types
 ---------------------
 
 An environment with *uninhabited* types is always **actually**
-effect-safe, as it means the function never be actually called.
+effect-safe, as it means the function can never be actually called.
 
 ```Scala
 def bar(f: Int -> IO, x: Int) = print(f x, "hello, world!")
@@ -525,7 +525,8 @@ System STLC-Impure
 The straight-forward extension:
 
 - STLC-Pure + Free functions + Subtyping (with $Top$)
-- $Pure$ excludes free function types $S \Rightarrow T$
+- $Pure$ excludes types $S \Rightarrow T$ in additional to the type
+  $E$
 
 . . .
 
@@ -715,13 +716,112 @@ What Does Effect Safety Assure Us?
 Any functions of type $S \to T$, where $S \neq E$ and $S \neq U
 \Rightarrow V$, are **actually** effect-free.
 
-System F-Pure
+System F-Impure
 =====================
 
-Comparison
+-------------------
+
+\tableofcontents[currentsection]
+
+System F-Impure
+---------------------
+
+The straight-forward extension:
+
+- STLC-Pure + Free functions + Universal Types (without subtyping)
+
+- $Pure$ excludes types $S \Rightarrow T$ in additional to the type
+  $E$
+
+- Type abstraction can only be typed in *pure* environments
+
+. . .
+
+\textcolor{red}{It doesn't work, unless we assume:}
+
+\vspace*{\baselineskip}
+
+\begin{minipage}{\linewidth}
+\infrule[T-TApp]
+{ \Gamma \vdash t_1 : \forall X.T \andalso \colorbox{shade}{$T_2 \neq E$}
+  \andalso \colorbox{shade}{$T_2 \neq U \Rightarrow V$} }
+{ \Gamma \vdash t_1 \; [T_2] : [X \mapsto T_2]T }
+\end{minipage}
+
+Counterexample
+---------------------
+
+Let $t = \uplambda X. \, \uplambda x{:}X. \, \uplambda y{:}B. \, x$, we have:
+
+- $\varnothing \vdash t : \forall X. X \to B \to X$
+- $\varnothing \vdash t \; [E]: \textcolor{red}{E \to B \to E}$
+
+. . .
+
+After one evaluation step $t \; [E] \longrightarrow t'$, with $t' = \uplambda
+x{:}E. \, \uplambda y{:}B. \, x$:
+
+- $\varnothing \vdash t' : \textcolor{red}{E \to B \Rightarrow E}$
+
+\textcolor{red}{Preservation breaks!}
+
+Effect Polymorphism
+=====================
+
+-------------------
+
+\tableofcontents[currentsection]
+
+Effect Polymorphism
+---------------------
+
+Three kinds of effect polymorphism:
+
+- Axiomatic Polymorphism
+- Currying Polymorphism
+- Stoic Polymorphism
+
+Axiomatic Polymorphism
 ----------------------
-- Monads can't handle effect polymorphism, duplication of code
-- Monads difficult to understand and use, capability more accessible
+Axiomatic polymorphism depends on the axiom \textsc{Ax-Poly}.
+
+```Scala
+def map[A,B](f: A => B)(l: List[A]) = l match {
+  case Nil => Nil
+  case x::xs => f(x)::map(f)(xs)
+}
+
+def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+def squarePure = map { x => x*x }
+```
+
+Currying Polymorphism
+----------------------
+
+It's possible to remove the dependency on \textsc{Ax-Poly} by avoid
+*currying*:
+
+```Scala
+def map[A,B](f: A => B)(l: List[A]) = l match {
+  case Nil => Nil
+  case x::xs => f(x)::map(f)(xs)
+}
+
+def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+def squarePure(l: List[Int]) = map { x => x*x } l
+```
+
+Stoic Polymorphism
+----------------------
+
+Stoic functions that take a free function and return a value of a pure
+type are inherently effect-polymorphic.
+
+```Scala
+def twice(f: Int => Int) = f (f 0)
+def pure(x: Int) = twice { n => n + x }
+def impure(x: Int)(c: IO) = twice { n => println(n)(c); n + x }
+```
 
 Summary
 ----------------------
