@@ -34,7 +34,7 @@ def map[A,B](f: A => B)(l: List[A]) = l match {
 
 . . .
 
-The effects of `map` depends on `f`, it's *effect-polymorphic*.
+The effect of `map` depends on `f`, it's *effect-polymorphic*.
 
 
 Effect Polymorphism : State of the Art (1)
@@ -78,7 +78,7 @@ map :: (a -> b) -> List a -> List b
 map f xx = runIdentity (mapM (\x. return (f x)) xx)
 ```
 
-Problem
+Problem of Effect Polymorphism
 --------------------
 
 How to express *effect-polymrophic* functions with minimal syntactical
@@ -129,7 +129,7 @@ def foo(xs: List[Int], c: IO) =
 Stoic Functions and Free Functions
 -------------------------------
 
-- Stoic functions ($\to$): **cannot** capture capabilities from the environment
+- Stoic functions ($\to$): **cannot** capture capabilities in the environment
 - Free functions ($\Rightarrow$): **can** freely capture anything in environment
 
 ```Scala
@@ -145,54 +145,63 @@ def foo(xs: List[Int], c: IO) =
     // Error, stoic function required
 ```
 
-Stoic Functions
+Stoic Functions are NOT Pure
 -----------------
-Stoic functions are not necessarily *pure*, only honest about effects
-in their type signature:
+
+Stoic functions are not necessarily *pure*, but only honest about
+effects in their type signature:
 
 ``` Scala
+// IO -> ()
 def hello(c:IO) = println("hello, world!", c)
 ```
+
+. . .
 
 Following stoic function is certainly *pure*:
 
 ``` Scala
+// (Int -> Int) -> Int -> Int
 def twice(f: Int -> Int)(x: Int) = f (f x)
 ```
 
-Effect Polymorphism via Capabilities
+Free Functions are Important
 ----------------------------------
-Both *free* and *stoic* functions are important:
+Effect polymorphism is only possible with *free functions*:
 
 ``` Scala
+// (A => B) -> List[A] => List[B]
 def map[A,B](f: A => B)(l: List[A]) = l match {
   case Nil => Nil
   case x::xs => f(x)::map(f)(xs)
 }
+
+// IO -> List[A] => List[B]
 def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+
+// List[A] -> List[B]
 def squarePure(l: List[Int]) = map { x => x*x } l
 ```
-
-Types of functions:
-
-------------   -------------------------------
-map            $(A \Rightarrow B) \to List[A] \Rightarrow List[B]$
-squareImpure   $IO \to List[A] \Rightarrow List[B]$
-squarePure     $List[A] \to List[B]$
-------------   -------------------------------
 
 Intuition is not Enough
 -------------------------------
 
-Are following functions *pure*?
+Can following functions be called to produce effects?
 
 ```Scala
-def bar(f: Int -> IO, x: Int) = print(f x, "hello, world!")
-
-def foo(f: Int -> Int => Int, x: Int) = f (f x)
-
-def mie(f: (Int => Int) -> Int => Int, x: Int) = f(n => n)(x)
+def bar(f: Int -> Int => Int) = f (f 5)
 ```
+. . .
+
+```Scala
+def foo(f: (Int -> Int) => Int) = f(n => n)(6)
+```
+. . .
+
+```Scala
+def tee(f: Int -> IO, x: Int) = print(f x, "hello, world!")
+```
+
 
 System STLC-Pure
 =====================
@@ -201,7 +210,7 @@ System STLC-Pure
 
 \tableofcontents[currentsection]
 
-System STLC-Pure: STLC-Variant with Only Stoic Functions
+System STLC-Pure
 ----------------------
 
 \setlength{\columnseprule}{0.4pt}
@@ -214,13 +223,13 @@ System STLC-Pure: STLC-Variant with Only Stoic Functions
       &     & $t \quad t$            & application          \\
 \\
   $v$ & ::= &                        & values:              \\
-      &     & $\uplambda x{:}T.\, t$ &     \\
-      &     & \colorbox{shade}{x}    & variable value       \\
+      &     & $\uplambda x{:}T.\, t$ & function value    \\
+      &     & \colorbox{shade}{$x$}  & variable value       \\
 \\
   $T$ & ::= &                      & types:               \\
       &     & $B$                  & basic type           \\
       &     & \colorbox{shade}{$E$}& capability type      \\
-      &     & $T \to T$            &     \\
+      &     & $T \to T$            & stoic type     \\
 \end{tabu}
 
 \columnbreak
@@ -261,12 +270,14 @@ If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
 Preservation
 ----------------------
 
-The classic substitution lemma cannot be proved!
-
 \begin{lemma}[Subsitution-Classic]
 If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
 \vdash [x \mapsto s]t : T$.
 \end{lemma}
+
+. . .
+
+\textcolor{red}{It cannot be proved!}
 
 Counterexample
 ----------------------
@@ -309,7 +320,7 @@ Strict Evaluation
 
 The new subsitution lemma implies:
 
--  capabilities can only work with *strict evaluation*!
+- Capabilities only work with *strict evaluation*!
 
 - Or, only *pure* computations can be delayed.
 
@@ -421,90 +432,6 @@ We only need to care pure environments without uninhabited types:
   It's impossible to construct a term of the capability type $E$ in a
   pure environment with only variables of inhabited types.
 \end{definition}
-
-<pre>
-Definition of Inhabited Types and Environments
----------------------
-
-\begin{definition}[Inhabited Type]
-  A type $T$ is inhabited if there exists a value v with the typing
-  $x:B, \; y:E \vdash v : T$.
-\end{definition}
-
-\begin{definition}[Inhabited Environment]
-  An environment $\Gamma$ is inhabited if it only contains variables
-  of inhabited types.
-\end{definition}
-
-Effect Safety Formally
---------------------
-
-\begin{definition}[Effect-Safety-Inhabited]
-  If $\Gamma$ is a pure and inhabited environment, then there doesn't
-  exist $t$ with $\Gamma \vdash t : E$.
-\end{definition}
-
-A Construct to Prove Effect Safety
----------------------
-
-*capsafe*: capability safe  \hfill  \emph{caprod}: capability producing
-
-\setlength{\columnseprule}{0.4pt}
-\begin{multicols}{2}
-
-\textbf{Capsafe Type}
-
-\infax[CS-Base]
-{ B \quad \text{capsafe} }
-
-\infrule[CS-Fun1]
-{ S \quad \text{caprod} }
-{ S \to T \quad \text{capsafe} }
-
-\infrule[CS-Fun2]
-{ T \quad \text{capsafe} }
-{ S \to T \quad \text{capsafe} }
-
-\columnbreak
-
-\textbf{Caprod Type}
-
-\infax[CP-Eff]
-{ E \quad \text{caprod} }
-
-\infrule[CP-Fun]
-{ S \; \text{capsafe} \andalso T \; \text{caprod} }
-{ S \to T \quad \text{caprod} }
-
-\textbf{Capsafe Environment}
-
-\infax[CE-Empty]
-{ \varnothing \quad \text{capsafe} }
-
-\infrule[CE-Var]
-{ \Gamma \; \text{capsafe} \andalso T \; \text{capsafe} }
-{ \Gamma, \; x:T \quad \text{capsafe} }
-
-\end{multicols}
-
-Proof Idea
-----------------------
-
-\begin{definition}[Effect-Safety]
-  If $\Gamma$ is capsafe, then there doesn't exist $t$ with
-  $\Gamma \vdash t : E$.
-\end{definition}
-
-\begin{center}
-$\Downarrow$
-\end{center}
-
-\begin{definition}[Effect-Safety-Inhabited]
-  If $\Gamma$ is a pure and inhabited environment, then there doesn't
-  exist $t$ with $\Gamma \vdash t : E$.
-\end{definition}
-
-</pre>
 
 What Does Effect Safety Assure Us?
 -----------------------
@@ -640,6 +567,8 @@ Type Equivalence
 In fact, the following two types are equivalent:
 
 - $B \to B \Rightarrow B \quad \equiv \quad B \to B \to B$
+
+. . .
 
 Justification:
 
@@ -786,14 +715,36 @@ Axiomatic Polymorphism
 Axiomatic polymorphism depends on the axiom \textsc{Ax-Poly}.
 
 ```Scala
+// (A => B) -> List[A] => List[B]
 def map[A,B](f: A => B)(l: List[A]) = l match {
   case Nil => Nil
   case x::xs => f(x)::map(f)(xs)
 }
 
+// IO -> List[A] => List[B]
 def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+
+// List[A] -> List[B]
 def squarePure = map { x => x*x }
 ```
+
+Another example
+---------------------
+
+```Scala
+// (A => B) -> List[A] => List[B]
+private def mapImpl[A,B](f: A => B)(l: List[A]) = l match {
+  case Nil => Nil
+  case x::xs => f(x)::map(f)(xs)
+}
+
+// (A -> B) -> List[A] -> List[B]
+def map[A,B](f: A -> B) = mapImpl(f)
+
+// IO -> (IO -> A => B) => List[A] => List[B]
+def map[A,B](c: IO)(f: IO -> A => B) = mapImpl(f c)
+```
+
 
 Currying Polymorphism
 ----------------------
@@ -802,12 +753,16 @@ It's possible to remove the dependency on \textsc{Ax-Poly} by avoid
 *currying*:
 
 ```Scala
+// (A => B) -> List[A] => List[B]
 def map[A,B](f: A => B)(l: List[A]) = l match {
   case Nil => Nil
   case x::xs => f(x)::map(f)(xs)
 }
 
+// IO -> List[A] => List[B]
 def squareImpure(c: IO) = map { x => println(x)(c); x*x }
+
+// List[A] -> List[B], no currying here
 def squarePure(l: List[Int]) = map { x => x*x } l
 ```
 
@@ -818,10 +773,16 @@ Stoic functions that take a free function and return a value of a pure
 type are inherently effect-polymorphic.
 
 ```Scala
+// (Int => Int) -> Int
 def twice(f: Int => Int) = f (f 0)
+
+// Int -> Int
 def pure(x: Int) = twice { n => n + x }
+
+// Int -> IO -> Int
 def impure(x: Int)(c: IO) = twice { n => println(n)(c); n + x }
 ```
+
 
 Summary
 ----------------------
@@ -835,3 +796,143 @@ Thank You
 \begin{center}
 \LARGE{Questions?}
 \end{center}
+
+\backupbegin
+
+Definition of Inhabited Types and Environments
+---------------------
+
+\begin{definition}[Inhabited Type]
+  A type $T$ is inhabited if there exists a value v with the typing
+  $x:B, \; y:E \vdash v : T$.
+\end{definition}
+
+\begin{definition}[Inhabited Environment]
+  An environment $\Gamma$ is inhabited if it only contains variables
+  of inhabited types.
+\end{definition}
+
+Effect Safety Formally
+--------------------
+
+\begin{definition}[Effect-Safety-Inhabited]
+  If $\Gamma$ is a pure and inhabited environment, then there doesn't
+  exist $t$ with $\Gamma \vdash t : E$.
+\end{definition}
+
+A Construct to Prove Effect Safety
+---------------------
+
+*capsafe*: capability safe  \hfill  \emph{caprod}: capability producing
+
+\setlength{\columnseprule}{0.4pt}
+\begin{multicols}{2}
+
+\textbf{Capsafe Type}
+
+\infax[CS-Base]
+{ B \quad \text{capsafe} }
+
+\infrule[CS-Fun1]
+{ S \quad \text{caprod} }
+{ S \to T \quad \text{capsafe} }
+
+\infrule[CS-Fun2]
+{ T \quad \text{capsafe} }
+{ S \to T \quad \text{capsafe} }
+
+\columnbreak
+
+\textbf{Caprod Type}
+
+\infax[CP-Eff]
+{ E \quad \text{caprod} }
+
+\infrule[CP-Fun]
+{ S \; \text{capsafe} \andalso T \; \text{caprod} }
+{ S \to T \quad \text{caprod} }
+
+\textbf{Capsafe Environment}
+
+\infax[CE-Empty]
+{ \varnothing \quad \text{capsafe} }
+
+\infrule[CE-Var]
+{ \Gamma \; \text{capsafe} \andalso T \; \text{capsafe} }
+{ \Gamma, \; x:T \quad \text{capsafe} }
+
+\end{multicols}
+
+Proof Idea
+----------------------
+
+\begin{definition}[Effect-Safety]
+  If $\Gamma$ is capsafe, then there doesn't exist $t$ with
+  $\Gamma \vdash t : E$.
+\end{definition}
+
+\begin{center}
+$\Downarrow$
+\end{center}
+
+\begin{definition}[Effect-Safety-Inhabited]
+  If $\Gamma$ is a pure and inhabited environment, then there doesn't
+  exist $t$ with $\Gamma \vdash t : E$.
+\end{definition}
+
+Sum and Product Types
+------------------------
+
+Sum Types:
+
+- $pure(\Gamma, \; x: B + E) \quad  = \quad pure(\Gamma), \; x: B + Top$
+
+\vspace*{\baselineskip}
+
+Product Types:
+
+- $pure(\Gamma, \; x: B \times E) \quad  = \quad pure(\Gamma), \; x: B \times Top$
+
+Record Types and Classes
+------------------------
+
+Record Types:
+
+- $pure(\Gamma, \; x:\{ a: E, b: B \}) \quad  = \quad pure(\Gamma), \; x: { b: B }$
+
+\vspace*{\baselineskip}
+
+Classes adopt similar ideas:
+
+- Each class have two type signature: `Student` and `StudentPure`
+- $pure(\Gamma, \; x: Student) \quad  = \quad pure(\Gamma), \; x: StudentPure$
+
+Mutability Effects
+-----------------------
+
+Stoic functions cannot capture mutable variables:
+
+```Scala
+var a = 3, b = a + 4
+
+// Int => Int
+def impure(n: Int) = n + a
+
+// Int -> Int
+def pure(n: Int) = n + b
+
+// Int -> Int
+def masking(n: Int) = var x = 5; x = b + 3; x + n
+
+// Int -> Int => Int
+def closure(n: Int) => var r = n; x => { r = r + 1; x }
+```
+
+\textcolor{red}{The axioms no longer hold, but still safe -- mutability local to pure functions.}
+
+The Value "null"
+-----------------------
+
+- Forbid type `Null` to be cast as capability types
+
+\backupend
