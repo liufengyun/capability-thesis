@@ -706,9 +706,27 @@ Effect Polymorphism
 
 Three kinds of effect polymorphism:
 
+- Stoic Polymorphism
 - Axiomatic Polymorphism
 - Currying Polymorphism
-- Stoic Polymorphism
+
+
+Stoic Polymorphism
+----------------------
+
+Stoic functions that take a free function and return a value of a pure
+type are inherently effect-polymorphic.
+
+```Scala
+// (Int => Int) -> Int
+def twice(f: Int => Int) = f (f 0)
+
+// Int -> Int
+def pure(x: Int) = twice { n => n + x }
+
+// Int -> IO -> Int
+def impure(x: Int)(c: IO) = twice { n => println(n)(c); n + x }
+```
 
 Axiomatic Polymorphism
 ----------------------
@@ -764,23 +782,6 @@ def squareImpure(c: IO) = map { x => println(x)(c); x*x }
 
 // List[A] -> List[B], no currying here
 def squarePure(l: List[Int]) = map { x => x*x } l
-```
-
-Stoic Polymorphism
-----------------------
-
-Stoic functions that take a free function and return a value of a pure
-type are inherently effect-polymorphic.
-
-```Scala
-// (Int => Int) -> Int
-def twice(f: Int => Int) = f (f 0)
-
-// Int -> Int
-def pure(x: Int) = twice { n => n + x }
-
-// Int -> IO -> Int
-def impure(x: Int)(c: IO) = twice { n => println(n)(c); n + x }
 ```
 
 
