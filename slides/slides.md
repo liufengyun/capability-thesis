@@ -957,7 +957,12 @@ Stoicism
 -----------------------
 
 - A philosophical school of the Hellenistic period (323 BC - AD 529)
-- Advocate peace of mind gained from living a life of Virtue in accordance with Nature
+- Founded by Zeno of Citium in Cyprus (344–262 BC)
 - Popular in Roman Greece
+- Seneca (4 BC – AD 65), the Emperor Marcus Aurelius (121 - 180 AD)
+- Important contributions to logic
+- Advocate peace of mind gained from living a life of Virtue in accordance with Nature.
+
+> Virtue consists in a will that is in agreement with Nature.
 
 \backupend
