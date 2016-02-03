@@ -1,10 +1,6 @@
 Background
 ===================================
 
-----
-
-\tableofcontents[currentsection]
-
 
 Motivation: Scala Needs An Effect System
 ------------------------------------
@@ -90,6 +86,7 @@ The Glory of Capability-Base Effect Systems
 No additional annotations in neither typing nor terms!
 
 ```Scala
+// (A => B) -> List[A] => List[B]
 def map[A,B](f: A => B)(l: List[A]) = l match {
   case Nil => Nil
   case x::xs => f(x)::map(f)(xs)
