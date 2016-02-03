@@ -8,6 +8,10 @@
 \setbeamertemplate{blocks}[rounded][shadow=false]
 \setbeamertemplate{title page}[default][colsep=-4bp,rounded=true] % remove title page shade
 
+% use default bullet style
+\setbeamertemplate{itemize items}[default]
+\setbeamertemplate{enumerate items}[default]
+
 % \setbeamertemplate{frametitle}{\insertframetitle\par\vskip-6pt\hrulefill}
 
 \usepackage{tabu}         % advanced table layout
@@ -73,15 +77,6 @@
   morestring=[b]"""
 }
 
-% backup slides
-\newcommand{\backupbegin}{
-   \newcounter{finalframe}
-   \setcounter{finalframe}{\value{framenumber}}
-}
-\newcommand{\backupend}{
-   \setcounter{framenumber}{\value{finalframe}}
-}
-
 
 \lstset{
   % frame=tb,
@@ -102,6 +97,14 @@
   xleftmargin=6mm
 }
 
+% backup slides
+\newcommand{\backupbegin}{
+   \newcounter{finalframe}
+   \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \setcounter{framenumber}{\value{finalframe}}
+}
 
 \title{\LARGE{Stoics}}
 \subtitle{\Large{An Introduction to Capability-Based Effect Systems}}
