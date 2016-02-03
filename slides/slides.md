@@ -953,4 +953,11 @@ The Value "null"
 
 - Forbid type `Null` to be cast as capability types
 
+Stoicism
+-----------------------
+
+- A philosophical school of the Hellenistic period (323 BC - AD 529)
+- Advocate peace of mind gained from living a life of Virtue in accordance with Nature
+- Popular in Roman Greece
+
 \backupend
