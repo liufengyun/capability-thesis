@@ -4,7 +4,7 @@ Background
 
 Motivation: Scala Needs An Effect System
 ------------------------------------
-How to restrict that `f` should be *pure*?
+How to enforce that `f` should be *pure*?
 
 ```Scala
 def pmap(xs: List[Int], f: Int => Int): List[Int]
@@ -14,11 +14,18 @@ def pmap(xs: List[Int], f: Int => Int): List[Int]
 
 Scala is in want of an effect system:
 
-- Compiler optimization
 - Parallel & distributed computing
+- Compiler optimization
 
 Effect Polymorphism
 ----------------------------
+
+An important difficulty: *effect polymorphism*. (Lukas 2012)
+
+\vspace*{1cm}
+
+. . .
+
 What's the effect of `map`?
 
 ```Scala
@@ -35,7 +42,7 @@ The effect of `map` depends on `f`, it's *effect-polymorphic*.
 
 Effect Polymorphism : State of the Art (1)
 ----------------------------
-In classical type-and-effect systems:
+In classical type-and-effect systems (via parametric polymorphism):
 
 ```Scala
 def map[A, B, E](f: A => B @E)(l: List[A]): List[B] @E
@@ -44,7 +51,7 @@ def map[A, B, E](f: A => B @E)(l: List[A]): List[B] @E
 Effect Polymorphism : State of the Art (2)
 ----------------------------
 
-In Java:
+In Java (via parametric polymorphism):
 
 ```Java
 public interface FunctionE<T, U, E extends Exception> {
@@ -59,7 +66,7 @@ public interface List<T> {
 Effect Polymorphism : State of the Art (3)
 ---------------------------
 
-In Haskell:
+In Haskell (via type class):
 
 ```Haskell
 mapM :: Monad m => (a -> m b) -> List a -> m (List b)
@@ -77,13 +84,13 @@ map f xx = runIdentity (mapM (\x. return (f x)) xx)
 Problem of Effect Polymorphism
 --------------------
 
-How to express *effect-polymorphic* functions with minimal syntactical
-overhead?
+How to express *effect-polymorphic* functions with minimal syntactic
+overhead and the least verbosity in type signature?
 
 The Glory of Capability-Base Effect Systems
 --------------------
 
-No additional annotations in neither typing nor terms!
+No changes in code, minor change in type signature.
 
 ```Scala
 // (A => B) -> List[A] => List[B]
@@ -191,12 +198,12 @@ def bar(f: Int -> Int => Int) = f (f 5)
 . . .
 
 ```Scala
-def foo(f: (Int -> Int) => Int) = f(n => n)(6)
+def foo(f: IO -> Int) = /* only use f internally */
 ```
 . . .
 
 ```Scala
-def tee(f: Int -> IO, x: Int) = print(f x, "hello, world!")
+def tee(f: Int -> IO) = print(f 5, "hello, world!")
 ```
 
 
@@ -281,15 +288,18 @@ Counterexample
 
 Following typings hold:
 
-- $f: E \to B,\; c:E,\; x:B \vdash \uplambda z{:}B.\,\textcolor{red}{x} \; : \; B \to B$
+- $f: E \to B,\; \textcolor{green}{c:E},\; x:B \vdash \uplambda
+  z{:}B.\,\textcolor{red}{x} \; : \; B \to B$
 
-- $f: E \to B,\; c:E \vdash \textcolor{red}{f \; c} \; : \; B$
+- $f: E \to B,\; \textcolor{green}{c:E} \vdash \textcolor{red}{f \; c}
+  \; : \; B$
 
 . . .
 
 However, after $[x \mapsto f \; c]$, it can't be typed:
 
-- $f: E \to B,\; c:E \vdash \uplambda z{:}B.\,\textcolor{red}{f \; c} \; : \; B \to B$
+- $f: E \to B,\; \textcolor{green}{c:E} \vdash \uplambda
+  z{:}B.\, f \; \textcolor{red}{c} \; : \; B \to B$
 
 The typing rule \textsc{T-Abs} forbids capturing of the capability
 variable `c`.
@@ -323,7 +333,9 @@ The new substitution lemma implies:
 
 . . .
 
-Monads can only work with lazy evaluation:
+\vspace*{5mm}
+
+Monad-based effect systems don't work with strict evaluation:
 
 ```Haskell
 inc :: (Num a, Show a) => a -> a
@@ -335,10 +347,10 @@ Effect Safety
 
 How can we be sure that a function of the type `B -> B` is actually *pure* ?
 
-Informal Formulation (1)
+Formulation (1)
 ----------------------
 
-\begin{definition}[Effect-Safety-Informally-1]
+\begin{definition}[Effect-Safety-1]
 A function typed in a pure environment cannot have side effects inside.
 \end{definition}
 
@@ -346,11 +358,11 @@ A function typed in a pure environment cannot have side effects inside.
 
 Problem: \textcolor{red}{Stoic functions of the type $E \to B$ may have side effects.}
 
-Informal Formulation (2)
+Formulation (2)
 -----------------------
 
-\begin{definition}[Effect-Safety-Informally-2]
-  A function, not taking any capability parameter and typed in a pure
+\begin{definition}[Effect-Safety-2]
+  A function, \emph{not taking any capability parameter} and typed in a pure
   environment, cannot have side effects inside.
 \end{definition}
 
@@ -358,7 +370,7 @@ Informal Formulation (2)
 
 Problem: \textcolor{red}{Better, but a little cumbersome}.
 
-Informal Formulation (3)
+Formulation (3)
 -----------------------
 
 If $S \neq E$, then $t_2$ cannot have side effects in a pure environment:
@@ -387,7 +399,7 @@ $\iff$
 
 Producing side effects needs capabilities, thus:
 
-\begin{definition}[Effect-Safety-Informally-3]
+\begin{definition}[Effect-Safety-3]
   It's impossible to construct a term of the capability type $E$ in a
   pure environment.
 \end{definition}
@@ -413,23 +425,24 @@ The problem is caused by *ill* types in pure environments:
 
 These *ill* types are **not** inhabited.
 
-Inhabited Types
+
+Formulation (4)
 ---------------------
 
 An environment with *uninhabited* types is always **actually**
 effect-safe, as it means the function can never be actually called.
 
 ```Scala
-def bar(f: Int -> IO, x: Int) = print(f x, "hello, world!")
+def bar(f: Int -> IO) = print(f 5, "hello, world!")
 ```
 
 . . .
 
-We only need to care pure environments without uninhabited types:
+We only need to care pure environments *without uninhabited types*:
 
-\begin{definition}[Effect-Safety-Informally-4]
+\begin{definition}[Effect-Safety-4]
   It's impossible to construct a term of the capability type $E$ in a
-  pure environment with only variables of inhabited types.
+  pure environment with \emph{only variables of inhabited types}.
 \end{definition}
 
 What Does Effect Safety Assure Us?
@@ -512,11 +525,11 @@ Introduce a special $top$ value:
 
 \infrule
 { T \neq Top }
-{ (\uplambda x{:}T.\, t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
+{ (\uplambda x{:}\textcolor{red}{T}.\, t_1) v_2 \longrightarrow [x \mapsto v_2]t_1 }
 
 \infrule
 { T = Top }
-{ (\lambda x{:}T.\, t_1) v_2 \longrightarrow [x \mapsto top]t_1 }
+{ (\lambda x{:}\textcolor{red}{T}.\, t_1) v_2 \longrightarrow [x \mapsto \textcolor{red}{top}]t_1 }
 
 \end{multicols}
 
@@ -570,27 +583,18 @@ In fact, the following two types are equivalent:
 
 Justification:
 
-- The inner function of the type $B \Rightarrow B$ cannot capture any
-capabilities or free functions.
+- The inner function ($B \Rightarrow B$) can't capture capabilities or
+free functions.
+
 - Otherwise, the outer function cannot be typed as *stoic*.
 
 Axioms
 ---------------------
 
-Proof of the second effect safety statement depends on following axioms:
+To prove 2\textsuperscript{nd} effect safety, we need following axioms:
 
 \newgeometry{right=0cm}
 \begin{multicols}{2}
-
-\infrule[Ax-Base]
-{ \Gamma \vdash t : B \to S \Rightarrow T }
-{ \Gamma \vdash t : B \to S \to T }
-
-
-\infrule[Ax-Top]
-{ \Gamma \vdash t : Top \to S \Rightarrow T }
-{ \Gamma \vdash t : Top \to S \to T }
-
 
 \infrule[Ax-Stoic]
 { \Gamma \vdash t : (U \to V) \to S \Rightarrow T }
@@ -601,6 +605,17 @@ Proof of the second effect safety statement depends on following axioms:
 { \Gamma \vdash t_2 : U \to V \\
   \Gamma \vdash t_1 : (U \Rightarrow V) \to S \Rightarrow T }
 { \Gamma \vdash t_1 \; t_2 : S \to T }
+
+
+\infrule[Ax-Base]
+{ \Gamma \vdash t : B \to S \Rightarrow T }
+{ \Gamma \vdash t : B \to S \to T }
+
+
+\infrule[Ax-Top]
+{ \Gamma \vdash t : Top \to S \Rightarrow T }
+{ \Gamma \vdash t : Top \to S \to T }
+
 
 \end{multicols}
 
@@ -615,8 +630,8 @@ Intuition: $t_1$ is *effect-polymorphic*.
 
 \begin{minipage}{\linewidth}
 \infrule[Ax-Poly]
-{ \Gamma \vdash t_2 : U \to V \andalso
-  \Gamma \vdash t_1 : (U \Rightarrow V) \to S \Rightarrow T }
+{ \Gamma \vdash t_1 : (U \Rightarrow V) \to S \Rightarrow T \andalso
+  \Gamma \vdash t_2 : U \to V }
 { \Gamma \vdash t_1 \; t_2 : S \to T }
 \end{minipage}
 
@@ -655,7 +670,7 @@ System F-Impure
 
 The straight-forward extension:
 
-- STLC-Pure + Free functions + Universal Types (without subtyping)
+- STLC-Pure + free functions + universal types (without subtyping)
 
 - $Pure$ excludes types $S \Rightarrow T$ in addition to the type $E$
 
@@ -785,14 +800,25 @@ def squarePure(l: List[Int]) = map { x => x*x } l
 Summary
 ----------------------
 
+Results:
+
+- Stoic functions + free functions + subtyping + universal types
 - Stoic functions and free functions make *effect polymorphism* easy
 - Capabilities can only work with *strict evaluation*
-- Universal types can't abstract over types of capabilities or free functions
+- Universal types can't abstract over capabilities or free functions types
+
+\vspace*{4mm}
+
+Future Work:
+
+- Bounded quantification
+- Recursive types & general recursion
+- Mutation effects
 
 Questions?
 ------------------
 \begin{center}
-\Huge{\textit{Thank You}}
+\Huge{\textit{Thank You!}}
 \end{center}
 
 \backupbegin
