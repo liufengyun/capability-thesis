@@ -269,7 +269,9 @@ If $\Gamma \vdash t : T$, and $t \longrightarrow t'$, then $\Gamma
 \vdash t' : T$.
 \end{theorem}
 
-*Preservation* is tricky!
+. . .
+
+\textcolor{red}{\emph{Preservation} is tricky!}
 
 Preservation
 ----------------------
@@ -307,17 +309,10 @@ variable `c`.
 New Substitution Lemma
 ----------------------
 
-Instead of the classic substitution lemma:
-
-\begin{lemma}[Substitution-Classic]
-If $\Gamma,\; x:S \vdash t : T$, and $\Gamma \vdash s : S$, then $\Gamma
-\vdash [x \mapsto s]t : T$.
-\end{lemma}
-
 We need to stipulate only *values* can be substituted:
 
 \begin{lemma}[Substitution-New]
-  If $\Gamma,\; x:S \vdash t : T$, s is a value and
+  If $\Gamma,\; x:S \vdash t : T$, \textbf{s is a value} and
   $\Gamma \vdash s : S$, then $\Gamma \vdash [x \mapsto s]t : T$.
 \end{lemma}
 
@@ -341,6 +336,10 @@ Monad-based effect systems don't work with strict evaluation:
 inc :: (Num a, Show a) => a -> a
 inc n = (\x -> n + 1) (putStrLn (show n))
 ```
+
+Following principle of monad-based effect systems breaks:
+
+> Once dirty, no way to wash hands clean.
 
 Effect Safety
 ----------------------
@@ -377,8 +376,8 @@ If $S \neq E$, then $t_2$ cannot have side effects in a pure environment:
 
 \begin{multicols}{3}
 \infrule
-{ pure(\Gamma), \; x: S \vdash t_2 : T }
-{ \Gamma \vdash \uplambda x{:}S.\;t_2 : S \to T }
+{ pure(\Gamma), \; x: S \vdash \textcolor{red}{t_2} : T }
+{ \Gamma \vdash \uplambda x{:}S.\; \textcolor{red}{t_2} : S \to T }
 
 \columnbreak
 
@@ -390,8 +389,8 @@ $\iff$
 \columnbreak
 
 \infrule
-{ pure(\Gamma, \; x: S) \vdash t_2 : T }
-{ \Gamma \vdash \uplambda x{:}S.\;t_2 : S \to T }
+{ pure(\Gamma, \; x: S) \vdash \textcolor{red}{t_2} : T }
+{ \Gamma \vdash \uplambda x{:}S.\; \textcolor{red}{t_2} : S \to T }
 
 \end{multicols}
 
@@ -449,7 +448,7 @@ What Does Effect Safety Assure Us?
 -----------------------
 
 Any functions of type $S \to T$, where $S \neq E$, are **actually**
-effect-free.
+pure.
 
 System STLC-Impure
 =====================
@@ -463,8 +462,8 @@ System STLC-Impure
 
 The straight-forward extension:
 
-- STLC-Pure + Free functions + Subtyping (with $Top$)
-- $Pure$ excludes types $S \Rightarrow T$ in addition to the type $E$
+> - STLC-Pure + Free functions + Subtyping (with $Top$)
+> - $Pure$ excludes types $S \Rightarrow T$ in addition to the type $E$
 
 . . .
 
@@ -473,7 +472,7 @@ The straight-forward extension:
 Counterexample
 ------------------
 
-Following typing holds:
+Following typings hold:
 
 -  $c:E \vdash (\uplambda x{:}Top. \, \uplambda y{:}B. \, x) \; : \;
    Top \to B \to Top$
@@ -543,18 +542,18 @@ Effect Safety
 
 Now we need two statements in the presence of *free functions*:
 
-\begin{definition}[Effect-Safety-Inhabited-1]
+\begin{definition}[Effect-Safety-1]
   If $\Gamma$ is a pure and inhabited environment, then there doesn't
   exist $t$ with $\Gamma \vdash t : E$.
 \end{definition}
 
-\begin{definition}[Effect-Safety-Inhabited-2]
+\begin{definition}[Effect-Safety-2]
   If $\Gamma$ is a pure and inhabited environment, and
   $\Gamma \vdash t_1 \; t_2 : T$, then there exists $U$, $V$ such that
   $\Gamma \vdash t_1 : U \to V$.
 \end{definition}
 
-The Second Statement of Effect Safety
+The Second Effect Safety
 ------------------
 
 Let's assume:
@@ -575,7 +574,7 @@ Does it mean we can produce effects in a *pure* and *inhabited* environment?
 
 \vspace*{\baselineskip}
 
-\textcolor{red}{No, due to type equivalence.}
+\textcolor{red}{No, due to type equivalence (next).}
 
 Type Equivalence
 --------------------
@@ -661,7 +660,7 @@ What Does Effect Safety Assure Us?
 -----------------------
 
 Any functions of type $S \to T$, where $S \neq E$ and $S \neq U
-\Rightarrow V$, are **actually** effect-free.
+\Rightarrow V$, are **actually** pure.
 
 System F-Impure
 =====================
@@ -675,11 +674,9 @@ System F-Impure
 
 The straight-forward extension:
 
-- STLC-Pure + free functions + universal types (without subtyping)
-
-- $Pure$ excludes types $S \Rightarrow T$ in addition to the type $E$
-
-- Type abstraction can only be typed in *pure* environments
+> - STLC-Pure + free functions + universal types (without subtyping)
+> - $Pure$ excludes types $S \Rightarrow T$ in addition to the type $E$
+> - Type abstraction can only be typed in *pure* environments
 
 . . .
 
