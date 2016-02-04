@@ -475,13 +475,18 @@ Counterexample
 
 Following typing holds:
 
--  $c:E \vdash (\uplambda x{:}Top. \, \uplambda y{:}B. \, x) \; c \; : \; B \to Top$
+-  $c:E \vdash (\uplambda x{:}Top. \, \uplambda y{:}B. \, x) \; : \;
+   Top \to B \to Top$
+
+-  $c:E \vdash (\uplambda x{:}Top. \, \uplambda y{:}B. \, x) \; c \; :
+   \; \textcolor{red}{B \to Top}$
 
 . . .
 
-After one evaluation step:
+After one evaluation step $[x \mapsto c]$:
 
--  $c:E \vdash \uplambda y{:}B. \, c  \; : \; B \Rightarrow Top$
+-  $c:E \vdash \uplambda y{:}B. \, c \; : \; \textcolor{red}{B
+   \Rightarrow Top}$
 
 \textcolor{red}{Preservation breaks!}
 
