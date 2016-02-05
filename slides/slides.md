@@ -924,7 +924,8 @@ Record Types and Classes
 
 Record Types:
 
-- $pure(\Gamma, \; x:\{ a: E, b: B \}) \quad  = \quad pure(\Gamma), \; x: { b: B }$
+- $pure(\Gamma, \; x:\{ \textcolor{red}{a: E}, b: B \}) \quad = \quad
+  pure(\Gamma), \; x: \{ b: B \}$
 
 \vspace*{\baselineskip}
 
