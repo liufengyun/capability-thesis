@@ -933,7 +933,7 @@ Classes adopt similar ideas:
 - Each class have two type signature: `Student` and `StudentPure`
 - $pure(\Gamma, \; x: Student) \quad  = \quad pure(\Gamma), \; x: StudentPure$
 
-Mutability Effects
+Mutational Effects
 -----------------------
 
 Idea: stoic functions cannot capture mutable variables.
