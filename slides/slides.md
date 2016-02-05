@@ -954,7 +954,7 @@ def problem(n: Int) = (closure n) n
 ```
 
 \textcolor{red}{The axioms no longer hold, but still safe --
-mutability local to pure functions.}
+mutations local to pure functions.}
 
 Exception Effects
 -----------------------
