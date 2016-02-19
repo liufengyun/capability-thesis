@@ -193,7 +193,7 @@ Intuition is not Enough
 Can following functions be called to produce effects?
 
 ```Scala
-def bar(f: Int -> Int => Int) = f (f 5)
+def bar(f: Int -> Int => Int) = (f 5) 5
 ```
 . . .
 
