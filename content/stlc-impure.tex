@@ -873,7 +873,7 @@ on the monadic version by using the identity monad:
 
 \begin{lstlisting}[language=Haskell]
   map :: (a -> b) -> List a -> List b
-  map f xx = runIdentity (mapM (x. return (f x)) xx)
+  map f xx = runIdentity (mapM (\x -> return (f x)) xx)
 \end{lstlisting}
 
 However, in practice programmers usually first come up with the
