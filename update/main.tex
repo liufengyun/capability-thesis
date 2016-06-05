@@ -1,0 +1,145 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{CambridgeUS}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]{}
+\setbeamertemplate{headline}{}
+\setbeamersize{text margin left=4em,text margin right=4em}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true] % remove title page shade
+
+% use default bullet style
+\setbeamertemplate{itemize items}[default]
+\setbeamertemplate{enumerate items}[default]
+
+% \setbeamertemplate{frametitle}{\insertframetitle\par\vskip-6pt\hrulefill}
+
+\usepackage{tabu}         % advanced table layout
+\usepackage{multicol}     % multi-column
+
+% inference rules
+\usepackage{../lib/bcprules} % typeset inference rule
+
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{amsthm}   % theorems, definitions, lemmas
+\usepackage{amsmath}  % \text{}
+
+% packages for drawing
+\usepackage{tikz}
+\usetikzlibrary{graphs}     % create graphs
+\usetikzlibrary{arrows}
+\usetikzlibrary{trees}
+
+% math mode style
+\usepackage{upgreek}      % upright greek letters, in was bundle
+\renewcommand\familydefault\sfdefault
+\usepackage{mathastext}   % math mode font
+\renewcommand\familydefault\rmdefault
+
+% code listing
+\usepackage{listings}
+% \usepackage[table]{xcolor}
+
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+      \setlength{\topsep}{0pt}%
+      \setlength{\leftmargin}{#1}%
+      \setlength{\rightmargin}{#2}%
+      \setlength{\listparindent}{\parindent}%
+      \setlength{\itemindent}{\parindent}%
+      \setlength{\parsep}{\parskip}%
+    }%
+  \item[]}{\end{list}}
+
+%% set code styles
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{shade}{rgb}{0.8,0.8,0.8}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% ``define'' Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+
+\lstset{
+  % frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=6mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  xleftmargin=6mm
+}
+
+% backup slides
+\newcommand{\backupbegin}{
+   \newcounter{finalframe}
+   \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \setcounter{framenumber}{\value{finalframe}}
+}
+
+\title{\LARGE{A Report of the Research on Capabilities}}
+% \subtitle{\Large{An Introduction to Capability-Based Effect Systems}}
+\author[Fengyun Liu]{\large{Fengyun Liu}}
+\institute{School of Computer and Communication Sciences, EPFL}
+\date{June 2016}
+
+% enables straight single quote
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }}
+\makeatother
+
+% enables backticks in verbatim
+\makeatletter
+{\catcode`\`=13
+\xdef\@verbatim{\unexpanded\expandafter{\@verbatim}\chardef\noexpand`=18 }
+}
+\makeatother
+
+\begin{document}
+
+{
+\setbeamertemplate{footline}{} % no page number
+\begin{frame}
+  \titlepage
+\end{frame}
+}
+
+\begin{frame}
+\frametitle{Outline}
+\tableofcontents
+\end{frame}
+
+\input{"slides.tex"}
+
+\end{document}
