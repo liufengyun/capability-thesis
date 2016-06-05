@@ -193,3 +193,27 @@ def f(g: (A => B) -> C)(h: A => B) = g h
 ```
 
 How to solve the problem of *effect polymorphism* in the new calculus?
+
+Future Research
+=====================
+
+-------------------
+
+\tableofcontents[currentsection]
+
+Possible Direction of Future Research
+----------------------
+
+The Problem of Versioning (not investigated so far)
+
+- *Implicit parameters*(Lewis, 2000) provide an elegant solution to
+the problem of versioning.
+- Difference from Scala implicits:  *dynamic scoping* VS *lexical scoping*
+
+The Problem of Effect Polymorphism
+
+- It seems we do need free functions ($A \Rightarrow B$) in order to
+reap the benefits of capability-based effect systems
+- The duality of *monad* and *comonad* implies there exist similar
+  tricks in monad-based effect systems that side-step the problem of
+  effect polymorphism.
