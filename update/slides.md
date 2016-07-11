@@ -204,7 +204,7 @@ Future Research
 Possible Direction of Future Research
 ----------------------
 
-The Problem of Versioning (not investigated so far)
+The Problem of Versioning (we haven't investigated so far)
 
 - *Implicit parameters*(Lewis, 2000) provide an elegant solution to
 the problem of versioning.
