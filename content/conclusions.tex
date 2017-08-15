@@ -15,10 +15,6 @@ Capability-based effect systems have to be paired with strict
 evaluation, just like monad-based effect systems have to be paired
 with lazy evaluation.
 
-In the two proposed systems with universal types, namely F-Pure and
-F-Impure, it's impossible to abstract over capability types and free
-function types.
-
 \subsection{Related Work}
 
 Lucassen and Gifford first introduced type-and-effect
@@ -98,22 +94,13 @@ practical model for industrial languages, it's useful to extend
 existing systems with these features.
 
 Effect masking can be a useful feature in real-world programming,
-especially when dealing with exception effects. It's worthy to explore
-effect masking in existing systems.
+especially when dealing with exception effects and local mutations.
+It's worthy to explore effect masking in existing systems.
 
-Though the effect polymorphism inherent in capability-based effect
-systems reduces the need for parametric polymorphism over capability
-types, parametric polymorphism over free function types is still
-useful in practical programming.  One approach to make parametric
-polymorphism work for capability types and free function types is to
-integrate \emph{bounded quantification} with capabilities. This is the
-what we are working on now. We've managed to prove soundness of the
-system, and the proof of effect safety is in progress.
-
-% Another direction of work is to extend the proposed systems with some
-% implicit calculus, in order to avoid explicitly passing capabilities
-% around in the code. This would result in significant savings in
-% boilerplate code, thus make the system more friendly to programmers.
+Another direction of work is to extend the proposed systems with some
+implicit calculus, in order to avoid explicitly passing capabilities
+around in the code. This would result in significant savings in
+boilerplate code, thus make the system more friendly to programmers.
 
 % The most exciting work would be to implement a capability-based effect
 % system in Scala or other industrial programming languages and

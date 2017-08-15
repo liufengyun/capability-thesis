@@ -144,9 +144,12 @@ uninhabited types like $B \to E$ as parameter to type abstraction.
 { \Gamma \vdash t_1 : \forall X.T \andalso T_2 \neq E }
 { \Gamma \vdash t_1 \; [T_2] : [X \mapsto T_2]T }
 
-Without the restriction, preservation of the system breaks, as can be
-seen from the following term $t$, which has the type
-$\forall X. X \to B \to X$:
+Without the restriction, preservation of the system breaks
+\footnote{It's also possible to allow $E$ as argument to type
+  application, and restore preservation by treating variables with the
+  type of a type variable as impure. We'll follow this approach in the
+  system F-Impure.}, as can be seen from the following term $t$, which
+has the type $\forall X. X \to B \to X$:
 
 \begin{center}
   $t = \uplambda X. \, \uplambda x{:}X. \, \uplambda y{:}B. \, x$
@@ -331,6 +334,9 @@ STLC-Pure highlighted.
 
 \infax[CS-Base]
 { B \quad capsafe }
+
+\infax[CS-Var]
+{ \colorbox{shade}{$X \quad capsafe$} }
 
 \infrule[CS-Fun1]
 { S \quad caprod }
